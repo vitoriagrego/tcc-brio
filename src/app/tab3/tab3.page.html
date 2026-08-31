@@ -1,255 +1,152 @@
-<ion-content [fullscreen]="true" class="pomodoro-page">
+<ion-content [fullscreen]="true" class="tab3-content">
 
-  <!--
-    FUNDO
-    -------------------------------------------------------
-    A imagem fica somente neste elemento.
-    Coloque sua imagem em:
+  <div class="main-overlay">
 
-    src/assets/img/fundo-alquimia.jpg
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
 
-    e ative o background no CSS.
-  -->
-  <div class="background"></div>
+    <div class="header-section">
 
-
-  <!-- =====================================================
-       CONTEÚDO DA PÁGINA
-       ===================================================== -->
-
-  <div class="page-content">
-
-
-    <!-- ===================================================
-         TOPO
-         =================================================== -->
-
-    <div class="header">
-
-      <div class="alchemy-status">
-        <span class="line"></span>
-
-        <span>
-          Transmutação em andamento
-        </span>
-
-        <span class="star">✦</span>
+      <div class="back-link">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        <span>Transmutação em andamento</span>
       </div>
 
-
-      <div class="page-title">
+      <h1 class="activity-title">
         Estudar alquimia
+      </h1>
+
+      <!-- TIMER SUPERIOR -->
+      <div class="top-timer">
+        {{ formatTime(secondsLeft) }}
       </div>
 
 
-      <div class="top-pomodoro">
-        {{ formatTime(timeLeft) }}
-      </div>
+      <div class="task-card">
 
-    </div>
+        <div class="task-info">
 
-
-
-    <!-- ===================================================
-         CARD DA TAREFA
-         =================================================== -->
-
-    <div class="task-card">
-
-      <div class="task-info">
-
-        <div class="task-title">
-          ESTUDAR PARA A PROVA DE
-        </div>
-
-        <div class="task-subtitle">
-          BIOLOGIA
-        </div>
-
-        <div class="task-time">
-          1h30m
-        </div>
-
-      </div>
-
-
-      <div class="task-potion">
-        🧪
-      </div>
-
-    </div>
-
-
-
-    <!-- ===================================================
-         ÁREA DO RELÓGIO
-         =================================================== -->
-
-    <div class="clock-container">
-
-
-      <!-- órbita externa -->
-      <div class="outer-orbit">
-
-        <span class="orbit-symbol top">
-          ✧
-        </span>
-
-        <span class="orbit-symbol right">
-          ◇
-        </span>
-
-        <span class="orbit-symbol bottom">
-          ♄
-        </span>
-
-        <span class="orbit-symbol left">
-          ☿
-        </span>
-
-      </div>
-
-
-      <!-- órbita interna -->
-      <div class="inner-orbit"></div>
-
-
-      <!-- relógio -->
-      <div class="clock">
-
-        <div class="clock-face">
-
-
-          <!-- números romanos -->
-
-          <span class="number n12">XII</span>
-          <span class="number n1">I</span>
-          <span class="number n2">II</span>
-          <span class="number n3">III</span>
-          <span class="number n4">IV</span>
-          <span class="number n5">V</span>
-          <span class="number n6">VI</span>
-          <span class="number n7">VII</span>
-          <span class="number n8">VIII</span>
-          <span class="number n9">IX</span>
-          <span class="number n10">X</span>
-          <span class="number n11">XI</span>
-
-
-          <!-- marcações do relógio -->
-
-          <div class="clock-ticks"></div>
-
-
-          <!-- ponteiro das horas -->
-
-          <div
-            class="hand hour-hand"
-            [style.transform]="'rotate(' + hourRotation + 'deg)'">
-          </div>
-
-
-          <!-- ponteiro dos minutos -->
-
-          <div
-            class="hand minute-hand"
-            [style.transform]="'rotate(' + minuteRotation + 'deg)'">
-          </div>
-
-
-          <!-- centro -->
-
-          <div class="clock-center"></div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- ===================================================
-         FRASE
-         =================================================== -->
-
-    <div class="quote">
-
-      <div>
-        "A concentração é o ingrediente
-      </div>
-
-      <div>
-        secreto da manifestação."
-      </div>
-
-    </div>
-
-
-
-    <!-- ===================================================
-         CONTROLES
-         =================================================== -->
-
-    <div class="controls">
-
-
-      <!-- PAUSAR -->
-
-      <button
-        class="control"
-        (click)="toggleTimer()">
-
-        <div class="control-circle">
-
-          <span *ngIf="isRunning">
-            Ⅱ
+          <span class="task-name">
+            ESTUDAR PARA A PROVA DE BIOLOGIA
           </span>
 
-          <span *ngIf="!isRunning">
-            ▶
+          <span class="task-duration">
+            1h30m
           </span>
 
         </div>
 
-        <span class="control-text">
-          {{ isRunning ? 'Pausar' : 'Continuar' }}
-        </span>
+        <div class="wax-seal">
 
-      </button>
+          <div class="seal-gem"></div>
 
+        </div>
 
-
-      <!-- TEMPO -->
-
-      <div class="bottom-time">
-        {{ formatTime(timeLeft) }}
       </div>
 
+    </div>
 
 
-      <!-- FINALIZAR -->
+    <!-- ========================= -->
+    <!-- RELÓGIO -->
+    <!-- ========================= -->
 
-      <button
-        class="control"
-        (click)="finishTimer()">
+    <div class="clock-frame">
 
-        <div class="control-circle">
+      <div class="clock-face">
 
-          <span class="square">
-            ■
+        <span class="num num-12">XII</span>
+        <span class="num num-3">III</span>
+        <span class="num num-6">VI</span>
+        <span class="num num-9">IX</span>
+
+
+        <div
+          class="hand hour-hand"
+          [style.transform]="'rotate(' + hourRotation + 'deg)'">
+        </div>
+
+
+        <div
+          class="hand minute-hand"
+          [style.transform]="'rotate(' + minuteRotation + 'deg)'">
+        </div>
+
+
+        <div class="center-pin"></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- RODAPÉ -->
+    <!-- ========================= -->
+
+    <div class="footer-section">
+
+      <p class="quote">
+        "A concentração é o ingrediente secreto da manifestação."
+      </p>
+
+
+      <div class="timer-controls-panel">
+
+
+        <!-- PAUSAR / CONTINUAR -->
+
+        <div
+          class="control-btn-wrapper"
+          (click)="togglePause()">
+
+          <button class="btn-circle">
+
+            <ion-icon
+              [name]="isPaused ? 'play-sharp' : 'pause-sharp'">
+            </ion-icon>
+
+          </button>
+
+          <span class="btn-label">
+            {{ isPaused ? 'Continuar' : 'Pausar' }}
           </span>
 
         </div>
 
-        <span class="control-text">
-          Finalizar
-        </span>
 
-      </button>
+        <!-- TIMER -->
+
+        <div class="live-timer">
+
+          {{ formatTime(secondsLeft) }}
+
+        </div>
+
+
+        <!-- FINALIZAR -->
+
+        <div
+          class="control-btn-wrapper"
+          (click)="stopTimer()">
+
+          <button class="btn-circle btn-stop">
+
+            <div class="stop-icon"></div>
+
+          </button>
+
+          <span class="btn-label">
+            Finalizar
+          </span>
+
+        </div>
+
+      </div>
+
 
     </div>
-
 
   </div>
 

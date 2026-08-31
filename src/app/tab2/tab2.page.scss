@@ -1,166 +1,182 @@
-/* =========================
-   CONFIGURAÇÃO DA PÁGINA
-========================= */
-
-.pagina-alquimia {
-  --background: #000000;
-
-  --padding-top: 0;
-  --padding-bottom: 0;
-  --padding-start: 0;
-  --padding-end: 0;
-}
-
-ion-content {
-  overflow: hidden;
-}
-
-/* =========================
-   CENÁRIO PRINCIPAL
-========================= */
-
-.cenario {
+.estudo-container {
+  --background: url('/assets/fundoEstudo.png') no-repeat center center / cover;
   position: relative;
-
-  width: 100%;
-  height: 100vh;
-
-  overflow: hidden;
-
-  background-color: #000000;
-}
-
-/* =========================
-   IMAGEM DE FUNDO
-========================= */
-
-.fundo {
-  position: absolute;
-
-  top: 0;
-  left: 50%;
-
   width: 100%;
   height: 100%;
+  overflow: hidden;
 
-  transform: translateX(-50%);
+  .btn-interativo {
+    position: absolute;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    z-index: 10;
+    -webkit-tap-highlight-color: transparent;
 
-  object-fit: cover;
-  object-position: center;
-
-  z-index: 1;
-
-  pointer-events: none;
-
-  user-select: none;
-}
-
-/* =========================
-   CONFIGURAÇÃO DOS BOTÕES
-========================= */
-
-.botao {
-  position: absolute;
-
-  padding: 0;
-  margin: 0;
-
-  border: none;
-  outline: none;
-
-  background: transparent;
-
-  cursor: pointer;
-
-  z-index: 10;
-
-  transition: transform 0.2s ease;
-}
-
-/* IMAGEM DENTRO DOS BOTÕES */
-
-.botao img {
-  display: block;
-
-  width: 100%;
-  height: auto;
-
-  object-fit: contain;
-
-  pointer-events: none;
-
-  user-select: none;
-}
-
-/* =========================
-   BOTÃO GUILDAS
-========================= */
-
-.botao-guildas {
-  width: 38%;
-
-  top: 27%;
-  left: 5%;
-}
-
-/* =========================
-   BOTÃO ESPÍRITO ALQUÍMICO
-========================= */
-
-.botao-espirito {
-  width: 38%;
-
-  top: 27%;
-  right: 5%;
-}
-
-/* =========================
-   EFEITO DOS BOTÕES
-========================= */
-
-.botao:hover {
-  transform: scale(1.05);
-}
-
-.botao:active {
-  transform: scale(0.92);
-}
-
-/* =========================
-   GRIMÓRIO
-========================= */
-
-.grimorio {
-  position: absolute;
-
-  width: 68%;
-
-  left: 50%;
-  bottom: 8%;
-
-  transform: translateX(-50%);
-
-  z-index: 8;
-
-  pointer-events: none;
-
-  user-select: none;
-
-  filter:
-    drop-shadow(0 8px 10px rgba(0, 0, 0, 0.7));
-}
-
-/* =========================
-   RESPONSIVIDADE
-========================= */
-
-@media (min-width: 600px) {
-
-  .cenario {
-    width: 430px;
-
-    margin-left: auto;
-    margin-right: auto;
+    &:active {
+      transform: scale(0.96);
+    }
   }
 
+  // 1. Matérias (Posicionado na prateleira superior da estante esquerda)
+  .btn-estante {
+    top: 20%;
+    left: 2%;
+    width: 28%;
+    height: 18%;
+
+    .glow-effect {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      box-shadow: inset 0 0 12px rgba(226, 203, 146, 0.3);
+      animation: breatheGlow 3s infinite ease-in-out;
+    }
+
+    .tooltip-label {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      background: rgba(25, 20, 40, 0.92);
+      color: #e2cb92;
+      border: 1px solid rgba(226, 203, 146, 0.5);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  // 2. Container Central Encaixado Sobre a Mesa
+  .center-elements-container {
+    position: absolute;
+    bottom: 28%; // Subiu bastante para alinhar com o tampo da mesa
+    left: 50%;
+    transform: translateX(-50%);
+    width: 62%; // Reduzido para ficar proporcional ao cenário
+    max-width: 320px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .img-grimorio {
+      width: 100%;
+      height: auto;
+      pointer-events: none;
+      filter: drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.6));
+    }
+
+    // Botão Fogo Esquerdo (Guilda)
+.btn-fogo-esquerdo {
+  top: 0;
+  left: 2%;
+  width: 46%;
+  height: 42%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .pulse-aura {
+    width: 82%;
+    height: 82%;
+    border-radius: 50%;
+    // Efeito sutil restrito à área interna do fogo
+    filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.7));
+    animation: firePulse 2s infinite alternate;
+  }
+}
+
+// Botão Fogo Direito (Espírito Alquímico)
+.btn-fogo-direito {
+  top: 0;
+  right: 2%;
+  width: 46%;
+  height: 42%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .pulse-aura {
+    width: 82%;
+    height: 82%;
+    border-radius: 50%;
+    // Efeito sutil restrito à área interna do fogo
+    filter: drop-shadow(0 0 8px rgba(255, 100, 50, 0.7));
+    animation: firePulse 2s infinite alternate-reverse;
+  }
+}
+
+// Animação ajustada sem estourar sombras externas
+@keyframes firePulse {
+  0% {
+    filter: drop-shadow(0 0 4px rgba(255, 165, 0, 0.4));
+    transform: scale(0.95);
+  }
+  100% {
+    filter: drop-shadow(0 0 12px rgba(255, 69, 0, 0.8));
+    transform: scale(1.02);
+  }
+}
+
+    // Botão Livro Aberto + Tag "Estudar"
+    .btn-livro-mesa {
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 85%;
+      height: 42%;
+
+      .glow-book {
+        width: 100%;
+        height: 100%;
+        border-radius: 16px;
+        box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+        animation: breatheGlow 2.5s infinite ease-in-out;
+      }
+
+      .tooltip-estudar {
+        position: absolute;
+        bottom: 8%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(25, 20, 40, 0.92);
+        color: #e2cb92;
+        border: 1px solid rgba(226, 203, 146, 0.5);
+        padding: 3px 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        white-space: nowrap;
+        pointer-events: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+      }
+    }
+  }
+}
+
+@keyframes firePulse {
+  0% {
+    box-shadow: 0 0 8px rgba(249, 115, 22, 0.3);
+    transform: scale(0.98);
+  }
+  100% {
+    box-shadow: 0 0 22px rgba(236, 72, 153, 0.7);
+    transform: scale(1.03);
+  }
+}
+
+@keyframes breatheGlow {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }

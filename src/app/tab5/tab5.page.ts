@@ -1,29 +1,28 @@
 import { Component, OnInit } from '@angular/core';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab5',
   templateUrl: './tab5.page.html',
   styleUrls: ['./tab5.page.scss'],
-  standalone: false,
+  standalone: false
 })
 export class Tab5Page implements OnInit {
 
-  // Dados do usuário
   usuario = {
     nickname: 'Nickname',
     nome: 'Nome do usuário',
-    avatar: 'assets/perfil.png', // Substitua pela sua imagem de avatar
+    avatar: 'assets/avatar-gato.png', // Substitua pelo seu asset local
     nivel: 17,
-    xpAtual: 8920,
-    xpTotal: 11500,
+    xpAtual: 850,
+    xpTotal: 1000,
     guilda: 'Guilda dos Alquimistas'
   };
 
-  // Estatísticas de estudo
   materiaPrestigio = {
     nome: 'Química',
-    nivel: 4,
-    progresso: 0.80 // 80%
+    nivel: 1,
+    progresso: 0.5 // 50%
   };
 
   tempoMedioEstudo = {
@@ -32,21 +31,32 @@ export class Tab5Page implements OnInit {
   };
 
   principalConquista = {
-    nome: 'Runa de Aetherion',
-    imagem: 'assets/runa.png' // Substitua pela imagem da conquista
+    nome: 'Runa de Aetherios'
   };
 
-  constructor() { }
-
-  ngOnInit() { }
-
-  alterarPerfil() {
-    console.log('Botão alterar perfil clicado');
-    // Insira sua lógica para abrir câmera ou galeria aqui
-  }
-
+  // Cálculo dinâmico para a barra de progresso (0 a 1)
   get progressoXp(): number {
     return this.usuario.xpAtual / this.usuario.xpTotal;
   }
 
+  constructor(private navCtrl: NavController) {}
+
+  ngOnInit() {}
+
+  alterarPerfil() {
+    this.navCtrl.navigateForward('/editar-perfil');
+  }
+
+
+  ionViewWillEnter() {
+  const nomeSalvo = localStorage.getItem('app_user_nickname');
+  if (nomeSalvo) {
+    this.usuario.nickname = nomeSalvo;
+  }
+
+  const avatarSalvo = localStorage.getItem('app_user_avatar');
+  if (avatarSalvo) {
+    this.usuario.avatar = avatarSalvo;
+  }
+}
 }

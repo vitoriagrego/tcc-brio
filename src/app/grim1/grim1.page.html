@@ -1,13 +1,45 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>grim1</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="grimorio-container">
+  
+  <button class="btn-back" (click)="voltarTab2()">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+    <span>BACK</span>
+  </button>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">grim1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="livro-viewport">
+    
+    <div class="pagina-base">
+      <img src="assets/grim1.png" alt="Livro Base" class="bg-pagina-img">
+      <div class="pagina-conteudo">
+        <div class="runa-item" *ngFor="let runa of runasPaginaAtual" [class.bloqueada]="!runa.desbloqueada">
+          <div class="runa-icon-container">
+            <img [src]="runa.icone" [alt]="runa.nome" class="runa-img" (error)="$event.target.style.display='none'">
+          </div>
+          <div class="runa-details">
+            <h2>{{ runa.nome }}</h2>
+            <p>{{ runa.descricao }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="folha-overlay" [class.animar-virada]="folhaVirando">
+      <img src="assets/grim1.png" alt="Folha Virando" class="bg-pagina-img">
+    </div>
+
+    <div class="controles-paginacao">
+      <button class="btn-pag" (click)="paginaAnterior()" [disabled]="paginaAtual === 0 || animando">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </button>
+      <span class="num-pagina">{{ paginaAtual + 1 }}/{{ totalPaginas }}</span>
+      <button class="btn-pag" (click)="proximaPagina()" [disabled]="paginaAtual >= totalPaginas - 1 || animando">
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+    </div>
+
+  </div>
+
+  <button class="btn-proximo-lado" (click)="irParaGrim2()" aria-label="Avançar lado do livro">
+    <ion-icon name="chevron-forward-circle-outline"></ion-icon>
+  </button>
+
 </ion-content>

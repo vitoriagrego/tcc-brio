@@ -1,22 +1,30 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab2',
-  templateUrl: './tab2.page.html',
-  styleUrls: ['./tab2.page.scss'],
+  templateUrl: 'tab2.page.html',
+  styleUrls: ['tab2.page.scss'],
   standalone: false
 })
 export class Tab2Page {
 
-  constructor(private router: Router) {}
+  constructor(private navCtrl: NavController) {}
 
-  irParaGuildas() {
-    this.router.navigate(['/guildas']);
+  abrirEstante() {
+    this.navCtrl.navigateForward('/materias');
   }
 
-  irParaEspiritoAlquimico() {
-    this.router.navigate(['/espirito-alquimico']);
+  abrirGuilda() {
+    this.navCtrl.navigateForward('/guildas');
+  }
+
+  abrirIA() {
+    this.navCtrl.navigateForward('/ia');
+  }
+
+  abrirLivroMesa() {
+    this.navCtrl.navigateForward('/grim1');
   }
 
 }

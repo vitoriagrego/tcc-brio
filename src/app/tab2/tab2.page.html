@@ -1,54 +1,32 @@
-<ion-content [fullscreen]="true" class="pagina-alquimia">
+<ion-content [fullscreen]="true" class="estudo-container">
+  
+  <!-- Botão e Rótulo "Matérias" (Estante Superior Esquerda) -->
+  <button class="btn-interativo btn-estante" (click)="abrirEstante()" aria-label="Matérias">
+    <div class="glow-effect"></div>
+    <span class="tooltip-label">Matérias</span>
+  </button>
 
-  <div class="cenario">
+  <!-- Container Redimensionado e Elevado para a Mesa -->
+  <div class="center-elements-container">
+    
+    <!-- Arte Renderizada -->
+    <img src="assets/naosei.png" alt="Livro Grimoire" class="img-grimorio">
 
-    <!-- =========================
-         FUNDO DA SALA
-    ========================== -->
-    <img
-      src="assets/fundo-alquimia.png"
-      alt="Sala de Alquimia"
-      class="fundo"
-    />
-
-    <!-- =========================
-         BOTÃO GUILDAS
-    ========================== -->
-    <button
-      type="button"
-      class="botao botao-guildas"
-      (click)="irParaGuildas()"
-      aria-label="Ir para Guildas"
-    >
-      <img
-        src="assets/botao-guildas.png"
-        alt="Guildas"
-      />
+    <!-- Botão Fogo Esquerdo (Guilda) -->
+    <button class="btn-interativo btn-fogo-esquerdo" (click)="abrirGuilda()" aria-label="Guilda">
+      <div class="pulse-aura"></div>
     </button>
 
-    <!-- =========================
-         BOTÃO ESPÍRITO ALQUÍMICO
-    ========================== -->
-    <button
-      type="button"
-      class="botao botao-espirito"
-      (click)="irParaEspiritoAlquimico()"
-      aria-label="Ir para Espírito Alquímico"
-    >
-      <img
-        src="assets/botao-espirito.png"
-        alt="Espírito Alquímico"
-      />
+    <!-- Botão Fogo Direito (Espírito Alquímico) -->
+    <button class="btn-interativo btn-fogo-direito" (click)="abrirIA()" aria-label="Espírito Alquímico">
+      <div class="pulse-aura"></div>
     </button>
 
-    <!-- =========================
-         GRIMÓRIO
-    ========================== -->
-    <img
-      src="assets/grimorio.png"
-      alt="Grimório mágico"
-      class="grimorio"
-    />
+    <!-- Botão Clicável do Livro -->
+    <button class="btn-interativo btn-livro-mesa" (click)="abrirLivroMesa()" aria-label="Estudar">
+      <div class="glow-book"></div>
+      <span class="tooltip-label tooltip-estudar">Estudar</span>
+    </button>
 
   </div>
 

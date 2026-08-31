@@ -1,0 +1,59 @@
+<ion-content [fullscreen]="true" class="settings-content">
+  <div class="background-overlay">
+
+    <!-- Header Nav -->
+    <div class="header-nav">
+      <ion-button fill="clear" class="btn-back" (click)="goBack()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <h2>Editar Perfil</h2>
+    </div>
+
+    <!-- Card Principal -->
+    <div class="card-rpg">
+      
+      <!-- Preview do Avatar e Nome -->
+      <div class="preview-section">
+        <div class="avatar-preview">
+          <img [src]="avatarSelecionado" alt="Preview Avatar">
+        </div>
+        <span class="preview-label">{{ nickname || 'Seu Nickname' }}</span>
+      </div>
+
+      <!-- Campo de Alteração de Nickname -->
+      <div class="form-group">
+        <h3>NOME DE USUÁRIO (NICKNAME)</h3>
+        <ion-item lines="none" class="input-item">
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-input 
+            type="text" 
+            [(ngModel)]="nickname" 
+            placeholder="Digite seu nickname"
+            maxlength="20">
+          </ion-input>
+        </ion-item>
+      </div>
+
+      <!-- Grade de Opções de Avatar -->
+      <div class="avatar-section">
+        <h3>ESCOLHA SEU AVATAR</h3>
+        <div class="avatar-grid">
+          <div 
+            *ngFor="let avatar of opcoesAvatares" 
+            class="avatar-option" 
+            [class.selected]="avatar === avatarSelecionado"
+            (click)="selecionarAvatar(avatar)">
+            <img [src]="avatar" alt="Opção Avatar">
+          </div>
+        </div>
+      </div>
+
+      <!-- Botão para Salvar Tudo -->
+      <ion-button expand="block" class="btn-salvar" (click)="salvarPerfil()">
+        Salvar Alterações
+      </ion-button>
+
+    </div>
+
+  </div>
+</ion-content>

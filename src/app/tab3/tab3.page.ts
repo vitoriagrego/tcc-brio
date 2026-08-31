@@ -1,8 +1,6 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+
+type TimerPhase = 'pomodoro' | 'shortBreak' | 'longBreak';
 
 @Component({
   selector: 'app-tab3',
@@ -12,175 +10,407 @@ import {
 })
 export class Tab3Page implements OnInit, OnDestroy {
 
-  /**
-   * 25 minutos
-   */
-  readonly pomodoroDuration = 25 * 60;
-  /**
-   * Tempo restante.
-   */
-  timeLeft = this.pomodoroDuration;
+  // =========================
+  // CONFIGURAÇÃO DO POMODORO
+  // =========================
+
+  readonly POMODORO_TIME = 25 * 60;      // 25 minutos
+  readonly SHORT_BREAK_TIME = 5 * 60;    // 5 minutos
+  readonly LONG_BREAK_TIME = 15 * 60;    // 15 minutos
+
+  // Depois de quantos pomodoros acontece a pausa longa
+  readonly POMODOROS_BEFORE_LONG_BREAK = 4;
+
+
+  // =========================
+  // ESTADO DO TIMER
+  // =========================
+
+  secondsLeft: number = this.POMODORO_TIME;
+
+  isPaused: boolean = false;
+
+  currentPhase: TimerPhase = 'pomodoro';
+
+  // Quantos pomodoros foram concluídos no ciclo atual
+  completedPomodoros: number = 0;
+
+  // Número do ciclo atual
+  cycleNumber: number = 1;
+
+
+  // =========================
+  // CONTROLE INTERNO
+  // =========================
+
+  private timerInterval: ReturnType<typeof setInterval> | null = null;
 
   /**
-   * Estado do Pomodoro.
+   * Momento em que a fase atual deve terminar.
+   *
+   * Exemplo:
+   * agora + 25 minutos
    */
-  isRunning = false;
-
-  private timerInterval?: ReturnType<typeof setInterval>;
+  private endTime: number | null = null;
 
 
-  constructor() {}
+  // =========================
+  // RELÓGIO VISUAL
+  // =========================
 
+  hourRotation: number = 135;
+  minuteRotation: number = 60;
+
+
+  // =========================
+  // INICIALIZAÇÃO
+  // =========================
 
   ngOnInit(): void {
-
-    /*
-     * Se quiser que comece automaticamente,
-     * troque para:
-     *
-     * this.startTimer();
-     */
-
-    this.isRunning = false;
+    this.startTimer();
   }
 
 
   ngOnDestroy(): void {
-
-    this.stopTimer();
-
+    this.clearTimer();
   }
 
 
-  /**
-   * Começa o Pomodoro.
-   */
+  // =========================
+  // INICIAR TIMER
+  // =========================
+
   startTimer(): void {
 
-    if (this.timerInterval) {
+    this.clearTimer();
+
+    this.isPaused = false;
+
+    // Define quando essa fase termina
+    this.endTime = Date.now() + (this.secondsLeft * 1000);
+
+    this.updateTimer();
+
+    /**
+     * Atualizamos algumas vezes por segundo.
+     *
+     * O valor real não depende da quantidade
+     * de vezes que esse intervalo executou.
+     */
+    this.timerInterval = setInterval(() => {
+      this.updateTimer();
+    }, 250);
+  }
+
+
+  // =========================
+  // ATUALIZAR TIMER
+  // =========================
+
+  private updateTimer(): void {
+
+    if (this.isPaused || this.endTime === null) {
       return;
     }
 
-    this.isRunning = true;
+    const millisecondsLeft = this.endTime - Date.now();
 
-    this.timerInterval = setInterval(() => {
+    const newSecondsLeft = Math.max(
+      0,
+      Math.ceil(millisecondsLeft / 1000)
+    );
 
-      if (this.timeLeft > 0) {
+    this.secondsLeft = newSecondsLeft;
 
-        this.timeLeft--;
+    this.updateClockHands();
 
-      } else {
-
-        this.stopTimer();
-
-      }
-
-    }, 1000);
-  }
-
-
-  /**
-   * Para o contador.
-   */
-  stopTimer(): void {
-
-    if (this.timerInterval) {
-
-      clearInterval(this.timerInterval);
-
-      this.timerInterval = undefined;
+    // Terminou a fase atual
+    if (millisecondsLeft <= 0) {
+      this.finishPhase();
     }
-
-    this.isRunning = false;
   }
 
 
-  /**
-   * Pausar / continuar.
-   */
-  toggleTimer(): void {
+  // =========================
+  // PAUSAR / CONTINUAR
+  // =========================
 
-    if (this.isRunning) {
+  togglePause(): void {
 
-      this.stopTimer();
+    if (this.isPaused) {
 
-    } else {
+      // CONTINUAR
 
       this.startTimer();
 
+    } else {
+
+      // PAUSAR
+
+      this.isPaused = true;
+
+      this.clearTimer();
+
+      /**
+       * Mantemos secondsLeft com o valor atual.
+       * Quando clicar em continuar, um novo endTime
+       * será calculado.
+       */
+      this.endTime = null;
     }
   }
 
 
-  /**
-   * Finalizar Pomodoro.
-   */
-  finishTimer(): void {
+  // =========================
+  // FINALIZAR
+  // =========================
 
-    this.stopTimer();
+  stopTimer(): void {
 
-    this.timeLeft = this.pomodoroDuration;
+    this.isPaused = true;
 
+    this.clearTimer();
+
+    this.secondsLeft = 0;
+
+    this.endTime = null;
+
+    this.updateClockHands();
   }
 
 
-  /**
-   * Converte segundos para MM:SS.
-   */
+  // =========================
+  // FASE TERMINOU
+  // =========================
+
+  private finishPhase(): void {
+
+    this.clearTimer();
+
+    this.secondsLeft = 0;
+
+    // =========================
+    // POMODORO TERMINOU
+    // =========================
+
+    if (this.currentPhase === 'pomodoro') {
+
+      this.completedPomodoros++;
+
+      /**
+       * A cada 4 pomodoros:
+       *
+       * Pomodoro → Long Break
+       *
+       * Caso contrário:
+       *
+       * Pomodoro → Short Break
+       */
+      if (
+        this.completedPomodoros >=
+        this.POMODOROS_BEFORE_LONG_BREAK
+      ) {
+
+        this.currentPhase = 'longBreak';
+
+      } else {
+
+        this.currentPhase = 'shortBreak';
+      }
+
+
+      this.secondsLeft = this.getPhaseDuration();
+
+      this.showPhaseNotification();
+
+      // Começa automaticamente a pausa
+      this.startTimer();
+
+      return;
+    }
+
+
+    // =========================
+    // PAUSA TERMINOU
+    // =========================
+
+    if (
+      this.currentPhase === 'shortBreak' ||
+      this.currentPhase === 'longBreak'
+    ) {
+
+      /**
+       * Se terminou uma pausa longa,
+       * começamos um novo ciclo.
+       */
+      if (this.currentPhase === 'longBreak') {
+
+        this.completedPomodoros = 0;
+        this.cycleNumber++;
+      }
+
+      this.currentPhase = 'pomodoro';
+
+      this.secondsLeft = this.getPhaseDuration();
+
+      this.showPhaseNotification();
+
+      // Começa automaticamente o próximo Pomodoro
+      this.startTimer();
+    }
+  }
+
+
+  // =========================
+  // DURAÇÃO DA FASE
+  // =========================
+
+  private getPhaseDuration(): number {
+
+    switch (this.currentPhase) {
+
+      case 'pomodoro':
+        return this.POMODORO_TIME;
+
+      case 'shortBreak':
+        return this.SHORT_BREAK_TIME;
+
+      case 'longBreak':
+        return this.LONG_BREAK_TIME;
+    }
+  }
+
+
+  // =========================
+  // TEXTO DA FASE
+  // =========================
+
+  get phaseTitle(): string {
+
+    switch (this.currentPhase) {
+
+      case 'pomodoro':
+        return 'Hora de focar';
+
+      case 'shortBreak':
+        return 'Pausa curta';
+
+      case 'longBreak':
+        return 'Pausa longa';
+    }
+  }
+
+
+  get phaseDescription(): string {
+
+    switch (this.currentPhase) {
+
+      case 'pomodoro':
+        return 'Estude com concentração.';
+
+      case 'shortBreak':
+        return 'Respire e descanse um pouco.';
+
+      case 'longBreak':
+        return 'Você merece uma pausa maior.';
+    }
+  }
+
+
+  // =========================
+  // CONTADOR VISUAL
+  // =========================
+
+  get cycleProgress(): string {
+
+    if (this.currentPhase === 'pomodoro') {
+      return `${this.completedPomodoros + 1}/${this.POMODOROS_BEFORE_LONG_BREAK}`;
+    }
+
+    return `${this.completedPomodoros}/${this.POMODOROS_BEFORE_LONG_BREAK}`;
+  }
+
+
+  // =========================
+  // RELÓGIO VISUAL
+  // =========================
+
+  private updateClockHands(): void {
+
+    const totalSeconds = this.getPhaseDuration();
+
+    const elapsedSeconds = totalSeconds - this.secondsLeft;
+
+    /**
+     * Para o ponteiro dos minutos:
+     *
+     * 60 minutos = 360 graus
+     *
+     * Então cada minuto = 6 graus.
+     */
+    const elapsedMinutes = elapsedSeconds / 60;
+
+    this.minuteRotation = elapsedMinutes * 6;
+
+
+    /**
+     * Ponteiro das horas.
+     *
+     * 60 minutos = 30 graus.
+     */
+    this.hourRotation = elapsedMinutes * 0.5;
+  }
+
+
+  // =========================
+  // FORMATAÇÃO
+  // =========================
+
   formatTime(totalSeconds: number): string {
 
-    const minutes = Math.floor(totalSeconds / 60);
+    const mins = Math.floor(totalSeconds / 60);
 
-    const seconds = totalSeconds % 60;
+    const secs = totalSeconds % 60;
 
-    return (
-      this.pad(minutes) +
-      ':' +
-      this.pad(seconds)
+    const formattedMins =
+      mins < 10 ? `0${mins}` : `${mins}`;
+
+    const formattedSecs =
+      secs < 10 ? `0${secs}` : `${secs}`;
+
+    return `${formattedMins}:${formattedSecs}`;
+  }
+
+
+  // =========================
+  // LIMPAR TIMER
+  // =========================
+
+  private clearTimer(): void {
+
+    if (this.timerInterval !== null) {
+
+      clearInterval(this.timerInterval);
+
+      this.timerInterval = null;
+    }
+  }
+
+
+  // =========================
+  // NOTIFICAÇÃO SIMPLES
+  // =========================
+
+  private showPhaseNotification(): void {
+
+    console.log(
+      `Fase concluída. Próxima fase: ${this.phaseTitle}`
     );
+
+    // Depois podemos trocar isso por:
+    // - Ionic Toast
+    // - alerta
+    // - som
+    // - notificação nativa
   }
-
-
-  private pad(value: number): string {
-
-    return value
-      .toString()
-      .padStart(2, '0');
-
-  }
-
-
-  /**
-   * Posição do ponteiro das horas.
-   */
-  get hourRotation(): number {
-
-    const elapsed =
-      this.pomodoroDuration - this.timeLeft;
-
-    const minutes =
-      elapsed / 60;
-
-    return (
-      minutes / 60
-    ) * 360;
-
-  }
-
-
-  /**
-   * Posição do ponteiro dos minutos.
-   */
-  get minuteRotation(): number {
-
-    const elapsed =
-      this.pomodoroDuration - this.timeLeft;
-
-    const minutes =
-      elapsed / 60;
-
-    return minutes * 360;
-
-  }
-
 }

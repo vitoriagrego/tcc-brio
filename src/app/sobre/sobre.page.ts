@@ -10,7 +10,7 @@ import { NavController } from '@ionic/angular';
 export class SobrePage implements OnInit {
 
   appVersion: string = '1.0.0';
-  empresaNome: string = 'BRIO Tech Studios';
+  empresaNome: string = 'Miauchemista  Studios';
   anoAtual: number = new Date().getFullYear();
 
   // Controle do Modal Legal
