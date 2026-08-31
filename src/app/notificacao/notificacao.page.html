@@ -1,0 +1,50 @@
+<ion-content class="settings-content">
+  <div class="background-overlay">
+    
+    <!-- Botão de Voltar -->
+    <div class="header-action">
+      <ion-button fill="clear" (click)="goBack()" class="back-btn">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Título da Página -->
+    <div class="title-card">
+      <h1>Notificações</h1>
+      <ion-button fill="clear" size="small" (click)="limparTodas()" [disabled]="notificacoes.length === 0" class="clear-btn">
+        Limpar
+      </ion-button>
+    </div>
+
+    <!-- Estado Vazio -->
+    <div class="empty-state" *ngIf="notificacoes.length === 0">
+      <ion-icon name="notifications-off-outline"></ion-icon>
+      <p>Nenhuma notificação por aqui.</p>
+    </div>
+
+    <!-- Lista de Notificações -->
+    <ion-list lines="none" class="settings-list" *ngIf="notificacoes.length > 0">
+      <ion-item 
+        *ngFor="let item of notificacoes" 
+        button 
+        (click)="marcarComoLida(item)" 
+        detail="false" 
+        class="menu-item"
+        [class.nao-lida]="!item.lida">
+        
+        <ion-icon [name]="item.icone" slot="start"></ion-icon>
+        
+        <ion-label>
+          <div class="item-header">
+            <h2>{{ item.titulo }}</h2>
+            <span class="time">{{ item.data }}</span>
+          </div>
+          <p>{{ item.mensagem }}</p>
+        </ion-label>
+
+        <div slot="end" class="unread-dot" *ngIf="!item.lida"></div>
+      </ion-item>
+    </ion-list>
+
+  </div>
+</ion-content>

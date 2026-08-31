@@ -1,0 +1,1224 @@
+:host {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+ion-content.pomodoro-page {
+  --background: transparent;
+
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+
+/* ==========================================================
+   FUNDO
+   ========================================================== */
+
+.background {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: #050515;
+
+  /* SUA IMAGEM */
+  background-image: url('/assets/alquimia.png');
+
+  background-size: cover;
+
+  background-position: center center;
+
+  background-repeat: no-repeat;
+
+  z-index: 0;
+}
+
+
+/* camada transparente sobre a imagem */
+
+.background::after {
+  content: '';
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: rgba(2, 2, 18, 0.10);
+
+  pointer-events: none;
+}
+
+
+/* ==========================================================
+   CONTEÚDO
+   ========================================================== */
+
+.page-content {
+  position: relative;
+
+  width: 100%;
+  height: 100vh;
+
+  min-height: 560px;
+
+  overflow: hidden;
+
+  z-index: 2;
+
+  color: white;
+
+  font-family:
+    Georgia,
+    'Times New Roman',
+    serif;
+}
+
+
+/* ==========================================================
+   CABEÇALHO
+   ========================================================== */
+
+.header {
+  position: absolute;
+
+  top: calc(env(safe-area-inset-top) + 13px);
+
+  left: 0;
+  right: 0;
+
+  text-align: center;
+
+  z-index: 10;
+}
+
+.alchemy-status {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  color: rgba(220, 211, 239, 0.72);
+
+  font-size: 10px;
+
+  letter-spacing: 0.5px;
+}
+
+.alchemy-status .line {
+  width: 24px;
+  height: 1px;
+
+  background: rgba(212, 196, 240, 0.55);
+}
+
+.alchemy-status .star {
+  color: #d9b5ff;
+
+  font-size: 13px;
+}
+
+.page-title {
+  margin-top: 5px;
+
+  color: #e4c387;
+
+  font-size: 17px;
+
+  letter-spacing: 0.5px;
+
+  text-shadow:
+    0 0 8px rgba(221, 173, 94, 0.25);
+}
+
+.top-pomodoro {
+  margin-top: 1px;
+
+  color: #d0bde8;
+
+  font-size: 23px;
+
+  letter-spacing: 1px;
+
+  text-shadow:
+    0 0 10px rgba(160, 122, 255, 0.5);
+}
+
+
+/* ==========================================================
+   CARD DA TAREFA
+   ========================================================== */
+
+.task-card {
+  position: absolute;
+
+  top: 88px;
+
+  left: 50%;
+
+  transform: translateX(-50%) rotate(-0.3deg);
+
+  width: calc(100% - 78px);
+
+  max-width: 310px;
+
+  min-height: 51px;
+
+  box-sizing: border-box;
+
+  padding: 7px 10px 7px 14px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  z-index: 20;
+
+  background:
+    linear-gradient(
+      90deg,
+      #c9a566,
+      #ecd29a 45%,
+      #d1aa69
+    );
+
+  border: 1px solid #5b3e25;
+
+  border-radius: 5px;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.55),
+    inset 0 0 8px rgba(255, 235, 184, 0.45);
+}
+
+.task-card::before {
+  content: '';
+
+  position: absolute;
+
+  inset: 3px;
+
+  border: 1px solid rgba(75, 49, 27, 0.3);
+
+  border-radius: 3px;
+
+  pointer-events: none;
+}
+
+.task-info {
+  position: relative;
+
+  z-index: 2;
+
+  color: #392a20;
+
+  line-height: 12px;
+}
+
+.task-title {
+  font-size: 10px;
+
+  font-weight: bold;
+
+  letter-spacing: 0.2px;
+}
+
+.task-subtitle {
+  display: inline-block;
+
+  font-size: 11px;
+
+  font-weight: bold;
+
+  letter-spacing: 0.4px;
+}
+
+.task-time {
+  display: inline-block;
+
+  margin-left: 5px;
+
+  color: rgba(57, 42, 32, 0.72);
+
+  font-size: 9px;
+}
+
+.task-potion {
+  position: relative;
+
+  z-index: 3;
+
+  width: 27px;
+  height: 27px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(79, 43, 95, 0.35);
+
+  font-size: 16px;
+}
+
+
+/* ==========================================================
+   RELÓGIO
+   ========================================================== */
+
+.clock-container {
+  position: absolute;
+
+  left: 50%;
+
+  top: 56%;
+
+  width: 280px;
+  height: 280px;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 8;
+}
+
+
+/* ==========================================================
+   ÓRBITA EXTERNA
+   ========================================================== */
+
+.outer-orbit {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 275px;
+  height: 275px;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(172, 131, 240, 0.3);
+
+  box-shadow:
+    0 0 15px rgba(99, 49, 185, 0.25);
+
+  animation:
+    rotateOrbit 50s linear infinite;
+}
+
+.outer-orbit::before {
+  content: '';
+
+  position: absolute;
+
+  inset: 7px;
+
+  border-radius: 50%;
+
+  border: 1px dashed rgba(179, 140, 244, 0.25);
+}
+
+.orbit-symbol {
+  position: absolute;
+
+  width: 19px;
+  height: 19px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(12, 8, 35, 0.65);
+
+  border: 1px solid rgba(193, 155, 255, 0.4);
+
+  color: #d5baf5;
+
+  font-size: 10px;
+
+  text-shadow:
+    0 0 7px rgba(165, 116, 255, 0.8);
+}
+
+.orbit-symbol.top {
+  top: -10px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+}
+
+.orbit-symbol.right {
+  right: -8px;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+}
+
+.orbit-symbol.bottom {
+  bottom: -9px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+}
+
+.orbit-symbol.left {
+  left: -8px;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+}
+
+@keyframes rotateOrbit {
+  from {
+    transform:
+      translate(-50%, -50%)
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotate(360deg);
+  }
+}
+
+
+/* ==========================================================
+   ÓRBITA INTERNA
+   ========================================================== */
+
+.inner-orbit {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 235px;
+  height: 235px;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(127, 194, 255, 0.23);
+
+  box-shadow:
+    inset 0 0 18px rgba(102, 48, 200, 0.25);
+}
+
+
+/* ==========================================================
+   RELÓGIO EXTERNO
+   ========================================================== */
+
+.clock {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 202px;
+  height: 202px;
+
+  transform: translate(-50%, -50%);
+
+  padding: 6px;
+
+  box-sizing: border-box;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #e2c06b,
+      #7b432d 23%,
+      #d7a948 50%,
+      #78432e 78%,
+      #d8b55e
+    );
+
+  border: 1px solid #3d2620;
+
+  box-shadow:
+    0 0 0 2px rgba(224, 181, 81, 0.6),
+    0 0 0 4px rgba(63, 37, 28, 0.8),
+    0 0 24px rgba(103, 49, 193, 0.65),
+    0 7px 20px rgba(0, 0, 0, 0.65);
+}
+
+
+/* ==========================================================
+   MOSTRADOR
+   ========================================================== */
+
+.clock-face {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 45% 38%,
+      #f0d58e,
+      #d1a74e 65%,
+      #9b652f
+    );
+
+  border: 2px solid #4a2d22;
+
+  box-shadow:
+    inset 0 0 12px rgba(71, 35, 22, 0.7);
+}
+
+.clock-face::before {
+  content: '';
+
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: 50%;
+
+  background:
+    repeating-radial-gradient(
+      circle,
+      transparent 0 15px,
+      rgba(81, 48, 25, 0.045) 16px 17px
+    );
+
+  pointer-events: none;
+}
+
+
+/* ==========================================================
+   NÚMEROS
+   ========================================================== */
+
+.number {
+  position: absolute;
+
+  z-index: 5;
+
+  color: #3d2920;
+
+  font-size: 14px;
+
+  font-weight: bold;
+
+  transform: translate(-50%, -50%);
+
+  text-shadow:
+    0 1px rgba(255, 233, 176, 0.5);
+}
+
+.n12 {
+  left: 50%;
+  top: 10%;
+}
+
+.n1 {
+  left: 70%;
+  top: 15%;
+}
+
+.n2 {
+  left: 84%;
+  top: 28%;
+}
+
+.n3 {
+  left: 90%;
+  top: 50%;
+}
+
+.n4 {
+  left: 84%;
+  top: 72%;
+}
+
+.n5 {
+  left: 70%;
+  top: 85%;
+}
+
+.n6 {
+  left: 50%;
+  top: 91%;
+}
+
+.n7 {
+  left: 30%;
+  top: 85%;
+}
+
+.n8 {
+  left: 16%;
+  top: 72%;
+}
+
+.n9 {
+  left: 10%;
+  top: 50%;
+}
+
+.n10 {
+  left: 16%;
+  top: 28%;
+}
+
+.n11 {
+  left: 30%;
+  top: 15%;
+}
+
+
+/* ==========================================================
+   MARCAÇÕES
+   ========================================================== */
+
+.clock-ticks {
+  position: absolute;
+
+  inset: 8px;
+
+  border-radius: 50%;
+
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(54, 34, 24, 0.7) 0deg 1deg,
+      transparent 1deg 6deg
+    );
+
+  -webkit-mask:
+    radial-gradient(
+      transparent 0 80%,
+      #000 81% 100%
+    );
+
+  mask:
+    radial-gradient(
+      transparent 0 80%,
+      #000 81% 100%
+    );
+}
+
+
+/* ==========================================================
+   PONTEIROS
+   ========================================================== */
+
+.hand {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform-origin: 50% 100%;
+
+  border-radius:
+    8px 8px 2px 2px;
+
+  z-index: 8;
+
+  box-shadow:
+    1px 2px 3px rgba(42, 20, 15, 0.6);
+}
+
+.hour-hand {
+  width: 6px;
+
+  height: 51px;
+
+  margin-left: -3px;
+
+  margin-top: -51px;
+
+  background:
+    linear-gradient(
+      to right,
+      #251b1d,
+      #603a32,
+      #1b171a
+    );
+}
+
+.minute-hand {
+  width: 4px;
+
+  height: 69px;
+
+  margin-left: -2px;
+
+  margin-top: -69px;
+
+  background:
+    linear-gradient(
+      to right,
+      #1c1719,
+      #54362e,
+      #151317
+    );
+}
+
+.clock-center {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 13px;
+  height: 13px;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 10;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 35% 35%,
+      #e5c878,
+      #713c2c
+    );
+
+  border: 2px solid #34201d;
+
+  box-shadow:
+    0 0 5px rgba(0, 0, 0, 0.7);
+}
+
+
+/* ==========================================================
+   FRASE
+   ========================================================== */
+
+.quote {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: 84px;
+
+  z-index: 20;
+
+  text-align: center;
+
+  color: rgba(224, 211, 238, 0.78);
+
+  font-size: 9px;
+
+  line-height: 14px;
+
+  text-shadow:
+    0 1px 4px #000;
+}
+
+
+/* ==========================================================
+   CONTROLES
+   ========================================================== */
+
+.controls {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom:
+    calc(env(safe-area-inset-bottom) + 11px);
+
+  height: 55px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 22px;
+
+  z-index: 30;
+}
+
+.control {
+  width: 45px;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: rgba(220, 211, 238, 0.78);
+
+  font-family:
+    Georgia,
+    serif;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.control-circle {
+  width: 29px;
+  height: 29px;
+
+  margin: auto;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(111, 83, 163, 0.28);
+
+  border: 1px solid rgba(203, 180, 239, 0.35);
+
+  color: #ded3ef;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 10px;
+
+  transition:
+    transform 0.15s,
+    background 0.15s;
+}
+
+.control:active .control-circle {
+  transform: scale(0.88);
+
+  background:
+    rgba(141, 104, 202, 0.48);
+}
+
+.control-text {
+  display: block;
+
+  margin-top: 2px;
+
+  font-size: 8px;
+
+  white-space: nowrap;
+}
+
+.square {
+  font-size: 8px;
+}
+
+
+/* ==========================================================
+   TEMPO INFERIOR
+   ========================================================== */
+
+.bottom-time {
+  min-width: 104px;
+
+  text-align: center;
+
+  color: #f1eaff;
+
+  font-family:
+    'Courier New',
+    monospace;
+
+  font-size: 27px;
+
+  font-weight: 300;
+
+  letter-spacing: 1px;
+
+  text-shadow:
+    0 0 10px rgba(169, 130, 255, 0.55);
+}
+
+
+/* ==========================================================
+   TELAS PEQUENAS
+   ========================================================== */
+
+@media (max-height: 700px) {
+
+  .clock-container {
+    top: 54%;
+  }
+
+  .clock {
+    width: 185px;
+    height: 185px;
+  }
+
+  .outer-orbit {
+    width: 250px;
+    height: 250px;
+  }
+
+  .inner-orbit {
+    width: 215px;
+    height: 215px;
+  }
+
+  .quote {
+    bottom: 76px;
+  }
+}
+
+
+/* ==========================================================
+   TELAS MAIORES
+   ========================================================== */
+
+@media (min-width: 500px) {
+
+  .clock-container {
+    width: 320px;
+    height: 320px;
+  }
+
+  .outer-orbit {
+    width: 315px;
+    height: 315px;
+  }
+
+  .inner-orbit {
+    width: 270px;
+    height: 270px;
+  }
+
+  .clock {
+    width: 225px;
+    height: 225px;
+  }
+
+  .task-card {
+    max-width: 340px;
+  }
+}
+
+/* ==========================================================
+   AJUSTE FINAL DA TELA
+   ========================================================== */
+
+ion-content.pomodoro-page {
+  --background: transparent;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+
+/* ----------------------------------------------------------
+   FUNDO
+   ---------------------------------------------------------- */
+
+.background {
+  position: fixed;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: #050515;
+  background-image: url('/assets/alquimia.png');
+
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+
+  z-index: 0;
+}
+
+
+/* ----------------------------------------------------------
+   ÁREA PRINCIPAL
+   ---------------------------------------------------------- */
+
+.page-content {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  min-height: 0;
+
+  overflow: hidden;
+
+  z-index: 2;
+}
+
+
+/* ----------------------------------------------------------
+   CABEÇALHO
+   ---------------------------------------------------------- */
+
+.header {
+  position: absolute;
+
+  top: 12px;
+  left: 0;
+  right: 0;
+
+  text-align: center;
+
+  z-index: 20;
+}
+
+.alchemy-status {
+  font-size: 9px;
+}
+
+.page-title {
+  margin-top: 4px;
+
+  font-size: 17px;
+}
+
+.top-pomodoro {
+  margin-top: 0;
+
+  font-size: 22px;
+}
+
+
+/* ----------------------------------------------------------
+   CARD
+   ---------------------------------------------------------- */
+
+.task-card {
+  top: 82px;
+
+  width: calc(100% - 72px);
+
+  max-width: 310px;
+
+  min-height: 48px;
+
+  padding: 6px 10px 6px 13px;
+}
+
+
+/* ----------------------------------------------------------
+   RELÓGIO
+   ---------------------------------------------------------- */
+
+.clock-container {
+  position: absolute;
+
+  left: 50%;
+
+  /*
+   * Subimos um pouco o relógio.
+   */
+  top: 56%;
+
+  width: 270px;
+  height: 270px;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 10;
+}
+
+
+/* órbita maior */
+
+.outer-orbit {
+  width: 265px;
+  height: 265px;
+}
+
+
+/* órbita menor */
+
+.inner-orbit {
+  width: 225px;
+  height: 225px;
+}
+
+
+/* relógio */
+
+.clock {
+  width: 190px;
+  height: 190px;
+}
+
+
+/* números */
+
+.number {
+  font-size: 13px;
+}
+
+
+/* ----------------------------------------------------------
+   FRASE
+   ---------------------------------------------------------- */
+
+.quote {
+  bottom: 72px;
+
+  font-size: 8px;
+
+  line-height: 12px;
+}
+
+
+/* ----------------------------------------------------------
+   CONTROLES
+   ---------------------------------------------------------- */
+
+.controls {
+  /*
+   * Importante:
+   * sobe os controles para não ficarem atrás
+   * da barra inferior do Ionic.
+   */
+  bottom: 52px;
+
+  height: 48px;
+
+  gap: 18px;
+
+  z-index: 50;
+}
+
+
+/* tempo */
+
+.bottom-time {
+  min-width: 100px;
+
+  font-size: 25px;
+}
+
+
+/* ----------------------------------------------------------
+   BOTÕES
+   ---------------------------------------------------------- */
+
+.control {
+  width: 42px;
+}
+
+.control-circle {
+  width: 28px;
+  height: 28px;
+}
+
+.control-text {
+  font-size: 8px;
+}
+
+
+/* ==========================================================
+   CELULARES PEQUENOS
+   ========================================================== */
+
+@media (max-height: 700px) {
+
+  .header {
+    top: 8px;
+  }
+
+  .task-card {
+    top: 78px;
+  }
+
+  .clock-container {
+    top: 53%;
+  }
+
+  .clock {
+    width: 180px;
+    height: 180px;
+  }
+
+  .outer-orbit {
+    width: 245px;
+    height: 245px;
+  }
+
+  .inner-orbit {
+    width: 210px;
+    height: 210px;
+  }
+
+  .quote {
+    bottom: 68px;
+  }
+
+  .controls {
+    bottom: 48px;
+  }
+}
+
+
+/* ==========================================================
+   IPHONES / TELAS ALTAS
+   ========================================================== */
+
+@media (min-height: 750px) {
+
+  .clock-container {
+    top: 56%;
+  }
+
+  .clock {
+    width: 195px;
+    height: 195px;
+  }
+
+  .outer-orbit {
+    width: 275px;
+    height: 275px;
+  }
+
+  .inner-orbit {
+    width: 235px;
+    height: 235px;
+  }
+}
+.header {
+  display: none;
+}

@@ -1,0 +1,74 @@
+<ion-content class="chat-bg">
+  
+  <!-- Cabeçalho Customizado -->
+  <div class="custom-header">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" text="" icon="arrow-back-outline" class="back-btn"></ion-back-button>
+    </ion-buttons>
+    <div class="header-card">
+      <h1>Espírito Alquímico</h1>
+    </div>
+  </div>
+
+  <!-- Container de Mensagens -->
+  <div class="chat-container">
+    
+    <!-- Mensagens do Chat -->
+    <div 
+      *ngFor="let msg of messages" 
+      [ngClass]="{'user-msg': msg.sender === 'user', 'ai-msg': msg.sender === 'ai'}" 
+      class="message-bubble">
+      <p>{{ msg.text }}</p>
+    </div>
+
+    <div *ngIf="isLoading" class="message-bubble ai-msg loading">
+      <ion-spinner name="dots" color="tertiary"></ion-spinner>
+    </div>
+
+    <!-- Imagem Central Mística da IA -->
+    <div class="avatar-center-container">
+      <img src="assets/ia.png" alt="Espírito Alquímico" class="avatar-center" />
+    </div>
+
+  </div>
+
+</ion-content>
+
+<!-- Rodapé / Barra de Envio -->
+<ion-footer class="custom-footer">
+  <div class="input-card">
+    <ion-textarea 
+      [(ngModel)]="userInput" 
+      placeholder="O que gostaria de perguntar?" 
+      [autoGrow]="true"
+      rows="1"
+      (keydown.enter)="sendMessageOnEnter($event)">
+    </ion-textarea>
+
+    <div class="input-actions">
+      <div class="left-actions">
+  <!-- Input de arquivo oculto para upload de imagem -->
+  <input type="file" #fileInput (change)="onImageSelected($event)" accept="image/*" style="display: none;">
+
+  <!-- Botão de Imagem -->
+  <ion-button fill="clear" size="small" class="icon-btn" (click)="fileInput.click()">
+    <ion-icon name="image-outline"></ion-icon>
+  </ion-button>
+
+  <!-- Botão de Formatação de Código -->
+  <ion-button fill="clear" size="small" class="icon-btn" (click)="insertCodeSnippet()">
+    <ion-icon name="code-slash-outline"></ion-icon>
+  </ion-button>
+
+  <!-- Botão de Microfone (Voz para Texto) -->
+  <ion-button fill="clear" size="small" class="icon-btn" (click)="toggleVoiceRecognition()">
+    <ion-icon [name]="isRecording ? 'mic' : 'mic-outline'"></ion-icon>
+  </ion-button>
+</div>
+
+      <ion-button class="send-btn" (click)="sendMessage()" [disabled]="isLoading">
+        <ion-icon name="arrow-up-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</ion-footer>

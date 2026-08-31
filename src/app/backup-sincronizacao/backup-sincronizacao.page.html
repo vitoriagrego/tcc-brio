@@ -1,0 +1,65 @@
+<ion-content class="settings-content">
+  <div class="background-overlay">
+    
+    <!-- Botão de Voltar -->
+    <div class="header-action">
+      <ion-button fill="clear" (click)="goBack()" class="back-btn">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Título da Página -->
+    <div class="title-card">
+      <h1>Backup e Sincronização</h1>
+    </div>
+
+    <!-- Status da Última Sincronização -->
+    <div class="status-card">
+      <ion-icon name="cloud-done-outline" class="cloud-icon"></ion-icon>
+      <div class="status-info">
+        <p class="status-label">Último backup realizado</p>
+        <span class="status-value">{{ ultimaSincronizacao }}</span>
+      </div>
+    </div>
+
+    <!-- Opções de Configuração -->
+    <ion-list lines="none" class="settings-list">
+      
+      <!-- Toggle: Auto Backup -->
+      <ion-item class="menu-item">
+        <ion-icon name="sync-outline" slot="start"></ion-icon>
+        <ion-label>Sincronização Automática</ion-label>
+        <ion-toggle 
+          slot="end" 
+          [(ngModel)]="sincronizacaoAutomatica" 
+          (ionChange)="salvarPreferencias()">
+        </ion-toggle>
+      </ion-item>
+
+      <!-- Toggle: Apenas Wi-Fi -->
+      <ion-item class="menu-item">
+        <ion-icon name="wifi-outline" slot="start"></ion-icon>
+        <ion-label>Apenas via Wi-Fi</ion-label>
+        <ion-toggle 
+          slot="end" 
+          [(ngModel)]="apenasWifi" 
+          (ionChange)="salvarPreferencias()">
+        </ion-toggle>
+      </ion-item>
+
+    </ion-list>
+
+    <!-- Botão Fazer Backup Agora -->
+    <div class="action-container">
+      <ion-button 
+        expand="block" 
+        class="backup-btn" 
+        (click)="fazerBackupAgora()" 
+        [disabled]="carregando">
+        <ion-spinner name="crescent" *ngIf="carregando"></ion-spinner>
+        <span *ngIf="!carregando">Fazer backup agora</span>
+      </ion-button>
+    </div>
+
+  </div>
+</ion-content>

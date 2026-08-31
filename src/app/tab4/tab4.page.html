@@ -1,0 +1,70 @@
+<ion-content class="progress-page">
+  <section class="profile-card">
+    <img src="../../assets/gatoProgresso.png">
+    <h1>Ciclo Arcano</h1><br>
+    <div class="level-progress">
+      <div *ngFor="let step of levels" class="step" [class.active]="step.active">
+        <span>{{ step.id }}</span>
+      </div>
+    </div>
+
+    <div class="level-labels">
+      <span *ngFor="let step of levels">
+        {{ step.label }}
+      </span>
+    </div>
+  </section><br><br>
+
+
+  <ion-card class="card-section">
+    <ion-card-header>
+      <ion-card-title>
+        Recompensas da classe:
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="rewards">
+        <div class="reward" *ngFor="let reward of rewards">
+          <img [src]="reward.image" [alt]="reward.title">
+          <p>{{ reward.title }}</p>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+  <ion-card class="card-section">
+    <ion-card-header>
+      <ion-card-title>
+        Próximo recompensa:
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="next-reward">
+        <div class="progress-text">
+          Faltam 240 XP para liberar a próxima recompensa
+        </div>
+        <div class="treasure">
+          <img src="../../assets/bauRecompensa.png">
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+
+  <ion-card class="card-section">
+    <ion-card-header>
+      <ion-card-title>
+        Gráfico de desempenho:
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="chart">
+        <div
+          *ngFor="let value of chartData"
+          class="bar"
+          [style.height.%]="value"
+        ></div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

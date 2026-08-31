@@ -1,0 +1,148 @@
+// ==========================================
+// PALETA DE CORES MÍSTICA (RPG/ALQUIMIA)
+// ==========================================
+$fundo-escuro:      #161b1d; 
+$papel-pergaminho:  #faedd2; 
+$vinho-titulo:      #4a1c37; 
+$marrom-texto:      #261d15; 
+$borda-suave:       #e8dfca; 
+$verde-botao:       #1e3839; 
+
+.rpg-theme {
+  --background: #{$fundo-escuro};
+  padding-top: env(safe-area-inset-top);
+  background: radial-gradient(circle at center, #242c2f 0%, #111516 100%);
+}
+
+.quiz-container {
+  background-color: $papel-pergaminho;
+  max-width: 480px;
+  margin: 20px auto;
+  padding: 36px 24px;
+  border-radius: 24px;
+  box-shadow: 
+    0px 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0px 0px 60px rgba(218, 201, 166, 0.2);
+  border: 1px solid #e3d1b0;
+  outline: 5px solid $papel-pergaminho;
+  outline-offset: -10px;
+}
+
+.quiz-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 2px dashed #d6c5a5;
+
+  h1 {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: $vinho-titulo;
+    font-size: 1.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.8);
+  }
+
+  h3 {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    color: #556772;
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.question-block {
+  margin-bottom: 28px;
+  padding: 16px;
+  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(230, 215, 185, 0.5);
+  box-shadow: 0 4px 10px rgba(160, 140, 110, 0.05);
+
+  h2 {
+    font-family: 'Georgia', serif;
+    color: $marrom-texto;
+    font-size: 1.08rem;
+    line-height: 1.45;
+    font-weight: bold;
+    margin: 0;
+  }
+}
+
+// ==========================================
+// CONFIGURAÇÃO DOS CHECKBOXES (CORREÇÃO DO TEXTO CORTE)
+// ==========================================
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+
+  ion-checkbox {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.95rem;
+    color: #40352d;
+    font-weight: 500;
+    width: 100%;
+    
+    padding: 14px 12px; // Um pouco mais de respiro vertical para o texto quebrado
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid #ebdcb9;
+    
+    --size: 20px;
+    --checkbox-background: #ffffff;
+    --checkbox-background-checked: #{$vinho-titulo};
+    --border-color: #a6937c;
+    --border-color-checked: #{$vinho-titulo};
+    --border-radius: 5px;
+    
+    // ---- SOLUÇÃO PARA NÃO CORTAR O TEXTO ----
+    white-space: normal !important;      // Permite que o texto quebre linhas normalmente
+    overflow: visible !important;        // Garante que o texto oculto apareça
+    text-overflow: clip !important;      // Remove os três pontinhos (...)
+    align-items: flex-start;             // Alinha o quadrado no topo quando o texto for longo
+    
+    // Customização do container interno do Shadow DOM do Ionic
+    &::part(label) {
+      white-space: normal;
+      text-overflow: initial;
+      overflow: visible;
+      line-height: 1.3;
+    }
+    // -----------------------------------------
+    
+    transition: all 0.2s ease-in-out;
+
+    &.checkbox-checked {
+      background: #a09096;
+      border-color: #d4b2c8;
+      color: $vinho-titulo;
+      transform: translateX(4px); 
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+// Ícones Místicos
+ion-icon {
+  font-size: 1.75rem;
+  filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.15));
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: rotate(15deg) scale(1.1); 
+  }
+}
+
+.rpg-icon-brown  { color: #8a6f56; } 
+.rpg-icon-pink   { color: #d63665; } 
+.rpg-icon-gold   { color: #e6a600; }

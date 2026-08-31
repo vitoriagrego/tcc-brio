@@ -1,0 +1,89 @@
+<ion-content [fullscreen]="true" class="gamified-container">
+
+  <div class="card-rpg card-perfil">
+    <h1 class="titulo-gotic">Perfil do Estudante</h1>
+
+    <div class="user-info-row">
+      <div class="avatar-container">
+        <img [src]="usuario.avatar" alt="Avatar">
+      </div>
+      <div class="text-container">
+        <h2>{{ usuario.nickname }}</h2>
+        <p>{{ usuario.nome }}</p>
+      </div>
+    </div>
+    
+
+    <ion-button expand="block" fill="clear" class="btn-alterar" (click)="alterarPerfil()">
+      Alterar perfil
+    </ion-button>
+
+    <div class="level-bar-container">
+      <div class="badge-level">
+        <span>{{ usuario.nivel }}</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="progressoXp * 100"></div>
+        <div class="xp-text">{{ usuario.xpAtual }} / {{ usuario.xpTotal }} XP</div>
+      </div>
+      <div class="lock-next">
+        <ion-icon name="lock-closed"></ion-icon>
+        <span class="next-label">NEXT</span>
+      </div>
+    </div>
+
+    <div class="guilda-section">
+      <h3>GUILDA:</h3>
+      <p class="nome-guilda">{{ usuario.guilda }}</p>
+    </div>
+  </div>
+
+  <div class="card-rpg card-estatisticas">
+    
+    <div class="secao-prestigio">
+      <h3>MATÉRIA DE PRESTÍGIO:</h3>
+      <div class="materia-badge">
+        <div class="materia-icon">
+          <ion-icon name="flask"></ion-icon>
+        </div>
+        <div class="materia-detalhes">
+          <h4>{{ materiaPrestigio.nome }}</h4>
+          <p>Nível {{ materiaPrestigio.nivel }}</p>
+          <div class="materia-progress-bg">
+            <div class="materia-progress-fill" [style.width.%]="materiaPrestigio.progresso * 100"></div>
+          </div>
+        </div>
+        <div class="materia-porcentagem">
+          {{ materiaPrestigio.progresso * 100 }}%
+        </div>
+      </div>
+    </div>
+
+    <div class="secao-tempo">
+      <h3>Tempo médio de estudo (diário)</h3>
+      <div class="display-tempo-container">
+        <div class="box-tempo">
+          <div class="num-tempo">{{ tempoMedioEstudo.horas }}</div>
+          <div class="label-tempo">Hour</div>
+        </div>
+        <div class="divisor-tempo">:</div>
+        <div class="box-tempo">
+          <div class="num-tempo">{{ tempoMedioEstudo.minutos }}</div>
+          <div class="label-tempo">Minute</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="secao-conquista">
+      <h3>PRINCIPAL CONQUISTA:</h3>
+      <div class="banner-conquista">
+        <div class="conquista-content">
+          <ion-icon name="color-wand" class="runa-icone"></ion-icon>
+          <h2 class="nome-conquista">{{ principalConquista.nome }}</h2>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</ion-content>

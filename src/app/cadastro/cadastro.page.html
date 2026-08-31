@@ -1,0 +1,45 @@
+<ion-content [fullscreen]="true">
+  <div class="background-container">
+    
+    <div class="cadastro-card">
+      
+      <div class="header-text">
+        <h2>Cadastre-se</h2>
+        <p>Bem-vindo (a)!! Preencha os campos abaixo</p>
+      </div>
+
+      <ion-input 
+        label="E-mail" 
+        label-placement="floating" 
+        type="email" 
+        placeholder="seu@email.com" 
+        [(ngModel)]="email"
+        class="custom-input">
+      </ion-input>
+      <br>
+      <ion-input 
+        label="Senha" 
+        label-placement="floating" 
+        type="password" 
+        placeholder="Crie uma senha" 
+        [(ngModel)]="senha"
+        class="custom-input">
+      </ion-input>
+      <br>
+      <ion-input 
+        label="Confirmar Senha" 
+        label-placement="floating" 
+        type="password" 
+        placeholder="Repita a senha" 
+        [(ngModel)]="confirmarSenha"
+        class="custom-input">
+      </ion-input>
+      <br>
+
+      <ion-button expand="block" (click)="cadastrar()" class="btn-cadastrar"  [routerLink]="['/questionario']">
+        CADASTRAR
+      </ion-button>
+
+    </div>
+  </div>
+</ion-content>

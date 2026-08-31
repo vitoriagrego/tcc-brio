@@ -1,0 +1,256 @@
+<ion-content [fullscreen]="true" class="pomodoro-page">
+
+  <!--
+    FUNDO
+    -------------------------------------------------------
+    A imagem fica somente neste elemento.
+    Coloque sua imagem em:
+
+    src/assets/img/fundo-alquimia.jpg
+
+    e ative o background no CSS.
+  -->
+  <div class="background"></div>
+
+
+  <!-- =====================================================
+       CONTEÚDO DA PÁGINA
+       ===================================================== -->
+
+  <div class="page-content">
+
+
+    <!-- ===================================================
+         TOPO
+         =================================================== -->
+
+    <div class="header">
+
+      <div class="alchemy-status">
+        <span class="line"></span>
+
+        <span>
+          Transmutação em andamento
+        </span>
+
+        <span class="star">✦</span>
+      </div>
+
+
+      <div class="page-title">
+        Estudar alquimia
+      </div>
+
+
+      <div class="top-pomodoro">
+        {{ formatTime(timeLeft) }}
+      </div>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         CARD DA TAREFA
+         =================================================== -->
+
+    <div class="task-card">
+
+      <div class="task-info">
+
+        <div class="task-title">
+          ESTUDAR PARA A PROVA DE
+        </div>
+
+        <div class="task-subtitle">
+          BIOLOGIA
+        </div>
+
+        <div class="task-time">
+          1h30m
+        </div>
+
+      </div>
+
+
+      <div class="task-potion">
+        🧪
+      </div>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         ÁREA DO RELÓGIO
+         =================================================== -->
+
+    <div class="clock-container">
+
+
+      <!-- órbita externa -->
+      <div class="outer-orbit">
+
+        <span class="orbit-symbol top">
+          ✧
+        </span>
+
+        <span class="orbit-symbol right">
+          ◇
+        </span>
+
+        <span class="orbit-symbol bottom">
+          ♄
+        </span>
+
+        <span class="orbit-symbol left">
+          ☿
+        </span>
+
+      </div>
+
+
+      <!-- órbita interna -->
+      <div class="inner-orbit"></div>
+
+
+      <!-- relógio -->
+      <div class="clock">
+
+        <div class="clock-face">
+
+
+          <!-- números romanos -->
+
+          <span class="number n12">XII</span>
+          <span class="number n1">I</span>
+          <span class="number n2">II</span>
+          <span class="number n3">III</span>
+          <span class="number n4">IV</span>
+          <span class="number n5">V</span>
+          <span class="number n6">VI</span>
+          <span class="number n7">VII</span>
+          <span class="number n8">VIII</span>
+          <span class="number n9">IX</span>
+          <span class="number n10">X</span>
+          <span class="number n11">XI</span>
+
+
+          <!-- marcações do relógio -->
+
+          <div class="clock-ticks"></div>
+
+
+          <!-- ponteiro das horas -->
+
+          <div
+            class="hand hour-hand"
+            [style.transform]="'rotate(' + hourRotation + 'deg)'">
+          </div>
+
+
+          <!-- ponteiro dos minutos -->
+
+          <div
+            class="hand minute-hand"
+            [style.transform]="'rotate(' + minuteRotation + 'deg)'">
+          </div>
+
+
+          <!-- centro -->
+
+          <div class="clock-center"></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         FRASE
+         =================================================== -->
+
+    <div class="quote">
+
+      <div>
+        "A concentração é o ingrediente
+      </div>
+
+      <div>
+        secreto da manifestação."
+      </div>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         CONTROLES
+         =================================================== -->
+
+    <div class="controls">
+
+
+      <!-- PAUSAR -->
+
+      <button
+        class="control"
+        (click)="toggleTimer()">
+
+        <div class="control-circle">
+
+          <span *ngIf="isRunning">
+            Ⅱ
+          </span>
+
+          <span *ngIf="!isRunning">
+            ▶
+          </span>
+
+        </div>
+
+        <span class="control-text">
+          {{ isRunning ? 'Pausar' : 'Continuar' }}
+        </span>
+
+      </button>
+
+
+
+      <!-- TEMPO -->
+
+      <div class="bottom-time">
+        {{ formatTime(timeLeft) }}
+      </div>
+
+
+
+      <!-- FINALIZAR -->
+
+      <button
+        class="control"
+        (click)="finishTimer()">
+
+        <div class="control-circle">
+
+          <span class="square">
+            ■
+          </span>
+
+        </div>
+
+        <span class="control-text">
+          Finalizar
+        </span>
+
+      </button>
+
+    </div>
+
+
+  </div>
+
+</ion-content>

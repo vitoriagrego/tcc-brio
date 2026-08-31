@@ -1,0 +1,7 @@
+{
+  "name": "brio2",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

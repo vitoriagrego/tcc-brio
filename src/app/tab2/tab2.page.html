@@ -1,0 +1,55 @@
+<ion-content [fullscreen]="true" class="pagina-alquimia">
+
+  <div class="cenario">
+
+    <!-- =========================
+         FUNDO DA SALA
+    ========================== -->
+    <img
+      src="assets/fundo-alquimia.png"
+      alt="Sala de Alquimia"
+      class="fundo"
+    />
+
+    <!-- =========================
+         BOTÃO GUILDAS
+    ========================== -->
+    <button
+      type="button"
+      class="botao botao-guildas"
+      (click)="irParaGuildas()"
+      aria-label="Ir para Guildas"
+    >
+      <img
+        src="assets/botao-guildas.png"
+        alt="Guildas"
+      />
+    </button>
+
+    <!-- =========================
+         BOTÃO ESPÍRITO ALQUÍMICO
+    ========================== -->
+    <button
+      type="button"
+      class="botao botao-espirito"
+      (click)="irParaEspiritoAlquimico()"
+      aria-label="Ir para Espírito Alquímico"
+    >
+      <img
+        src="assets/botao-espirito.png"
+        alt="Espírito Alquímico"
+      />
+    </button>
+
+    <!-- =========================
+         GRIMÓRIO
+    ========================== -->
+    <img
+      src="assets/grimorio.png"
+      alt="Grimório mágico"
+      class="grimorio"
+    />
+
+  </div>
+
+</ion-content>

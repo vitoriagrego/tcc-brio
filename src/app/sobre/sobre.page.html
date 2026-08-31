@@ -1,0 +1,71 @@
+<ion-content class="settings-content">
+  <div class="background-overlay">
+    
+    <!-- Botão de Voltar -->
+    <div class="header-action">
+      <ion-button fill="clear" (click)="goBack()" class="back-btn">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Título da Página -->
+    <div class="title-card">
+      <h1>Sobre o BRIO</h1>
+    </div>
+
+    <!-- Card de Apresentação -->
+    <div class="info-card logo-card">
+      <div class="app-avatar">
+        <ion-icon name="sparkles-outline"></ion-icon>
+      </div>
+      <h2>BRIO App</h2>
+      <span class="version-badge">Versão {{ appVersion }}</span>
+      <p class="description">
+        O BRIO é seu ecossistema pessoal para acompanhamento de rotina, desenvolvimento de hábitos e evolução contínua, projetado para elevar sua produtividade ao máximo.
+      </p>
+    </div>
+
+    <!-- Card da Empresa -->
+    <div class="info-card company-card">
+      <h3>Desenvolvido por</h3>
+      <p class="company-name">{{ empresaNome }}</p>
+      <p class="copyright">© {{ anoAtual }} Todos os direitos reservados.</p>
+    </div>
+
+    <!-- Links de Informações Legais -->
+    <ion-list lines="none" class="settings-list">
+      <ion-item button detail="false" class="menu-item">
+        <ion-icon name="document-text-outline" slot="start"></ion-icon>
+        <ion-label>Termos de Uso</ion-label>
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-item>
+
+      <ion-item button detail="false" class="menu-item">
+        <ion-icon name="shield-checkmark-outline" slot="start"></ion-icon>
+        <ion-label>Política de Privacidade</ion-label>
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-item>
+    </ion-list>
+
+  </div>
+
+  <!-- Modal dinâmico para os dois textos -->
+  <ion-modal [isOpen]="modalAberto" (didDismiss)="fecharModal()" class="legal-modal">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar class="modal-toolbar">
+          <ion-title>{{ modalTitulo }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="fecharModal()" color="light">Fechar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="modal-content">
+        <div class="text-container">
+          <p>{{ modalTexto }}</p>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

@@ -1,0 +1,138 @@
+.progress-page {
+  --background: #0f0f13;
+  color: white;
+  padding: 12px;
+}
+
+.profile-card {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.profile-card img {
+  width: 50%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.profile-card h1 {
+  font-size: 30px;
+  margin: 10px 0;
+  color: #f0d6ff;
+  font-family: serif;
+}
+
+.level-progress {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+
+  margin-top: 12px;
+}
+
+.step {
+  width: 26px;
+  height: 26px;
+
+  border-radius: 50%;
+  background: #531c74;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: 2px solid #340b41cc;
+  font-size: 14px;
+}
+
+.step.active {
+  background: #ffb347;
+  border-color: #ffb347;
+  color: #000;
+}
+
+.level-labels {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 8px;
+  gap: 30px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+ion-card {
+  background: #1c1c24;
+  border-radius: 12px;
+  margin-top: 12px;
+}
+
+ion-card-title {
+  color: white;
+  font-size: 14px;
+}
+
+.rewards {
+  display: flex;
+  justify-content: space-between;
+}
+
+.reward {
+  width: 70px;
+  text-align: center;
+}
+
+.reward-image {
+  width: 45px;
+  height: 45px;
+
+  background: linear-gradient(
+    180deg,
+    #3f1d5a,
+    #2a123f
+  );
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: auto;
+  margin-bottom: 6px;
+}
+
+.reward span {
+  font-size: 10px;
+}
+
+.next-reward {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-text {
+  color: #f5c97a;
+  font-weight: 600;
+}
+
+.treasure ion-icon {
+  font-size: 48px;
+  color: gold;
+}
+
+.chart {
+  height: 120px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-evenly;
+
+  gap: 6px;
+}
+
+.bar {
+  width: 12px;
+  background: #e89cff;
+  border-radius: 6px 6px 0 0;
+}

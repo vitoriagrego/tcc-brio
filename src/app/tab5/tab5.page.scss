@@ -1,0 +1,294 @@
+:host {
+  --bg-gamified: #f1f5f9;       // Fundo geral cinza claro e limpo
+  --card-bg: #ffffff;          // Cards brancos para contraste suave
+  --text-dark: #1e293b;
+  --rpg-purple: #4f46e5;       // Roxo moderno e menos saturado
+  --rpg-purple-light: #e0e7ff;
+  --dark-blueprint: #1e293b;
+  --gold-accent: #eab308;
+}
+
+ion-content.gamified-container {
+  --background: url('../../assets/fundoPerfil.png') no-repeat center center / cover;
+  
+  // Opcional: Adiciona uma leve camada escura por cima da imagem 
+  // para que os seus cards continuem fáceis de ler
+  background-color: rgba(30, 41, 59, 0.4); 
+}
+// Cards Principais Limpos e Modernos
+.card-rpg {
+  // O valor 0.9 deixa o card branco, mas 10% transparente para mostrar o fundo de leve
+  background-color: rgba(255, 255, 255, 0.9); 
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;        // Cantos mais arredondados e elegantes
+  margin: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.titulo-gotic {
+  color: #312e81;
+  font-size: 1.8rem;
+  text-align: center;
+  margin: 0 0 20px 0;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  margin: 0 0 10px 0;
+}
+
+// Linha do Usuário
+.user-info-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  .avatar-container {
+    width: 90px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--rpg-purple-light);
+    
+    img {
+      width: 500%;
+      height: 110%;
+      object-fit: cover;
+    }
+  }
+
+  .text-container {
+    h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    p {
+      margin: 2px 0 0 0;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+  }
+}
+
+// Botão Alterar Perfil
+.btn-alterar {
+  --background: var(--rpg-purple-light);
+  --color: var(--rpg-purple);
+  --border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: none;
+  margin-bottom: 20px;
+}
+
+// Barra de Nível Suave (Level 17)
+.level-bar-container {
+  display: flex;
+  align-items: center;
+  background-color: #0f172a;
+  padding: 6px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+
+  .badge-level {
+    background: var(--rpg-purple);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    span {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 16px;
+    background-color: #334155;
+    margin: 0 12px;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #818cf8, #c084fc);
+      border-radius: 4px;
+    }
+
+    .xp-text {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 2px;
+      font-size: 0.65rem;
+      color: #ffffff;
+      font-weight: 600;
+    }
+  }
+
+  .lock-next {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #94a3b8;
+    padding-right: 4px;
+
+    ion-icon { font-size: 0.85rem; }
+    .next-label { font-size: 0.5rem; font-weight: bold; }
+  }
+}
+
+.guilda-section {
+  .nome-guilda {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+}
+
+// Seção Matéria de Prestígio
+.materia-badge {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .materia-icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--rpg-purple-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    ion-icon {
+      font-size: 1.2rem;
+      color: var(--rpg-purple);
+    }
+  }
+
+  .materia-detalhes {
+    flex: 1;
+    h4 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    p {
+      margin: 2px 0 6px 0;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+    .materia-progress-bg {
+      height: 6px;
+      background-color: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden;
+      
+      .materia-progress-fill {
+        height: 100%;
+        background-color: var(--rpg-purple);
+      }
+    }
+  }
+
+  .materia-porcentagem {
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    font-weight: 700;
+  }
+}
+
+// Seção Tempo
+.secao-tempo {
+  margin: 24px 0;
+  
+  h3 { text-align: left; }
+
+  .display-tempo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+
+    .divisor-tempo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+
+    .box-tempo {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      flex: 1;
+      padding: 12px 0;
+      text-align: center;
+
+      &:first-child {
+        background-color: #f5f3ff;
+        border-color: #ddd6fe;
+        
+        .num-tempo { color: #6d28d9; }
+      }
+
+      .num-tempo {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-dark);
+      }
+
+      .label-tempo {
+        font-size: 0.7rem;
+        color: #64748b;
+        margin-top: 2px;
+      }
+    }
+  }
+}
+
+// Seção Conquista Limpa
+.banner-conquista {
+  background-color: var(--dark-blueprint);
+  border-radius: 12px;
+  padding: 16px;
+  
+  .conquista-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    ion-icon.runa-icone {
+      font-size: 1.6rem;
+      color: var(--gold-accent);
+    }
+
+    .nome-conquista {
+      color: #ffffff;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+}
