@@ -21,12 +21,12 @@ export class MateriasPage implements OnInit {
   filtroSelecionado: string = 'todas';
 
   materias: Materia[] = [
-    { id: 'matematica', nome: 'Matemática', categoria: 'exatas', nivel: 3, progresso: 50, imagem: '/assets/icones/matematica.png', favorita: true },
-    { id: 'historia', nome: 'História', categoria: 'humanas', nivel: 4, progresso: 25, imagem: '/assets/icones/historia.png', favorita: false },
-    { id: 'geografia', nome: 'Geografia', categoria: 'humanas', nivel: 4, progresso: 50, imagem: '/assets/icones/geografia.png', favorita: true },
-    { id: 'biologia', nome: 'Biologia', categoria: 'biologicas', nivel: 3, progresso: 30, imagem: '/assets/icones/biologia.png', favorita: false },
-    { id: 'fisica', nome: 'Física', categoria: 'exatas', nivel: 3, progresso: 75, imagem: '/assets/icones/fisica.png', favorita: true },
-    { id: 'quimica', nome: 'Química', categoria: 'exatas', nivel: 4, progresso: 80, imagem: '/assets/icones/quimica.png', favorita: false }
+    { id: 'matematica', nome: 'Matemática', categoria: 'exatas', nivel: 3, progresso: 50, imagem: '/assets/materias/mat.png', favorita: true },
+    { id: 'historia', nome: 'História', categoria: 'humanas', nivel: 4, progresso: 25, imagem: '/assets/materias/historia.png', favorita: false },
+    { id: 'geografia', nome: 'Geografia', categoria: 'humanas', nivel: 4, progresso: 50, imagem: '/assets/materias/geo.png', favorita: true },
+    { id: 'biologia', nome: 'Biologia', categoria: 'biologicas', nivel: 3, progresso: 30, imagem: '/assets/materias/biologia.png', favorita: false },
+    { id: 'fisica', nome: 'Física', categoria: 'exatas', nivel: 3, progresso: 75, imagem: '/assets/materias/fisica.png', favorita: true },
+    { id: 'quimica', nome: 'Química', categoria: 'exatas', nivel: 4, progresso: 80, imagem: '/assets/materias/quimica.png', favorita: false }
   ];
 
   constructor(private navCtrl: NavController) {}

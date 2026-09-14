@@ -86,6 +86,14 @@ const routes: Routes = [
   {
     path: 'materias',
     loadChildren: () => import('./materias/materias.module').then( m => m.MateriasPageModule)
+  },
+  {
+    path: 'grim2',
+    loadChildren: () => import('./grim2/grim2.module').then( m => m.Grim2PageModule)
+  },
+  {
+    path: 'biologia',
+    loadChildren: () => import('./biologia/biologia.module').then( m => m.BiologiaPageModule)
   }
 ];
 @NgModule({

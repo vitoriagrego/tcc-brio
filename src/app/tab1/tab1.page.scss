@@ -1,473 +1,233 @@
-/* =========================
-   FUNDO
-========================= */
-
-
 .background {
   width: 100%;
   height: 100vh;
-
   padding: 10px;
-
   position: relative;
-
   box-sizing: border-box;
-
   overflow: hidden;
-
   background-image: url('/assets/gatoHome.png');
   background-repeat: no-repeat;
-
-  /* IMAGEM MAIS PARA CIMA */
   background-position: center -60px;
-
-  /* PREENCHENDO A TELA */
   background-size: cover;
 }
-
-
-/* =========================
-   TOPO
-========================= */
-
 .headerTotal {
   display: flex;
-
   justify-content: space-between;
   align-items: flex-start;
-
   position: relative;
   z-index: 10;
-
   margin-top: 5px;
 }
-
 .header {
   display: flex;
   align-items: center;
-
   width: calc(100% - 48px);
   height: 60px;
-
   padding: 5px 8px;
-
   background: rgba(26, 27, 36, 0.65);
-
   border-radius: 12px;
 }
-
 .perfil {
   display: flex;
-
   align-items: center;
-
   gap: 8px;
 }
-
 .perfil img {
   width: 48px;
   height: 48px;
-
   border-radius: 50%;
-
   border: 2px solid #9b6dff;
-
   object-fit: cover;
 }
-
-
-/* =========================
-   DADOS
-========================= */
-
 .dados h2 {
   margin: 0;
-
   color: #e8d5ff;
-
   font-size: 14px;
-
   font-family: Georgia, serif;
 }
-
 .dados p {
   margin: 1px 0 4px;
-
   color: white;
-
   font-size: 10px;
 }
-
-
-/* =========================
-   XP
-========================= */
-
 .xp-bar {
   width: 150px;
-
   height: 5px;
-
   background: rgba(255, 255, 255, 0.35);
-
   border-radius: 20px;
-
   overflow: hidden;
 }
-
 .xp-fill {
   width: 75%;
-
   height: 100%;
-
-  background: linear-gradient(
-    90deg,
-    #cb7cff,
-    #8f3cff
-  );
-
+  background: linear-gradient(90deg,#cb7cff,#8f3cff);
   border-radius: 20px;
 }
-
-
-/* =========================
-   ÍCONES
-========================= */
-
 .acoes {
   display: flex;
-
   flex-direction: column;
-
   gap: 4px;
-
   margin-top: 3px;
 }
-
 .acoes ion-icon {
   font-size: 21px;
-
   color: white;
-
   background: rgba(26, 27, 36, 0.65);
-
   padding: 4px;
-
   border-radius: 8px;
 }
-
-
-/* =========================
-   LIVRO
-========================= */
-
 .livro {
   position: relative;
-
-  width: 108%;
-
+  width: 100%;
   height: 315px;
-
-  /* LIVRO MAIS PARA CIMA PARA CABER NA TELA */
   margin-top: 230px;
-
-  margin-left: -4%;
-
+  margin-left: 0;
+  margin-right: 0;
   background-image: url('/assets/livro.png');
-
   background-repeat: no-repeat;
-
-  background-position: center;
-
-  background-size: 108% auto;
+  background-position: center center;
+  background-size: calc(100% - 20px) auto;
 }
-
-
-/* =========================
-   ESTUDOS DO DIA
-========================= */
-
 .conteudo-livro {
   position: absolute;
-
-  /* DESCE SOMENTE O CONTEÚDO */
   top: 70px;
-
-  /* CENTRALIZA NO LIVRO */
   left: 20%;
-
   width: 60%;
-
   z-index: 2;
 }
-
-
-/* =========================
-   TÍTULO
-========================= */
-
 .conteudo-livro h2 {
   margin: 0 0 12px;
-
   text-align: center;
-
   color: #5a3a20;
-
   font-size: 18px;
-
   font-family: Georgia, serif;
 }
-
-
-/* =========================
-   TAREFAS
-========================= */
-
 .tarefa {
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
-
   width: 100%;
-
   padding: 8px 10px;
-
   margin: 0 auto 9px;
-
-  background: rgba(230, 207, 165, 0.90);
-
-  border: 1px solid rgba(91, 57, 29, 0.35);
-
+  background: rgba(230,207,165,0.90);
+  border: 1px solid rgba(91,57,29,0.35);
   border-radius: 7px;
-
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
   box-sizing: border-box;
 }
-
-
-/* =========================
-   TEXTO
-========================= */
-
 .texto {
   min-width: 0;
 }
-
 .texto h3 {
   margin: 0;
-
   color: #4a2e18;
-
   font-size: 11px;
-
   line-height: 1.2;
-
   font-family: Georgia, serif;
 }
-
 .texto p {
   margin: 3px 0 0;
-
   color: #6d5138;
-
   font-size: 9px;
 }
-
-
-/* =========================
-   GEMAS
-========================= */
-
 .tarefa img {
   width: 30px;
-
   height: 30px;
-
   object-fit: contain;
-
   margin-left: 8px;
 }
-
-
-/* =========================
-   RESUMO
-========================= */
-
 .resumo {
   position: relative;
-
   z-index: 5;
-
   margin-top: 5px;
-
-  /* RESUMO UM POUCO MAIS PARA BAIXO */
   transform: translateY(-30px);
-
   padding: 12px;
-
-  background: rgba(15, 16, 22, 0.94);
-
+  background: rgba(15,16,22,0.94);
   border-radius: 18px;
 }
-
 .resumo h2 {
   margin: 0 0 10px;
-
   color: #d8bbff;
-
   font-size: 15px;
-
   font-family: Georgia, serif;
 }
-
-
-/* =========================
-   CARDS
-========================= */
-
 .cards {
   display: flex;
-
   gap: 7px;
 }
-
 .card-info {
   flex: 1;
-
   padding: 8px 4px;
-
   text-align: center;
-
   background: #1a1b24;
-
   border-radius: 10px;
 }
-
 .card-info span {
   display: block;
-
   color: white;
-
   font-size: 9px;
 }
-
 .card-info h3 {
   margin: 7px 0 0;
-
   color: #b77aff;
-
   font-size: 18px;
-
   font-family: Georgia, serif;
 }
-
-
-/* =========================
-   IMPEDIR ROLAGEM
-========================= */
-
-html,
-body {
+html,body {
   width: 100%;
   height: 100%;
-
   margin: 0;
   padding: 0;
-
   overflow: hidden;
 }
-
 ion-content {
   --overflow: hidden;
 }
-
-
-/* =========================
-   RESPONSIVO
-========================= */
-
-@media (max-width: 390px) {
-
+@media (max-width:390px) {
   .header {
     height: 58px;
   }
-
   .perfil img {
     width: 45px;
     height: 45px;
   }
-
   .xp-bar {
     width: 140px;
   }
-
-
-  /* ===== LIVRO ===== */
-
   .livro {
-    width: 108%;
-
+    width: 100%;
     height: 300px;
-
     margin-top: 230px;
-
-    margin-left: -4%;
-
-    background-size: 108% auto;
+    margin-left: 0;
+    background-size: calc(100% - 20px) auto;
   }
-
-
-  /* ===== ESTUDOS ===== */
-
   .conteudo-livro {
     top: 50px;
-
     left: 20%;
-
     width: 60%;
   }
-
   .conteudo-livro h2 {
     font-size: 17px;
-
     margin-bottom: 10px;
   }
-
-
-  /* ===== TAREFAS ===== */
-
   .tarefa {
     padding: 7px 8px;
-
     margin-bottom: 8px;
   }
-
   .texto h3 {
     font-size: 10px;
   }
-
   .texto p {
     font-size: 8px;
   }
-
   .tarefa img {
     width: 28px;
-
     height: 28px;
   }
-
-
-  /* ===== RESUMO ===== */
-
   .resumo {
     margin-top: 5px;
-
     transform: translateY(-30px);
   }
-
   .card-info h3 {
     font-size: 17px;
   }

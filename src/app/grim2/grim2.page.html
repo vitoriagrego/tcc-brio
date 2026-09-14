@@ -1,0 +1,100 @@
+<ion-content [fullscreen]="true" class="grimorio-container">
+  
+  <button class="btn-back" (click)="voltarTab2()">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+    <span>VOLTAR</span>
+  </button>
+
+  <div class="livro-viewport">
+    
+    <div class="pagina-base">
+      <img src="assets/grim2.png" alt="Página Direita" class="bg-pagina-img">
+      
+      <div class="pagina-conteudo">
+        
+        <!-- Dias da Semana -->
+        <div class="dias-semana">
+          <span *ngFor="let dia of diasSemana; let i = index" 
+                [class.ativo]="diaAtivoIndex === i" 
+                (click)="selecionarDia(i)">
+            {{ dia }}
+          </span>
+        </div>
+
+        <!-- Lista de Tarefas (Com área de rolagem interna se exceder o tamanho) -->
+        <div class="tarefas-scroll-wrapper">
+          <div class="tarefas-list">
+            <div class="tarefa-card" *ngFor="let tarefa of tarefasDiaAtual">
+              
+              <!-- Cabeçalho -->
+              <div class="tarefa-header" (click)="toggleExpansao(tarefa)">
+                <div class="tarefa-textos">
+                  <h3>{{ tarefa.titulo }}</h3>
+                  <span class="tempo" *ngIf="tarefa.tempo">{{ tarefa.tempo }}</span>
+                </div>
+
+                <div class="gema-container" *ngIf="tarefa.iconeGema">
+                  <img [src]="tarefa.iconeGema" [alt]="tarefa.titulo" class="gema-img" (error)="$event.target.style.display='none'">
+                </div>
+              </div>
+
+              <!-- Subtarefas -->
+              <div class="subtarefas-container" *ngIf="tarefa.expandido">
+                <div class="subtarefa-item" *ngFor="let sub of tarefa.subtarefas" (click)="toggleSubtarefa(sub, $event)">
+                  <ion-icon [name]="sub.concluida ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+                  <span [class.concluida]="sub.concluida">{{ sub.titulo }}</span>
+                </div>
+
+                <!-- Novo Campo Estilizado Místico -->
+                <div class="add-subtarefa-box" (click)="$event.stopPropagation()">
+                  <ion-icon name="add-outline"></ion-icon>
+                  <input #inputSub type="text" placeholder="ADICIONAR SUBTAREFA..." (keyup.enter)="adicionarSubtarefa(tarefa, inputSub)">
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-add-tarefa" (click)="abrirModalNovaTarefa()">
+          <ion-icon name="add-circle-outline"></ion-icon>
+          <span>NOVA TAREFA</span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- FOLHA SOBREPOSTA DE ANIMAÇÃO -->
+    <div class="folha-overlay" [class.animar-virada]="folhaVirando">
+      <img src="assets/grim2.png" alt="Folha Virando" class="bg-pagina-img">
+    </div>
+
+  </div>
+
+  <button class="btn-voltar-lado" (click)="irParaGrim1()" aria-label="Voltar lado do livro">
+    <ion-icon name="chevron-back-circle-outline"></ion-icon>
+  </button>
+
+  <!-- MODAL DE CREAÇÃO -->
+  <div class="modal-mistico-overlay" *ngIf="exibirModal">
+    <div class="modal-mistico-card">
+      <h2>NOVA TAREFA ARCANA</h2>
+
+      <div class="input-group">
+        <label>TÍTULO DA TAREFA</label>
+        <input type="text" [(ngModel)]="novaTarefaTitulo" placeholder="Ex: ESTUDAR ALQUIMIA">
+      </div>
+
+      <div class="input-group">
+        <label>DURAÇÃO (OPCIONAL)</label>
+        <input type="text" [(ngModel)]="novaTarefaTempo" placeholder="Ex: 1h30m">
+      </div>
+
+      <div class="modal-acoes">
+        <button class="btn-cancelar" (click)="fecharModal()">CANCELAR</button>
+        <button class="btn-salvar" (click)="salvarNovaTarefa()">ADICIONAR</button>
+      </div>
+    </div>
+  </div>
+
+</ion-content>

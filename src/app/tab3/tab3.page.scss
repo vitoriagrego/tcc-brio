@@ -1,255 +1,938 @@
-/* tab3.page.scss */
+/* ==========================================
+   FUNDO PRINCIPAL
+   ========================================== */
 
 .tab3-content {
-  /* Fundo fixo preenchendo a tela toda */
   --background: #090314 url('../../assets/pomodoro.png') no-repeat center center / cover;
-  font-family: 'Georgia', serif;
+
   --overflow: hidden;
+
+  font-family: 'Georgia', serif;
 }
+
+
+/* ==========================================
+   ESTRUTURA PRINCIPAL
+   ========================================== */
 
 .main-overlay {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  height: 100vh;
-  box-sizing: border-box;
-  /* Topo com padding correto para o texto caber dentro da folha de pergaminho */
-  padding: calc(env(safe-area-inset-top, 20px) + 22px) 16px calc(env(safe-area-inset-bottom, 0px) + 65px) 16px;
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
 }
 
-/* --- TOPO (Encaixado dentro do Pergaminho) --- */
+
+/* ==========================================
+   CABEÇALHO
+   ========================================== */
+
 .header-section {
+  position: fixed;
+
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+
+  left: 0;
+
   width: 100%;
+
   display: flex;
   flex-direction: column;
   align-items: center;
+
   text-align: center;
-  color: #d1b88a;
+
+  z-index: 50;
+
+  pointer-events: none;
 }
+
+
+/* ==========================================
+   "TRANSMUTAÇÃO EM ANDAMENTO"
+   ========================================== */
 
 .back-link {
   display: flex;
+
   align-items: center;
-  gap: 5px;
-  font-size: 0.75rem;
-  color: #a48cc7;
+
+  gap: 4px;
+
   margin-bottom: 2px;
+
+  font-size: 0.68rem;
+
+  color: #b89bd0;
+
+  text-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.95);
+
+  ion-icon {
+    font-size: 0.8rem;
+  }
+}
+
+
+/* ==========================================
+   TÍTULO
+   ========================================== */
+
+.activity-title {
+  margin: 1px 0;
+
+  font-size: 1.02rem;
+
+  line-height: 1.1;
+
+  font-weight: 600;
+
+  color: #e5cb91;
+
+  text-shadow:
+    0 1px 5px rgba(0, 0, 0, 0.95);
+}
+
+
+/* ==========================================
+   TIMER DO TOPO
+   ========================================== */
+
+.top-timer {
+  margin: 1px 0 6px;
+
+  font-size: 1.65rem;
+
+  line-height: 1;
+
+  font-weight: bold;
+
+  letter-spacing: 1px;
+
+  color: #e6bd69;
+
+  text-shadow:
+    0 0 8px rgba(229, 188, 101, 0.45),
+    0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+
+/* ==========================================
+   CARD DA TAREFA
+   ========================================== */
+
+.task-card {
+  width: 82%;
+
+  max-width: 290px;
+
+  min-height: 37px;
+
+  box-sizing: border-box;
+
+  display: flex;
+
+  align-items: center;
+
+  padding: 5px 12px;
+
+  border-radius: 9px;
+
+  /*
+   * Mais transparente para aparecer
+   * o pergaminho e o fundo atrás.
+   */
+
+  background:
+    rgba(224, 202, 157, 0.48);
+
+  border:
+    1px solid rgba(250, 229, 186, 0.42);
+
+  backdrop-filter: blur(4px);
+
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.18);
+
+  color: #2b2116;
+}
+
+
+/* ==========================================
+   INFORMAÇÕES DA TAREFA
+   ========================================== */
+
+.task-info {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 1px;
+}
+
+
+.task-name {
+  font-size: 0.64rem;
+
+  line-height: 1.15;
+
+  font-weight: 800;
+
+  letter-spacing: 0.15px;
+}
+
+
+.task-duration {
+  font-size: 0.67rem;
+
+  line-height: 1;
+
+  opacity: 0.7;
+}
+
+
+/* ==========================================
+   ÁREA DO RELÓGIO
+   ========================================== */
+
+.clock-area {
+  position: fixed;
+
+  left: 50%;
+
+  /*
+   * Ajustado para encaixar no círculo
+   * mágico existente no fundo.
+   */
+
+  top: 55%;
+
+  transform: translate(-50%, -50%);
+
+  width: 210px;
+
+  height: 210px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  z-index: 10;
+
+  pointer-events: none;
+}
+
+
+/* ==========================================
+   ANEL MÁGICO
+   ========================================== */
+
+.magic-ring {
+  position: relative;
+
+  width: 202px;
+
+  height: 202px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(245, 208, 131, 0.10),
+      rgba(128, 70, 190, 0.07) 55%,
+      transparent 72%
+    );
+
+  border:
+    1px solid rgba(238, 205, 135, 0.48);
+
+  box-shadow:
+    0 0 8px rgba(237, 201, 129, 0.45),
+    0 0 22px rgba(141, 75, 201, 0.35),
+    inset 0 0 14px rgba(255, 255, 255, 0.04);
+}
+
+
+/* Anel interno */
+
+.magic-ring::before {
+  content: '';
+
+  position: absolute;
+
+  inset: 7px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid rgba(237, 205, 140, 0.35);
+
+  box-shadow:
+    0 0 6px rgba(215, 174, 238, 0.25);
+}
+
+
+/* Anel pontilhado */
+
+.magic-ring::after {
+  content: '';
+
+  position: absolute;
+
+  inset: 13px;
+
+  border-radius: 50%;
+
+  border:
+    1px dashed rgba(204, 157, 226, 0.30);
+}
+
+
+/* ==========================================
+   MOLDURA DO RELÓGIO
+   ========================================== */
+
+.clock-frame {
+  width: 168px;
+
+  height: 168px;
+
+  padding: 5px;
+
+  box-sizing: border-box;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      145deg,
+      #70405f,
+      #402548
+    );
+
+  border:
+    1px solid rgba(242, 210, 144, 0.85);
+
+  box-shadow:
+    0 0 10px rgba(238, 201, 128, 0.62),
+    0 0 18px rgba(125, 68, 181, 0.4),
+    inset 0 0 10px rgba(0, 0, 0, 0.55);
+}
+
+
+/* ==========================================
+   MOSTRADOR
+   ========================================== */
+
+.clock-face {
+  width: 100%;
+
+  height: 100%;
+
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 38% 32%,
+      #fff0bd 0%,
+      #ead19b 45%,
+      #c59a58 80%,
+      #9f713d 100%
+    );
+
+  border:
+    1px solid rgba(255, 241, 198, 0.9);
+
+  box-shadow:
+    inset 0 0 14px rgba(75, 42, 18, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+
+
+/* Brilho suave no mostrador */
+
+.clock-face::before {
+  content: '';
+
+  position: absolute;
+
+  width: 100px;
+
+  height: 100px;
+
+  top: -35px;
+
+  left: -20px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.25),
+      transparent 70%
+    );
+}
+
+
+/* ==========================================
+   NÚMEROS ROMANOS
+   ========================================== */
+
+.num {
+  position: absolute;
+
+  z-index: 5;
+
+  font-size: 0.76rem;
+
+  font-weight: bold;
+
+  color: #49301a;
+
+  text-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+
+.num-12 {
+  top: 7px;
+}
+
+
+.num-3 {
+  right: 8px;
+}
+
+
+.num-6 {
+  bottom: 7px;
+}
+
+
+.num-9 {
+  left: 8px;
+}
+
+
+/* ==========================================
+   PEQUENOS MARCADORES
+   ========================================== */
+
+.clock-dot {
+  position: absolute;
+
+  width: 3px;
+
+  height: 3px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(70, 42, 20, 0.48);
+
+  z-index: 4;
+}
+
+
+.dot-12 {
+  top: 24px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+}
+
+
+.dot-1 {
+  top: 28px;
+
+  right: 29%;
+}
+
+
+.dot-2 {
+  top: 41px;
+
+  right: 18%;
+}
+
+
+.dot-3 {
+  top: 50%;
+
+  right: 22px;
+
+  transform: translateY(-50%);
+}
+
+
+.dot-4 {
+  bottom: 41px;
+
+  right: 18%;
+}
+
+
+.dot-5 {
+  bottom: 28px;
+
+  right: 29%;
+}
+
+
+.dot-6 {
+  bottom: 24px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+}
+
+
+.dot-7 {
+  bottom: 28px;
+
+  left: 29%;
+}
+
+
+.dot-8 {
+  bottom: 41px;
+
+  left: 18%;
+}
+
+
+.dot-9 {
+  top: 50%;
+
+  left: 22px;
+
+  transform: translateY(-50%);
+}
+
+
+.dot-10 {
+  top: 41px;
+
+  left: 18%;
+}
+
+
+.dot-11 {
+  top: 28px;
+
+  left: 29%;
+}
+
+
+/* ==========================================
+   PONTEIROS
+   ========================================== */
+
+.hand {
+  position: absolute;
+
+  left: 50%;
+
+  bottom: 50%;
+
+  transform-origin: bottom center;
+
+  border-radius: 5px;
+
+  z-index: 7;
+
+  transition:
+    transform 0.25s linear;
+}
+
+
+/* Ponteiro das horas */
+
+.hour-hand {
+  width: 4px;
+
+  height: 34px;
+
+  margin-left: -2px;
+
+  background:
+    linear-gradient(
+      to top,
+      #421e2b,
+      #793d4c
+    );
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+
+/* Ponteiro dos minutos */
+
+.minute-hand {
+  width: 2.5px;
+
+  height: 49px;
+
+  margin-left: -1.25px;
+
+  background:
+    linear-gradient(
+      to top,
+      #55202f,
+      #9a4c5e
+    );
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+
+/* ==========================================
+   CENTRO DO RELÓGIO
+   ========================================== */
+
+.center-pin {
+  position: absolute;
+
+  z-index: 12;
+
+  width: 12px;
+
+  height: 12px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #fff1ac,
+      #d28d51 45%,
+      #672c3d 100%
+    );
+
+  border:
+    2px solid #542535;
+
+  box-shadow:
+    0 0 7px rgba(93, 42, 58, 0.65);
+}
+
+
+.center-gem {
+  width: 3px;
+
+  height: 3px;
+
+  position: absolute;
+
+  top: 2px;
+
+  left: 2px;
+
+  border-radius: 50%;
+
+  background: #fff8ce;
+}
+
+
+/* ==========================================
+   RODAPÉ
+   ========================================== */
+
+.footer-section {
+  position: fixed;
+
+  left: 0;
+
+  bottom:
+    calc(env(safe-area-inset-bottom, 0px) + 62px);
+
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 7px;
+
+  z-index: 60;
+}
+
+
+/* ==========================================
+   FRASE
+   ========================================== */
+
+.quote {
+  max-width: 270px;
+
+  margin: 0;
+
+  font-size: 0.68rem;
+
+  line-height: 1.2;
+
+  text-align: center;
+
+  font-style: italic;
+
+  color: #d5bee3;
+
+  text-shadow:
+    0 1px 5px rgba(0, 0, 0, 0.95);
+}
+
+
+/* ==========================================
+   PAINEL DOS CONTROLES
+   ========================================== */
+
+.timer-controls-panel {
+  width: 92%;
+
+  max-width: 330px;
+
+  min-height: 62px;
+
+  box-sizing: border-box;
+
+  padding: 7px 13px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 5px;
+
+  border-radius: 40px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(40, 23, 59, 0.94),
+      rgba(25, 13, 39, 0.94)
+    );
+
+  backdrop-filter: blur(13px);
+
+  border:
+    1px solid rgba(190, 157, 224, 0.35);
+
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+
+/* ==========================================
+   BOTÕES
+   ========================================== */
+
+.control-btn-wrapper {
+  flex-shrink: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 1px;
+
   cursor: pointer;
+
+  user-select: none;
+
+  transition:
+    transform 0.15s ease;
+}
+
+
+.control-btn-wrapper:active {
+  transform: scale(0.88);
+}
+
+
+/* Botão circular */
+
+.btn-circle {
+  width: 34px;
+
+  height: 34px;
+
+  padding: 0;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background:
+    rgba(255, 255, 255, 0.12);
+
+  border:
+    1px solid rgba(255, 255, 255, 0.2);
+
+  color: #e9ddf5;
+
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.08);
 
   ion-icon {
     font-size: 0.9rem;
   }
 }
 
-.activity-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0 0 2px 0;
-  color: #d4bc8b;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+
+/* ==========================================
+   BOTÃO PULAR PAUSA
+   ========================================== */
+
+.btn-skip {
+  background:
+    rgba(210, 176, 115, 0.16);
+
+  border:
+    1px solid rgba(230, 200, 140, 0.3);
+
+  color: #ead4a0;
+
+  box-shadow:
+    0 0 6px rgba(211, 171, 103, 0.12);
 }
 
-.top-timer {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #dcb36c;
-  margin-bottom: 8px;
-  text-shadow: 0 0 8px rgba(220, 179, 108, 0.4);
+
+/* ==========================================
+   BOTÃO FINALIZAR
+   ========================================== */
+
+.btn-stop {
+  background:
+    rgba(255, 255, 255, 0.1);
 }
 
-.task-card {
-  background: linear-gradient(135deg, #d8c298 0%, #aa9060 100%);
-  border: 1px solid #6e542b;
-  border-radius: 10px;
-  padding: 6px 12px;
-  width: 86%;
-  max-width: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  color: #22170c;
 
-  .task-info {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    gap: 1px;
-  }
+.stop-icon {
+  width: 9px;
 
-  .task-name {
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.3px;
-  }
+  height: 9px;
 
-  .task-duration {
-    font-size: 0.72rem;
-    font-weight: 600;
-    opacity: 0.85;
-  }
+  border-radius: 2px;
 
-  .wax-seal {
-    width: 24px;
-    height: 24px;
-    background: #5a1f28;
-    border-radius: 50%;
-    border: 2px solid #8a3341;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .seal-gem {
-      width: 7px;
-      height: 7px;
-      background: radial-gradient(circle, #ff5500 0%, #7a001e 100%);
-      border-radius: 50%;
-      box-shadow: 0 0 5px #ff4500;
-    }
-  }
+  background: #e8dcf4;
 }
 
-/* --- RELÓGIO (Encaixado perfeitamente no Círculo Mágico do Fundo) --- */
-.clock-frame {
-  width: 172px;
-  height: 172px;
-  border-radius: 50%;
-  background: #8b1d1d;
-  border: 3.5px solid #4a0c0c;
-  padding: 5px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 0 20px rgba(168, 46, 46, 0.6);
-  box-sizing: border-box;
-  
-  /* Ajuste de posição vertical para bater com a rosácea/círculo do fundo */
-  margin-top: 32px; 
+
+/* ==========================================
+   TEXTOS DOS BOTÕES
+   ========================================== */
+
+.btn-label {
+  font-size: 0.54rem;
+
+  line-height: 1;
+
+  color: #b7a4cc;
+
+  white-space: nowrap;
 }
 
-.clock-face {
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, #f3e0af 0%, #be9b58 100%);
-  border-radius: 50%;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
-  .num {
-    position: absolute;
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: #3b2814;
-  }
-  .num-12 { top: 6px; }
-  .num-3  { right: 8px; }
-  .num-6  { bottom: 6px; }
-  .num-9  { left: 8px; }
-
-  .hand {
-    position: absolute;
-    bottom: 50%;
-    left: 50%;
-    transform-origin: bottom center;
-    background: #3b0a0a;
-  }
-
-  .hour-hand {
-    width: 4px;
-    height: 35px;
-    margin-left: -2px;
-  }
-
-  .minute-hand {
-    width: 3px;
-    height: 50px;
-    margin-left: -1.5px;
-    background: #7a0000;
-  }
-
-  .center-pin {
-    width: 8px;
-    height: 8px;
-    background: #3b0a0a;
-    border-radius: 50%;
-    position: absolute;
-    z-index: 10;
-  }
-}
-
-/* --- RODAPÉ --- */
-.footer-section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.quote {
-  font-size: 0.75rem;
-  color: #cbb2e8;
-  font-style: italic;
-  text-align: center;
-  max-width: 270px;
-  margin: 0;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
-}
-
-.timer-controls-panel {
-  background: rgba(25, 12, 42, 0.88);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(150, 110, 200, 0.4);
-  border-radius: 40px;
-  padding: 8px 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 86%;
-  max-width: 300px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-}
-
-.control-btn-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  cursor: pointer;
-
-  .btn-circle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: #e2d3f5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    ion-icon {
-      font-size: 1rem;
-    }
-
-    .stop-icon {
-      width: 10px;
-      height: 10px;
-      background: #e2d3f5;
-      border-radius: 2px;
-    }
-  }
-
-  .btn-label {
-    font-size: 0.62rem;
-    color: #a894c2;
-  }
-}
+/* ==========================================
+   TIMER CENTRAL
+   ========================================== */
 
 .live-timer {
-  font-size: 1.8rem;
+  flex: 1;
+
+  min-width: 70px;
+
+  text-align: center;
+
+  font-size: 1.65rem;
+
+  line-height: 1;
+
   font-weight: bold;
+
+  letter-spacing: 0.5px;
+
   color: #ffffff;
-  letter-spacing: 1px;
-  text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+
+  text-shadow:
+    0 0 12px rgba(255, 255, 255, 0.35);
+}
+
+
+/* ==========================================
+   TELAS MENORES
+   ========================================== */
+
+@media (max-height: 700px) {
+
+  .clock-area {
+    top: 45%;
+  }
+  .header-section {
+    top:
+      calc(env(safe-area-inset-top, 0px) + 8px);
+  }
+
+
+  .footer-section {
+    bottom:
+      calc(env(safe-area-inset-bottom, 0px) + 56px);
+  }
+  .quote {
+    font-size: 0.62rem;
+  }
+  .timer-controls-panel {
+    min-height: 58px;
+  }
+  .btn-circle {
+    width: 31px;
+
+    height: 31px;
+  }
+  .live-timer {
+    font-size: 1.5rem;
+  }
 }

@@ -1,153 +1,141 @@
 <ion-content [fullscreen]="true" class="tab3-content">
-
   <div class="main-overlay">
-
     <!-- ========================= -->
-    <!-- HEADER -->
+    <!-- TOPO -->
     <!-- ========================= -->
-
     <div class="header-section">
-
       <div class="back-link">
         <ion-icon name="arrow-back-outline"></ion-icon>
         <span>Transmutação em andamento</span>
       </div>
-
       <h1 class="activity-title">
         Estudar alquimia
       </h1>
-
-      <!-- TIMER SUPERIOR -->
       <div class="top-timer">
         {{ formatTime(secondsLeft) }}
       </div>
-
-
       <div class="task-card">
 
-        <div class="task-info">
+  <div class="task-info">
 
-          <span class="task-name">
-            ESTUDAR PARA A PROVA DE BIOLOGIA
-          </span>
+    <span class="task-name">
+      {{ currentPhase === 'pomodoro'
+        ? taskName
+        : 'MOMENTO DE DESCANSO' }}
+    </span>
 
-          <span class="task-duration">
-            1h30m
-          </span>
-
-        </div>
-
-        <div class="wax-seal">
-
-          <div class="seal-gem"></div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- ========================= -->
-    <!-- RELÓGIO -->
-    <!-- ========================= -->
-
-    <div class="clock-frame">
-
-      <div class="clock-face">
-
-        <span class="num num-12">XII</span>
-        <span class="num num-3">III</span>
-        <span class="num num-6">VI</span>
-        <span class="num num-9">IX</span>
-
-
-        <div
-          class="hand hour-hand"
-          [style.transform]="'rotate(' + hourRotation + 'deg)'">
-        </div>
-
-
-        <div
-          class="hand minute-hand"
-          [style.transform]="'rotate(' + minuteRotation + 'deg)'">
-        </div>
-
-
-        <div class="center-pin"></div>
-
-      </div>
-
-    </div>
-
-
-    <!-- ========================= -->
-    <!-- RODAPÉ -->
-    <!-- ========================= -->
-
-    <div class="footer-section">
-
-      <p class="quote">
-        "A concentração é o ingrediente secreto da manifestação."
-      </p>
-
-
-      <div class="timer-controls-panel">
-
-
-        <!-- PAUSAR / CONTINUAR -->
-
-        <div
-          class="control-btn-wrapper"
-          (click)="togglePause()">
-
-          <button class="btn-circle">
-
-            <ion-icon
-              [name]="isPaused ? 'play-sharp' : 'pause-sharp'">
-            </ion-icon>
-
-          </button>
-
-          <span class="btn-label">
-            {{ isPaused ? 'Continuar' : 'Pausar' }}
-          </span>
-
-        </div>
-
-
-        <!-- TIMER -->
-
-        <div class="live-timer">
-
-          {{ formatTime(secondsLeft) }}
-
-        </div>
-
-
-        <!-- FINALIZAR -->
-
-        <div
-          class="control-btn-wrapper"
-          (click)="stopTimer()">
-
-          <button class="btn-circle btn-stop">
-
-            <div class="stop-icon"></div>
-
-          </button>
-
-          <span class="btn-label">
-            Finalizar
-          </span>
-
-        </div>
-
-      </div>
-
-
-    </div>
+    <span class="task-duration">
+      {{ currentPhase === 'pomodoro'
+        ? '1h30m'
+        : '5min de pausa' }}
+    </span>
 
   </div>
 
+  <button
+    class="edit-task-button"
+    *ngIf="currentPhase === 'pomodoro'"
+    (click)="editarTarefa()">
+
+    <ion-icon name="create-outline"></ion-icon>
+
+  </button>
+
+</div>
+    <!-- ========================= -->
+    <!-- RELÓGIO -->
+    <!-- ========================= -->
+    <div class="clock-area">
+      <div class="magic-ring">
+        <div class="clock-frame">
+          <div class="clock-face">
+            <span class="clock-dot dot-12"></span>
+            <span class="clock-dot dot-1"></span>
+            <span class="clock-dot dot-2"></span>
+            <span class="clock-dot dot-3"></span>
+            <span class="clock-dot dot-4"></span>
+            <span class="clock-dot dot-5"></span>
+            <span class="clock-dot dot-6"></span>
+            <span class="clock-dot dot-7"></span>
+            <span class="clock-dot dot-8"></span>
+            <span class="clock-dot dot-9"></span>
+            <span class="clock-dot dot-10"></span>
+            <span class="clock-dot dot-11"></span>
+            <span class="num num-12">XII</span>
+            <span class="num num-3">III</span>
+            <span class="num num-6">VI</span>
+            <span class="num num-9">IX</span>
+            <div
+              class="hand hour-hand"
+              [style.transform]="'rotate(' + hourRotation + 'deg)'">
+            </div>
+            <div
+              class="hand minute-hand"
+              [style.transform]="'rotate(' + minuteRotation + 'deg)'">
+            </div>
+            <div class="center-pin">
+              <div class="center-gem"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ========================= -->
+    <!-- RODAPÉ -->
+    <!-- ========================= -->
+    <div class="footer-section">
+      <p class="quote">
+        "A concentração é o ingrediente secreto da manifestação."
+      </p>
+      <div class="timer-controls-panel">
+        <!-- INICIAR / PAUSAR / CONTINUAR -->
+        <div
+          class="control-btn-wrapper"
+          (click)="togglePause()">
+          <button
+            class="btn-circle"
+            type="button">
+            <ion-icon
+              [name]="isRunning ? 'pause-sharp' : 'play-sharp'">
+            </ion-icon>
+          </button>
+          <span class="btn-label">
+            {{ isRunning
+              ? 'Pausar'
+              : (hasStarted ? 'Continuar' : 'Iniciar') }}
+          </span>
+        </div>
+        <!-- PULAR PARA INTERVALO -->
+        <div
+          class="control-btn-wrapper"
+          (click)="skipToBreak()">
+          <button
+            class="btn-circle btn-skip"
+            type="button">
+            <ion-icon name="play-forward-sharp"></ion-icon>
+          </button>
+          <span class="btn-label">
+            Pular pausa
+          </span>
+        </div>
+        <!-- TIMER -->
+        <div class="live-timer">
+          {{ formatTime(secondsLeft) }}
+        </div>
+        <!-- FINALIZAR -->
+        <div
+          class="control-btn-wrapper"
+          (click)="stopTimer()">
+          <button
+            class="btn-circle btn-stop"
+            type="button">
+            <div class="stop-icon"></div>
+          </button>
+          <span class="btn-label">
+            Finalizar
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-content>

@@ -1,77 +1,60 @@
 <ion-content [fullscreen]="true">
-
   <div class="background">
-
     <!-- TOPO -->
     <div class="headerTotal">
-
       <div class="header">
-
         <div class="perfil">
-          <a href="tabs/tab5"><img src="assets/perfil.png" alt="avatar" ></a>
-
+          <a href="tabs/tab5">
+            <img src="assets/perfil.png" alt="avatar">
+          </a>
           <div class="dados" [routerLink]="['/tabs/tab4']">
             <h2>Aprendiz II</h2>
             <p>Nível 17</p>
-
             <div class="xp-bar">
               <div class="xp-fill"></div>
             </div>
           </div>
         </div>
-
       </div>
-
       <div class="acoes">
-        <ion-icon name="notifications-outline"></ion-icon>
-        <a href="config"><ion-icon name="settings-outline"></ion-icon></a>
+        <a href="notificacao">
+          <ion-icon name="notifications-outline"></ion-icon>
+        </a>
+        <a href="config">
+          <ion-icon name="settings-outline"></ion-icon>
+        </a>
       </div>
-
     </div>
-
 
     <!-- LIVRO + ESTUDOS -->
     <div class="livro">
-
       <div class="conteudo-livro">
         <br><br>
         <h2>Estudos do dia</h2>
 
         <div class="tarefa">
-
           <div class="texto">
             <h3>Estudar para a prova de Biologia</h3>
             <p>1h30m</p>
           </div>
-
           <img src="assets/gema.png" alt="gema">
-
         </div>
 
-
         <div class="tarefa">
-
           <div class="texto">
             <h3>Leitura longa e profunda</h3>
             <p>2 horas</p>
           </div>
-
           <img src="assets/gema-roxa.png" alt="gema">
-
         </div>
-
       </div>
-
     </div>
-
 
     <!-- RESUMO -->
     <div class="resumo">
-
       <h2>Resumo do dia</h2>
 
       <div class="cards">
-
         <div class="card-info">
           <span>Estudos</span>
           <h3>1/3</h3>
@@ -84,13 +67,9 @@
 
         <div class="card-info">
           <span>Foco Total</span>
-          <h3>3h15m</h3>
+          <h3>{{ focoTotal }}</h3>
         </div>
-
       </div>
-
     </div>
-
   </div>
-
 </ion-content>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 type TimerPhase = 'pomodoro' | 'shortBreak' | 'longBreak';
 
@@ -9,408 +9,285 @@ type TimerPhase = 'pomodoro' | 'shortBreak' | 'longBreak';
   standalone: false,
 })
 export class Tab3Page implements OnInit, OnDestroy {
-
-  // =========================
-  // CONFIGURAÇÃO DO POMODORO
-  // =========================
-
-  readonly POMODORO_TIME = 25 * 60;      // 25 minutos
-  readonly SHORT_BREAK_TIME = 5 * 60;    // 5 minutos
-  readonly LONG_BREAK_TIME = 15 * 60;    // 15 minutos
-
-  // Depois de quantos pomodoros acontece a pausa longa
+  // ==========================================
+  // CONFIGURAÇÃO DOS TEMPOS
+  // ==========================================
+  readonly POMODORO_TIME = 25 * 60;
+  readonly SHORT_BREAK_TIME = 5 * 60;
+  readonly LONG_BREAK_TIME = 15 * 60;
   readonly POMODOROS_BEFORE_LONG_BREAK = 4;
-
-
-  // =========================
+  // ==========================================
   // ESTADO DO TIMER
-  // =========================
-
+  // ==========================================
   secondsLeft: number = this.POMODORO_TIME;
-
-  isPaused: boolean = false;
-
   currentPhase: TimerPhase = 'pomodoro';
-
-  // Quantos pomodoros foram concluídos no ciclo atual
   completedPomodoros: number = 0;
-
-  // Número do ciclo atual
   cycleNumber: number = 1;
-
-
-  // =========================
+  // ==========================================
+  // CONTROLE DO TIMER
+  // ==========================================
+  isRunning: boolean = false;
+  hasStarted: boolean = false;
+  // ==========================================
   // CONTROLE INTERNO
-  // =========================
-
+  // ==========================================
   private timerInterval: ReturnType<typeof setInterval> | null = null;
-
-  /**
-   * Momento em que a fase atual deve terminar.
-   *
-   * Exemplo:
-   * agora + 25 minutos
-   */
   private endTime: number | null = null;
-
-
-  // =========================
+  private focoInicial: number = 0;
+  // ==========================================
   // RELÓGIO VISUAL
-  // =========================
-
-  hourRotation: number = 135;
-  minuteRotation: number = 60;
-
-
-  // =========================
+  // ==========================================
+  hourRotation: number = 0;
+  minuteRotation: number = 0;
+  // ==========================================
   // INICIALIZAÇÃO
-  // =========================
-
+  // ==========================================
   ngOnInit(): void {
-    this.startTimer();
+    this.isRunning = false;
+    this.hasStarted = false;
+    this.secondsLeft = this.POMODORO_TIME;
+    this.updateClockHands();
   }
-
-
   ngOnDestroy(): void {
     this.clearTimer();
   }
-
-
-  // =========================
+  // ==========================================
   // INICIAR TIMER
-  // =========================
-
+  // ==========================================
   startTimer(): void {
-
     this.clearTimer();
-
-    this.isPaused = false;
-
-    // Define quando essa fase termina
+    this.isRunning = true;
+    this.hasStarted = true;
+    this.focoInicial = Number(localStorage.getItem('tempoFoco') || 0);
     this.endTime = Date.now() + (this.secondsLeft * 1000);
-
     this.updateTimer();
-
-    /**
-     * Atualizamos algumas vezes por segundo.
-     *
-     * O valor real não depende da quantidade
-     * de vezes que esse intervalo executou.
-     */
     this.timerInterval = setInterval(() => {
       this.updateTimer();
     }, 250);
   }
-
-
-  // =========================
+  // ==========================================
   // ATUALIZAR TIMER
-  // =========================
-
+  // ==========================================
   private updateTimer(): void {
-
-    if (this.isPaused || this.endTime === null) {
+    if (!this.isRunning || this.endTime === null) {
       return;
     }
-
     const millisecondsLeft = this.endTime - Date.now();
-
     const newSecondsLeft = Math.max(
       0,
       Math.ceil(millisecondsLeft / 1000)
     );
-
     this.secondsLeft = newSecondsLeft;
-
     this.updateClockHands();
-
-    // Terminou a fase atual
+    // ==========================================
+    // ATUALIZA O FOCO TOTAL
+    // ==========================================
+    if (this.currentPhase === 'pomodoro' && this.isRunning) {
+      const tempoDecorrido = this.POMODORO_TIME - this.secondsLeft;
+      const novoTempoFoco = this.focoInicial + tempoDecorrido;
+      localStorage.setItem('tempoFoco', String(novoTempoFoco));
+    }
     if (millisecondsLeft <= 0) {
       this.finishPhase();
     }
   }
-
-
-  // =========================
-  // PAUSAR / CONTINUAR
-  // =========================
-
+  // ==========================================
+  // INICIAR / PAUSAR / CONTINUAR
+  // ==========================================
   togglePause(): void {
-
-    if (this.isPaused) {
-
-      // CONTINUAR
-
-      this.startTimer();
-
-    } else {
-
-      // PAUSAR
-
-      this.isPaused = true;
-
-      this.clearTimer();
-
-      /**
-       * Mantemos secondsLeft com o valor atual.
-       * Quando clicar em continuar, um novo endTime
-       * será calculado.
-       */
-      this.endTime = null;
-    }
-  }
-
-
-  // =========================
-  // FINALIZAR
-  // =========================
-
-  stopTimer(): void {
-
-    this.isPaused = true;
-
-    this.clearTimer();
-
-    this.secondsLeft = 0;
-
-    this.endTime = null;
-
-    this.updateClockHands();
-  }
-
-
-  // =========================
-  // FASE TERMINOU
-  // =========================
-
-  private finishPhase(): void {
-
-    this.clearTimer();
-
-    this.secondsLeft = 0;
-
-    // =========================
-    // POMODORO TERMINOU
-    // =========================
-
-    if (this.currentPhase === 'pomodoro') {
-
-      this.completedPomodoros++;
-
-      /**
-       * A cada 4 pomodoros:
-       *
-       * Pomodoro → Long Break
-       *
-       * Caso contrário:
-       *
-       * Pomodoro → Short Break
-       */
-      if (
-        this.completedPomodoros >=
-        this.POMODOROS_BEFORE_LONG_BREAK
-      ) {
-
-        this.currentPhase = 'longBreak';
-
-      } else {
-
-        this.currentPhase = 'shortBreak';
-      }
-
-
-      this.secondsLeft = this.getPhaseDuration();
-
-      this.showPhaseNotification();
-
-      // Começa automaticamente a pausa
-      this.startTimer();
-
+    if (this.isRunning) {
+      this.pauseTimer();
       return;
     }
-
-
-    // =========================
-    // PAUSA TERMINOU
-    // =========================
-
+    this.startTimer();
+  }
+  // ==========================================
+  // PAUSAR
+  // ==========================================
+  private pauseTimer(): void {
+    // Salva o tempo antes de pausar
+    if (this.currentPhase === 'pomodoro') {
+      const tempoDecorrido = this.POMODORO_TIME - this.secondsLeft;
+      const novoTempoFoco = this.focoInicial + tempoDecorrido;
+      localStorage.setItem('tempoFoco', String(novoTempoFoco));
+    }
+    this.isRunning = false;
+    this.clearTimer();
+    this.endTime = null;
+    this.updateClockHands();
+  }
+  // ==========================================
+  // FINALIZAR
+  // ==========================================
+  stopTimer(): void {
+    // Salva o tempo que foi estudado antes de finalizar
+    if (this.currentPhase === 'pomodoro') {
+      const tempoDecorrido = this.POMODORO_TIME - this.secondsLeft;
+      const novoTempoFoco = this.focoInicial + tempoDecorrido;
+      localStorage.setItem('tempoFoco', String(novoTempoFoco));
+    }
+    this.clearTimer();
+    this.isRunning = false;
+    this.hasStarted = false;
+    this.currentPhase = 'pomodoro';
+    this.secondsLeft = this.POMODORO_TIME;
+    this.endTime = null;
+    this.updateClockHands();
+    console.log('Pomodoro finalizado e reiniciado.');
+  }
+  // ==========================================
+  // PULAR DIRETAMENTE PARA A PAUSA
+  // ==========================================
+  skipToBreak(): void {
+    // Salva o tempo de foco antes de ir para a pausa
+    if (this.currentPhase === 'pomodoro') {
+      const tempoDecorrido = this.POMODORO_TIME - this.secondsLeft;
+      const novoTempoFoco = this.focoInicial + tempoDecorrido;
+      localStorage.setItem('tempoFoco', String(novoTempoFoco));
+    }
+    this.clearTimer();
+    this.isRunning = false;
+    this.hasStarted = false;
+    this.endTime = null;
+    if (this.currentPhase === 'pomodoro') {
+      this.completedPomodoros++;
+      if (this.completedPomodoros >= this.POMODOROS_BEFORE_LONG_BREAK) {
+        this.currentPhase = 'longBreak';
+      } else {
+        this.currentPhase = 'shortBreak';
+      }
+      this.secondsLeft = this.getPhaseDuration();
+      this.updateClockHands();
+      console.log(`Pausa iniciada: ${this.phaseTitle}`);
+      return;
+    }
+    this.currentPhase = 'pomodoro';
+    this.secondsLeft = this.POMODORO_TIME;
+    this.updateClockHands();
+  }
+  // ==========================================
+  // FASE TERMINOU NATURALMENTE
+  // ==========================================
+  private finishPhase(): void {
+    // Se o Pomodoro terminou os 25 minutos,
+    // adicionamos os 25 minutos completos ao foco.
+    if (this.currentPhase === 'pomodoro') {
+      const novoTempoFoco = this.focoInicial + this.POMODORO_TIME;
+      localStorage.setItem('tempoFoco', String(novoTempoFoco));
+    }
+    this.clearTimer();
+    this.isRunning = false;
+    this.endTime = null;
+    this.secondsLeft = 0;
+    if (this.currentPhase === 'pomodoro') {
+      this.completedPomodoros++;
+      if (this.completedPomodoros >= this.POMODOROS_BEFORE_LONG_BREAK) {
+        this.currentPhase = 'longBreak';
+      } else {
+        this.currentPhase = 'shortBreak';
+      }
+      this.secondsLeft = this.getPhaseDuration();
+      this.hasStarted = false;
+      this.updateClockHands();
+      this.showPhaseNotification();
+      return;
+    }
     if (
       this.currentPhase === 'shortBreak' ||
       this.currentPhase === 'longBreak'
     ) {
-
-      /**
-       * Se terminou uma pausa longa,
-       * começamos um novo ciclo.
-       */
       if (this.currentPhase === 'longBreak') {
-
         this.completedPomodoros = 0;
         this.cycleNumber++;
       }
-
       this.currentPhase = 'pomodoro';
-
-      this.secondsLeft = this.getPhaseDuration();
-
+      this.secondsLeft = this.POMODORO_TIME;
+      this.hasStarted = false;
+      this.updateClockHands();
       this.showPhaseNotification();
-
-      // Começa automaticamente o próximo Pomodoro
-      this.startTimer();
     }
   }
-
-
-  // =========================
+  // ==========================================
   // DURAÇÃO DA FASE
-  // =========================
-
+  // ==========================================
   private getPhaseDuration(): number {
-
     switch (this.currentPhase) {
-
       case 'pomodoro':
         return this.POMODORO_TIME;
-
       case 'shortBreak':
         return this.SHORT_BREAK_TIME;
-
       case 'longBreak':
         return this.LONG_BREAK_TIME;
     }
   }
-
-
-  // =========================
-  // TEXTO DA FASE
-  // =========================
-
+  // ==========================================
+  // TÍTULO DA FASE
+  // ==========================================
   get phaseTitle(): string {
-
     switch (this.currentPhase) {
-
       case 'pomodoro':
-        return 'Hora de focar';
-
+        return 'Estudar alquimia';
       case 'shortBreak':
         return 'Pausa curta';
-
       case 'longBreak':
         return 'Pausa longa';
     }
   }
-
-
+  // ==========================================
+  // DESCRIÇÃO DA FASE
+  // ==========================================
   get phaseDescription(): string {
-
     switch (this.currentPhase) {
-
       case 'pomodoro':
         return 'Estude com concentração.';
-
       case 'shortBreak':
         return 'Respire e descanse um pouco.';
-
       case 'longBreak':
         return 'Você merece uma pausa maior.';
     }
   }
-
-
-  // =========================
-  // CONTADOR VISUAL
-  // =========================
-
+  // ==========================================
+  // PROGRESSO DO CICLO
+  // ==========================================
   get cycleProgress(): string {
-
     if (this.currentPhase === 'pomodoro') {
       return `${this.completedPomodoros + 1}/${this.POMODOROS_BEFORE_LONG_BREAK}`;
     }
-
     return `${this.completedPomodoros}/${this.POMODOROS_BEFORE_LONG_BREAK}`;
   }
-
-
-  // =========================
+  // ==========================================
   // RELÓGIO VISUAL
-  // =========================
-
+  // ==========================================
   private updateClockHands(): void {
-
     const totalSeconds = this.getPhaseDuration();
-
     const elapsedSeconds = totalSeconds - this.secondsLeft;
-
-    /**
-     * Para o ponteiro dos minutos:
-     *
-     * 60 minutos = 360 graus
-     *
-     * Então cada minuto = 6 graus.
-     */
     const elapsedMinutes = elapsedSeconds / 60;
-
     this.minuteRotation = elapsedMinutes * 6;
-
-
-    /**
-     * Ponteiro das horas.
-     *
-     * 60 minutos = 30 graus.
-     */
     this.hourRotation = elapsedMinutes * 0.5;
   }
-
-
-  // =========================
-  // FORMATAÇÃO
-  // =========================
-
+  // ==========================================
+  // FORMATAÇÃO DO TEMPO
+  // ==========================================
   formatTime(totalSeconds: number): string {
-
     const mins = Math.floor(totalSeconds / 60);
-
     const secs = totalSeconds % 60;
-
-    const formattedMins =
-      mins < 10 ? `0${mins}` : `${mins}`;
-
-    const formattedSecs =
-      secs < 10 ? `0${secs}` : `${secs}`;
-
+    const formattedMins = mins < 10 ? `0${mins}` : `${mins}`;
+    const formattedSecs = secs < 10 ? `0${secs}` : `${secs}`;
     return `${formattedMins}:${formattedSecs}`;
   }
-
-
-  // =========================
+  // ==========================================
   // LIMPAR TIMER
-  // =========================
-
+  // ==========================================
   private clearTimer(): void {
-
     if (this.timerInterval !== null) {
-
       clearInterval(this.timerInterval);
-
       this.timerInterval = null;
     }
   }
-
-
-  // =========================
-  // NOTIFICAÇÃO SIMPLES
-  // =========================
-
+  // ==========================================
+  // NOTIFICAÇÃO
+  // ==========================================
   private showPhaseNotification(): void {
-
-    console.log(
-      `Fase concluída. Próxima fase: ${this.phaseTitle}`
-    );
-
-    // Depois podemos trocar isso por:
-    // - Ionic Toast
-    // - alerta
-    // - som
-    // - notificação nativa
+    console.log(`Próxima fase: ${this.phaseTitle}`);
   }
 }
