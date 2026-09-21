@@ -7,7 +7,8 @@
 
       <div class="user-info-row">
         <div class="avatar-container">
-          <img src="assets/perfil.png" alt="Avatar">
+          <!-- Apenas esta linha foi corrigida para vincular ao atributo [src] -->
+          <img [src]="usuario.avatar" alt="Avatar">
         </div>
         <div class="text-container">
           <h2>{{ usuario.nickname }}</h2>

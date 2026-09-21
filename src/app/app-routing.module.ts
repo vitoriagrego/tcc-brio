@@ -94,6 +94,26 @@ const routes: Routes = [
   {
     path: 'biologia',
     loadChildren: () => import('./biologia/biologia.module').then( m => m.BiologiaPageModule)
+  },
+  {
+    path: 'matematica',
+    loadChildren: () => import('./matematica/matematica.module').then( m => m.MatematicaPageModule)
+  },
+  {
+    path: 'fisica',
+    loadChildren: () => import('./fisica/fisica.module').then( m => m.FisicaPageModule)
+  },
+  {
+    path: 'quimica',
+    loadChildren: () => import('./quimica/quimica.module').then( m => m.QuimicaPageModule)
+  },
+  {
+    path: 'historia',
+    loadChildren: () => import('./historia/historia.module').then( m => m.HistoriaPageModule)
+  },
+  {
+    path: 'geografia',
+    loadChildren: () => import('./geografia/geografia.module').then( m => m.GeografiaPageModule)
   }
 ];
 @NgModule({

@@ -1,0 +1,63 @@
+<ion-content class="fundo-mistico">
+
+  <!-- Header / Barra Superior -->
+  <div class="topo-bar">
+    <button class="btn-back" (click)="voltar()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+      <span>VOLTAR</span>
+    </button>
+    <h2 class="titulo-materia">GEOGRAFIA</h2>
+  </div>
+
+  <!-- Subtítulo / Orientação -->
+  <div class="subtitulo-secao">
+    <p>Selecione um bloco para estudar o conteúdo</p>
+  </div>
+
+  <!-- Lista de Blocos de Assuntos -->
+  <div class="blocos-container">
+    <div class="bloco-card" *ngFor="let bloco of blocosGeografia" (click)="abrirBloco(bloco)">
+      <div class="bloco-info">
+        <h3>{{ bloco.titulo }}</h3>
+        <p>{{ bloco.subtitulo }}</p>
+      </div>
+
+      <div class="bloco-status">
+        <ion-icon [name]="bloco.concluido ? 'checkmark-circle' : 'sparkles-outline'" 
+                  [class.concluido]="bloco.concluido"></ion-icon>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD / MODAL SOBREPOSTO COM O CONTEÚDO -->
+  <div class="modal-overlay" *ngIf="exibirModal && blocoAtivo">
+    <div class="card-conteudo-mistico">
+      
+      <!-- Cabeçalho do Card -->
+      <div class="card-header">
+        <div class="header-titulos">
+          <h3>{{ blocoAtivo.titulo }}</h3>
+          <span>{{ blocoAtivo.subtitulo }}</span>
+        </div>
+        <button class="btn-fechar" (click)="fecharModal()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <!-- Texto de Estudo -->
+      <div class="card-body">
+        <p>{{ blocoAtivo.conteudo }}</p>
+      </div>
+
+      <!-- Ações (Marcar como Concluído) -->
+      <div class="card-footer">
+        <button class="btn-concluir" (click)="concluirEstudo()">
+          <ion-icon name="checkmark-done-outline"></ion-icon>
+          <span>CONCLUIR ASSUNTO</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</ion-content>

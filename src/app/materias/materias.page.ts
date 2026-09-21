@@ -5,8 +5,6 @@ interface Materia {
   id: string;
   nome: string;
   categoria: 'humanas' | 'exatas' | 'biologicas';
-  nivel: number;
-  progresso: number;
   imagem: string;
   favorita: boolean;
 }
@@ -18,40 +16,147 @@ interface Materia {
   standalone: false
 })
 export class MateriasPage implements OnInit {
+
   filtroSelecionado: string = 'todas';
 
   materias: Materia[] = [
-    { id: 'matematica', nome: 'Matemática', categoria: 'exatas', nivel: 3, progresso: 50, imagem: '/assets/materias/mat.png', favorita: true },
-    { id: 'historia', nome: 'História', categoria: 'humanas', nivel: 4, progresso: 25, imagem: '/assets/materias/historia.png', favorita: false },
-    { id: 'geografia', nome: 'Geografia', categoria: 'humanas', nivel: 4, progresso: 50, imagem: '/assets/materias/geo.png', favorita: true },
-    { id: 'biologia', nome: 'Biologia', categoria: 'biologicas', nivel: 3, progresso: 30, imagem: '/assets/materias/biologia.png', favorita: false },
-    { id: 'fisica', nome: 'Física', categoria: 'exatas', nivel: 3, progresso: 75, imagem: '/assets/materias/fisica.png', favorita: true },
-    { id: 'quimica', nome: 'Química', categoria: 'exatas', nivel: 4, progresso: 80, imagem: '/assets/materias/quimica.png', favorita: false }
+
+    {
+      id: 'matematica',
+      nome: 'Matemática',
+      categoria: 'exatas',
+      imagem: '/assets/materias/mat.png',
+      favorita: true
+    },
+
+    {
+      id: 'historia',
+      nome: 'História',
+      categoria: 'humanas',
+      imagem: '/assets/materias/historia.png',
+      favorita: false
+    },
+
+    {
+      id: 'geografia',
+      nome: 'Geografia',
+      categoria: 'humanas',
+      imagem: '/assets/materias/geo.png',
+      favorita: true
+    },
+
+    {
+      id: 'biologia',
+      nome: 'Biologia',
+      categoria: 'biologicas',
+      imagem: '/assets/materias/biologia.png',
+      favorita: false
+    },
+
+    {
+      id: 'fisica',
+      nome: 'Física',
+      categoria: 'exatas',
+      imagem: '/assets/materias/fisica.png',
+      favorita: true
+    },
+
+    {
+      id: 'quimica',
+      nome: 'Química',
+      categoria: 'exatas',
+      imagem: '/assets/materias/quimica.png',
+      favorita: false
+    }
+
   ];
 
-  constructor(private navCtrl: NavController) {}
 
-  ngOnInit() {}
+  constructor(
+    private navCtrl: NavController
+  ) {}
+
+
+  ngOnInit(): void {
+  }
+
 
   get materiasFiltradas(): Materia[] {
-    if (this.filtroSelecionado === 'todas') return this.materias;
-    if (this.filtroSelecionado === 'favoritas') return this.materias.filter(m => m.favorita);
-    return this.materias.filter(m => m.categoria === this.filtroSelecionado);
+
+    if (this.filtroSelecionado === 'todas') {
+      return this.materias;
+    }
+
+    if (this.filtroSelecionado === 'favoritas') {
+      return this.materias.filter(
+        materia => materia.favorita
+      );
+    }
+
+    return this.materias.filter(
+      materia => materia.categoria === this.filtroSelecionado
+    );
   }
 
-  selecionarFiltro(filtro: string) {
+
+  selecionarFiltro(filtro: string): void {
+
     this.filtroSelecionado = filtro;
+
   }
 
-  voltar() {
-    this.navCtrl.back();
+
+  voltar(): void {
+    this.navCtrl.navigateBack('/tabs/tab2');
   }
 
-  estudarMateria(materia: Materia) {
-    console.log('Estudar:', materia.nome);
+
+  estudarMateria(materia: Materia): void {
+
+    switch (materia.id) {
+
+      case 'matematica':
+        this.navCtrl.navigateForward('/matematica');
+        break;
+
+      case 'historia':
+        this.navCtrl.navigateForward('/historia');
+        break;
+
+      case 'geografia':
+        this.navCtrl.navigateForward('/geografia');
+        break;
+
+      case 'biologia':
+        this.navCtrl.navigateForward('/biologia');
+        break;
+
+      case 'fisica':
+        this.navCtrl.navigateForward('/fisica');
+        break;
+
+      case 'quimica':
+        this.navCtrl.navigateForward('/quimica');
+        break;
+
+      default:
+        console.log(
+          'Matéria não encontrada:',
+          materia.id
+        );
+
+    }
+
   }
 
-  exerciciosMateria(materia: Materia) {
-    console.log('Exercícios:', materia.nome);
+
+  exerciciosMateria(materia: Materia): void {
+
+    console.log(
+      'Exercícios:',
+      materia.nome
+    );
+
   }
+
 }
