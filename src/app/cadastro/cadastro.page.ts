@@ -46,8 +46,7 @@ export class CadastroPage {
     this.senha = '';
     this.confirmarSenha = '';
 
-    // Navega de volta para o login (ajuste a rota se necessário)
-    this.router.navigate(['/login']);
+    this.router.navigate(['/questionario']);
   }
 
   // Função auxiliar para mostrar notificações na tela

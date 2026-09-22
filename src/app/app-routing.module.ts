@@ -114,6 +114,14 @@ const routes: Routes = [
   {
     path: 'geografia',
     loadChildren: () => import('./geografia/geografia.module').then( m => m.GeografiaPageModule)
+  },
+  {
+    path: 'relaxamento',
+    loadChildren: () => import('./relaxamento/relaxamento.module').then( m => m.RelaxamentoPageModule)
+  },
+  {
+    path: 'quiz-historia',
+    loadChildren: () => import('./quiz-historia/quiz-historia.module').then( m => m.QuizHistoriaPageModule)
   }
 ];
 @NgModule({

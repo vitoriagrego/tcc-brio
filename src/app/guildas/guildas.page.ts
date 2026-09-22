@@ -36,7 +36,7 @@ export class GuildaPage implements OnInit {
     {
       id: 1,
       titulo: 'Desafio da guilda:',
-      descricao: 'transmutar 5 poções',
+      descricao: 'concluir 5 transmutações',
       progressoAtual: 8,
       progressoTotal: 15,
       icone: 'flask-outline',

@@ -1,43 +1,102 @@
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="login-content">
+
   <div class="login-wrapper">
-    
+
     <div class="login-box">
-      <ion-list lines="none">
-        <div class="header-text">
-        <h2>Login</h2>
-        <p>Bem-vindo(a) de volta!!</p>
+
+      <!-- Logo / Título -->
+      <div class="header-text">
+        <h2>Bem-vindo!</h2>
+        <p>Entre na sua conta para continuar.</p>
       </div>
+
+      <!-- Formulário -->
+      <form (ngSubmit)="executarLogin()">
+
+        <!-- E-mail -->
         <div class="form-group">
-          <ion-label position="stacked">Email</ion-label>
-          <ion-input 
-            type="email" 
-            placeholder="Digite seu email" 
-            [(ngModel)]="credenciais.email">
+          <ion-label for="email">E-mail</ion-label>
+          <ion-input
+            id="email"
+            type="email"
+            name="email"
+            [(ngModel)]="credenciais.email"
+            placeholder="Digite seu e-mail"
+            required>
           </ion-input>
         </div>
 
+        <!-- Senha -->
         <div class="form-group">
-          <ion-label position="stacked">Senha</ion-label>
-          <ion-input 
-            type="password" 
-            placeholder="Digite sua senha" 
-            [(ngModel)]="credenciais.senha">
+          <ion-label for="senha">Senha</ion-label>
+          <ion-input
+            id="senha"
+            type="password"
+            name="senha"
+            [(ngModel)]="credenciais.senha"
+            placeholder="Digite sua senha"
+            required>
           </ion-input>
         </div>
 
+        <!-- Esqueci minha senha -->
+        <div class="esqueci-senha-container">
+          <a (click)="abrirModalRecuperacao()" class="esqueci-senha-link">
+            Esqueci minha senha
+          </a>
+        </div>
+
+        <!-- Mensagem de erro -->
         <div class="error-container" *ngIf="loginInvalido">
           <ion-icon name="alert-circle-outline"></ion-icon>
           <span>{{ mensagemErro }}</span>
         </div>
 
-        <ion-button class="btn-submit" expand="block" (click)="executarLogin()">
+        <!-- Botão Entrar -->
+        <ion-button expand="block" class="btn-submit" (click)="executarLogin()">
           Entrar
         </ion-button>
-        
-        <a class="btn-register" [routerLink]="['/cadastro']">Ainda não tenho conta</a>
 
-      </ion-list>
+      </form>
+
+      <!-- Cadastro -->
+      <div class="cadastro-section">
+        <a routerLink="/cadastro" class="btn-register">
+          Ainda não possui uma conta? Criar conta
+        </a>
+      </div>
+
     </div>
 
   </div>
+
+  <!-- Modal Customizado de Recuperação de Senha (Card Centralizado) -->
+  <div class="modal-overlay" *ngIf="isModalOpen">
+    <div class="login-box modal-box">
+      
+      <div class="header-text">
+        <h2>Recuperar Senha</h2>
+        <p>Digite seu e-mail para receber as instruções de redefinição.</p>
+      </div>
+
+      <div class="form-group">
+        <ion-label>E-mail registrado</ion-label>
+        <ion-input
+          type="email"
+          [(ngModel)]="emailRecuperacao"
+          placeholder="Digite seu e-mail">
+        </ion-input>
+      </div>
+
+      <ion-button expand="block" class="btn-submit" (click)="enviarEmailRecuperacao()">
+        Enviar e-mail
+      </ion-button>
+
+      <a (click)="fecharModalRecuperacao()" class="btn-cancelar-modal">
+        Cancelar / Voltar
+      </a>
+
+    </div>
+  </div>
+
 </ion-content>

@@ -1,0 +1,75 @@
+<ion-content class="settings-content">
+  <div class="background-overlay">
+    
+    <!-- Botão de Voltar -->
+    <div class="header-action">
+      <ion-button fill="clear" (click)="goBack()" class="back-btn">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Título da Página -->
+    <div class="title-card">
+      <h1>Seção de Relaxamento</h1>
+    </div>
+
+    <!-- Lista de Opções -->
+    <ion-list lines="none" class="settings-list">
+
+      <!-- Sons (Dinâmico) -->
+      <ion-item button [routerLink]="['/sons']" detail="false" class="menu-item">
+        <ion-icon name="musical-notes-outline" slot="start"></ion-icon>
+        <ion-label>Ambientação</ion-label>
+        <span class="item-value" slot="end">{{ sonsAtivado }}</span>
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-item>
+
+    </ion-list>
+
+    <!-- Cabeçalho da Seção de Exercícios -->
+    <div class="section-header">
+      <h2>Exercícios de Descompressão</h2>
+      <p>Técnicas rápidas para aliviar a ansiedade e recuperar o foco.</p>
+    </div>
+
+    <!-- Container dos Exercícios de Descompressão -->
+    <div class="decompression-container">
+
+      <!-- Exercício 1: Respiração Diafragmática (4-7-8) -->
+      <div class="exercise-card">
+        <div class="exercise-header">
+          <ion-icon name="fitness-outline" class="exercise-icon"></ion-icon>
+          <h3>Respiração Guiada (Técnica 4-7-8)</h3>
+        </div>
+        <p class="exercise-description">
+          Inspire profundamente pelo nariz por <strong>4 segundos</strong>, segure o ar por <strong>7 segundos</strong> e solte devagar pela boca por <strong>8 segundos</strong>. Repita o ciclo 4 vezes para desacelerar seus batimentos e acalmar a mente.
+        </p>
+        <div class="video-container">
+          <video controls playsinline poster="assets/videos/respiracao.jpg">
+            <source src="assets/videos/respiracao.mp4" type="video/mp4">
+            Seu navegador não suporta vídeos HTML5.
+          </video>
+        </div>
+      </div>
+
+      <!-- Exercício 2: Relaxamento Muscular Progressivo -->
+      <div class="exercise-card">
+        <div class="exercise-header">
+          <ion-icon name="body-outline" class="exercise-icon"></ion-icon>
+          <h3>Relaxamento Muscular Guiado</h3>
+        </div>
+        <p class="exercise-description">
+          Foque em contrair os ombros em direção às orelhas por <strong>5 segundos</strong> acumulando a tensão, e em seguida solte de uma vez descontraindo todo o pescoço e costas. Excelente para pausas de estudo longas.
+        </p>
+        <div class="video-container">
+          <video controls playsinline poster="assets/videos/relaxamento.jpg">
+            <source src="assets/videos/relaxamento-muscular.mp4" type="video/mp4">
+            Seu navegador não suporta vídeos HTML5.
+          </video>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>

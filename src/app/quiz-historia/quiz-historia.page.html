@@ -1,0 +1,251 @@
+<ion-content
+  [fullscreen]="true"
+  class="quiz-content">
+
+  <div class="quiz-page">
+
+    <!-- CABEÇALHO -->
+
+    <div class="quiz-header">
+
+      <button
+        class="back-button"
+        type="button"
+        (click)="voltar()">
+
+        <ion-icon
+          name="arrow-back-outline">
+        </ion-icon>
+
+      </button>
+
+      <div class="header-text">
+
+        <span>QUIZ</span>
+
+        <h1>{{ materia }}</h1>
+
+      </div>
+
+    </div>
+
+
+    <!-- QUIZ -->
+
+    <div
+      *ngIf="!finalizado && perguntas.length > 0"
+      class="quiz-card">
+
+
+      <!-- PROGRESSO -->
+
+      <div class="progress-area">
+
+        <div class="progress-info">
+
+          <span>
+            QUESTÃO {{ perguntaAtual + 1 }}
+          </span>
+
+          <span>
+            {{ perguntas.length }} QUESTÕES
+          </span>
+
+        </div>
+
+        <div class="progress-bar">
+
+          <div
+            class="progress-fill"
+            [style.width.%]="
+              ((perguntaAtual + 1) / perguntas.length) * 100
+            ">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PERGUNTA -->
+
+      <div class="question-area">
+
+        <span class="question-number">
+          PERGUNTA {{ perguntaAtual + 1 }}
+        </span>
+
+        <h2>
+          {{ pergunta.pergunta }}
+        </h2>
+
+      </div>
+
+
+      <!-- ALTERNATIVAS -->
+
+      <div class="alternativas">
+
+        <button
+          *ngFor="
+            let alternativa of pergunta.alternativas;
+            let i = index
+          "
+          type="button"
+          class="alternativa"
+
+          [class.selecionada]="
+            respostaSelecionada === i
+          "
+
+          [class.correta]="
+            respostaSelecionada !== null &&
+            i === pergunta.respostaCorreta
+          "
+
+          [class.errada]="
+            respostaSelecionada === i &&
+            respostaSelecionada !== pergunta.respostaCorreta
+          "
+
+          (click)="selecionarResposta(i)">
+
+
+          <span class="letra">
+            {{ ['A', 'B', 'C', 'D'][i] }}
+          </span>
+
+
+          <span class="texto-alternativa">
+            {{ alternativa }}
+          </span>
+
+
+          <ion-icon
+            *ngIf="
+              respostaSelecionada !== null &&
+              i === pergunta.respostaCorreta
+            "
+            name="checkmark-circle-outline">
+          </ion-icon>
+
+
+          <ion-icon
+            *ngIf="
+              respostaSelecionada === i &&
+              respostaSelecionada !== pergunta.respostaCorreta
+            "
+            name="close-circle-outline">
+          </ion-icon>
+
+        </button>
+
+      </div>
+
+
+      <!-- PRÓXIMA PERGUNTA -->
+
+      <button
+        class="next-button"
+        type="button"
+
+        [disabled]="
+          respostaSelecionada === null
+        "
+
+        (click)="proximaPergunta()">
+
+        <span>
+
+          {{
+            perguntaAtual === perguntas.length - 1
+              ? 'FINALIZAR QUIZ'
+              : 'PRÓXIMA PERGUNTA'
+          }}
+
+        </span>
+
+        <ion-icon
+          name="arrow-forward-outline">
+        </ion-icon>
+
+      </button>
+
+    </div>
+
+
+    <!-- RESULTADO -->
+
+    <div
+      *ngIf="finalizado"
+      class="resultado-card">
+
+      <div class="resultado-icon">
+
+        <ion-icon
+          name="trophy-outline">
+        </ion-icon>
+
+      </div>
+
+      <span class="resultado-label">
+        QUIZ FINALIZADO
+      </span>
+
+      <h2>
+        Parabéns!
+      </h2>
+
+      <p>
+        Você terminou o quiz de {{ materia }}.
+      </p>
+
+      <div class="pontuacao">
+
+        <strong>
+          {{ pontuacao }}
+        </strong>
+
+        <span>
+          / {{ perguntas.length }}
+        </span>
+
+      </div>
+
+      <p class="mensagem">
+
+        {{
+          pontuacao === perguntas.length
+            ? 'Você acertou todas as questões!'
+            : 'Continue estudando e tente novamente!'
+        }}
+
+      </p>
+
+      <div class="resultado-botoes">
+
+        <button
+          class="restart-button"
+          type="button"
+          (click)="reiniciarQuiz()">
+
+          Tentar novamente
+
+        </button>
+
+        <button
+          class="back-result-button"
+          type="button"
+          (click)="voltar()">
+
+          Voltar para matérias
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</ion-content>

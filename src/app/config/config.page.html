@@ -1,6 +1,6 @@
 <ion-content class="settings-content">
   <div class="background-overlay">
-    
+
     <!-- Botão de Voltar -->
     <div class="header-action">
       <ion-button fill="clear" (click)="goBack()" class="back-btn">
@@ -15,7 +15,7 @@
 
     <!-- Lista de Opções -->
     <ion-list lines="none" class="settings-list">
-      
+
       <!-- Notificações -->
       <ion-item button [routerLink]="['/notificacao']" detail="false" class="menu-item">
         <ion-icon name="notifications-outline" slot="start"></ion-icon>
@@ -30,28 +30,18 @@
         <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
       </ion-item>
 
-      <!-- Tema (Alterna ao clicar no botão, sem ir para outra tela) -->
-      <ion-item button (click)="alternarTema()" detail="false" class="menu-item">
+      <!-- Tema (Em breve em uma futura versão) -->
+      <ion-item [disabled]="true" class="menu-item menu-item-disabled">
         <ion-icon name="color-palette-outline" slot="start"></ion-icon>
         <ion-label>Tema</ion-label>
-        <span class="item-value" slot="end">{{ temaAtual }}</span>
-        <ion-icon name="swap-horizontal-outline" slot="end"></ion-icon>
-      </ion-item> 
-
-      <!-- Idioma (Dinâmico) -->
-      <ion-item button [routerLink]="['/idioma']" detail="false" class="menu-item">
-        <ion-icon name="globe-outline" slot="start"></ion-icon>
-        <ion-label>Idioma</ion-label>
-        <span class="item-value" slot="end">{{ idiomaAtual }}</span>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-badge color="medium" slot="end" class="badge-em-breve">Em breve</ion-badge>
       </ion-item>
 
-      <!-- Sons (Dinâmico) -->
-      <ion-item button [routerLink]="['/sons']" detail="false" class="menu-item">
-        <ion-icon name="musical-notes-outline" slot="start"></ion-icon>
-        <ion-label>Ambientação</ion-label>
-        <span class="item-value" slot="end">{{ sonsAtivado }}</span>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      <!-- Idioma (Em breve em uma futura versão) -->
+      <ion-item [disabled]="true" class="menu-item menu-item-disabled">
+        <ion-icon name="globe-outline" slot="start"></ion-icon>
+        <ion-label>Idioma</ion-label>
+        <ion-badge color="medium" slot="end" class="badge-em-breve">Em breve</ion-badge>
       </ion-item>
 
       <!-- Sobre o BRIO -->

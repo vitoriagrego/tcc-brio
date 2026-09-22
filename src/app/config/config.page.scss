@@ -79,6 +79,18 @@
     }
   }
 }
+.menu-item-disabled {
+  --opacity: 0.6;
+}
+
+.badge-em-breve {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #a0aec0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
 
 // Container do botão Sair da conta
 .logout-container {

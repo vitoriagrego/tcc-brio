@@ -2,7 +2,7 @@
   <div class="bg-overlay"></div>
 
   <div class="main-overlay">
-    
+
     <div class="top-bar">
       <button class="back-button" type="button" (click)="voltar()">
         <ion-icon name="arrow-back-outline"></ion-icon>
@@ -10,33 +10,52 @@
     </div>
 
     <div class="filters-scroll">
-      <button class="filter-chip" type="button" [class.active]="filtroSelecionado === 'todas'"
+      <button
+        class="filter-chip"
+        type="button"
+        [class.active]="filtroSelecionado === 'todas'"
         (click)="selecionarFiltro('todas')">
         Todas
       </button>
     </div>
 
     <div class="cards-grid">
+
       <div class="materia-card" *ngFor="let materia of materiasFiltradas">
+
         <h3 class="materia-title">
           {{ materia.nome }}
         </h3>
 
         <div class="icon-frame">
-          <img [src]="materia.imagem" [alt]="materia.nome" class="materia-icon"
-            (error)="materia.imagem = 'assets/icones/matematica.png'" />
+          <img
+            [src]="materia.imagem"
+            [alt]="materia.nome"
+            class="materia-icon"
+            (error)="materia.imagem = 'assets/icones/matematica.png'"
+          />
         </div>
 
         <div class="actions-group">
-          <button class="btn-action btn-estudar" type="button" (click)="estudarMateria(materia)">
+
+          <button
+            class="btn-action btn-estudar"
+            type="button"
+            (click)="estudarMateria(materia)">
             Estudar
           </button>
 
-          <button class="btn-action btn-exercicios" type="button" disabled style="opacity: 0.5;">
-            Em Breve
+          <button
+            class="btn-action btn-exercicios"
+            type="button"
+            (click)="abrirExercicios(materia)">
+            Exercícios
           </button>
+
         </div>
+
       </div>
+
     </div>
 
   </div>
