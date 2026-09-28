@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-
-interface Materia {
-  nome: string;
-  imagem: string;
-}
+import { Router } from '@angular/router';
+import { ToastController, LoadingController } from '@ionic/angular';
+import { SupabaseService } from 'src/app/services/supabase';
 
 @Component({
   selector: 'app-questionario',
@@ -13,60 +11,61 @@ interface Materia {
 })
 export class QuestionarioPage implements OnInit {
 
-  // Variáveis para controlo dos filtros e matérias
-  filtroSelecionado: string = 'todas';
-  
-  materias: Materia[] = [
-    { nome: 'Matemática', imagem: 'assets/icones/matematica.png' },
-    { nome: 'História', imagem: 'assets/icones/historia.png' },
-    { nome: 'Geografia', imagem: 'assets/icones/geografia.png' },
-    { nome: 'Biologia', imagem: 'assets/icones/biologia.png' },
-    { nome: 'Física', imagem: 'assets/icones/fisica.png' },
-    { nome: 'Química', imagem: 'assets/icones/quimica.png' }
-  ];
+  // Objeto para armazenar as respostas das 12 perguntas do seu HTML
+  respostas: { [key: number]: any } = {};
 
-  materiasFiltradas: Materia[] = [];
+  constructor(
+    private supabaseService: SupabaseService,
+    private router: Router,
+    private toastController: ToastController,
+    private loadingController: LoadingController
+  ) {}
 
-  // Variáveis para controlo da "Tela" de Exercícios
-  exibindoExercicios: boolean = false;
-  materiaSelecionada: Materia | null = null;
+  ngOnInit() {}
 
-  constructor() { }
-
-  ngOnInit() {
-    this.materiasFiltradas = this.materias;
+  // Registra a resposta selecionada em cada ion-radio-group do HTML
+  selecionarOpcao(perguntaId: number, valor: any) {
+    this.respostas[perguntaId] = valor;
   }
 
-  selecionarFiltro(filtro: string) {
-    this.filtroSelecionado = filtro;
-    if (filtro === 'todas') {
-      this.materiasFiltradas = this.materias;
+  // Função acionada pelo botão (click)="enviarQuestionario()" do HTML
+  async enviarQuestionario() {
+    const loading = await this.loadingController.create({
+      message: 'Salvando suas preferências...'
+    });
+    await loading.present();
+
+    try {
+      // Salva todas as respostas no formato JSONB na tabela 'user_questionnaire'
+      await this.supabaseService.salvarQuestionario({
+        respostas_completas: this.respostas
+      });
+
+      await loading.dismiss();
+      
+      const toast = await this.toastController.create({
+        message: 'Questionário salvo com sucesso!',
+        duration: 2000,
+        position: 'bottom'
+      });
+      toast.present();
+
+      // Redireciona para o aplicativo principal
+      this.router.navigate(['/tabs', 'tab1']);
+
+    } catch (error: any) {
+      await loading.dismiss();
+      const toast = await this.toastController.create({
+        message: 'Erro ao salvar questionário: ' + (error.message || error),
+        duration: 3000,
+        position: 'bottom'
+      });
+      toast.present();
     }
   }
 
-  estudarMateria(materia: Materia) {
-    console.log('A estudar:', materia.nome);
-  }
-
-  // Função para abrir a vista de exercícios
-  abrirExercicios(materia: Materia) {
-    this.materiaSelecionada = materia;
-    this.exibindoExercicios = true;
-  }
-
-  // Função para fechar a vista de exercícios e voltar à lista
-  fecharExercicios() {
-    this.exibindoExercicios = false;
-    this.materiaSelecionada = null;
-  }
-
-  // Função do botão Voltar da barra superior
-  voltar() {
-    if (this.exibindoExercicios) {
-      this.fecharExercicios();
-    } else {
-      // Lógica padrão de navegação para voltar atrás na aplicação (ex: NavController)
-      console.log('A voltar à página anterior...');
-    }
+  // Mantido caso também queira usar em outro lugar
+  async finalizarQuestionario() {
+    await this.enviarQuestionario();
   }
 }

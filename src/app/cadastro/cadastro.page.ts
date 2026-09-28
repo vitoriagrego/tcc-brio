@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { ToastController, LoadingController } from '@ionic/angular';
+import { SupabaseService } from 'src/app/services/supabase';
 
 @Component({
   selector: 'app-cadastro',
@@ -9,54 +10,51 @@ import { ToastController } from '@ionic/angular';
   standalone: false,
 })
 export class CadastroPage {
-  // Inicializando as variáveis para evitar erros com o modo "strict" do TypeScript
   email = '';
   senha = '';
   confirmarSenha = '';
 
   constructor(
+    private supabaseService: SupabaseService,
     private router: Router,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private loadingController: LoadingController
   ) {}
 
   async cadastrar() {
-    // 1. Validação se os campos estão vazios
     if (!this.email || !this.senha || !this.confirmarSenha) {
-      await this.exibirMensagem('Por favor, preencha todos os campos.', 'warning');
+      this.exibirToast('Preencha todos os campos.');
       return;
     }
 
-    // 2. Validação simples de email
-    if (!this.email.includes('@')) {
-      await this.exibirMensagem('Insira um e-mail válido.', 'warning');
-      return;
-    }
-
-    // 3. Validação de igualdade das senhas
     if (this.senha !== this.confirmarSenha) {
-      await this.exibirMensagem('As senhas não coincidem!', 'danger');
+      this.exibirToast('As senhas não coincidem.');
       return;
     }
 
-    // Se passou em tudo, simula o sucesso
-    await this.exibirMensagem('Cadastro realizado com sucesso!', 'success');
-    
-    // Limpa os campos após o sucesso
-    this.email = '';
-    this.senha = '';
-    this.confirmarSenha = '';
+    const loading = await this.loadingController.create({
+      message: 'Criando conta...'
+    });
+    await loading.present();
 
-    this.router.navigate(['/questionario']);
+    const { data, error } = await this.supabaseService.signUp(this.email, this.senha);
+
+    await loading.dismiss();
+
+    if (error) {
+      this.exibirToast('Erro ao cadastrar: ' + error.message);
+    } else {
+      this.exibirToast('Conta criada com sucesso!');
+      this.router.navigate(['/questionario']);
+    }
   }
 
-  // Função auxiliar para mostrar notificações na tela
-  async exibirMensagem(texto: string, cor: string) {
+  private async exibirToast(mensagem: string) {
     const toast = await this.toastController.create({
-      message: texto,
-      duration: 2500,
-      color: cor,
+      message: mensagem,
+      duration: 3000,
       position: 'bottom'
     });
-    await toast.present();
+    toast.present();
   }
 }

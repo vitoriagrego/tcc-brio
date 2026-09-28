@@ -1,6 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 
-type TimerPhase = 'pomodoro' | 'shortBreak' | 'longBreak';
+type TimerPhase =
+  'pomodoro' |
+  'shortBreak' |
+  'longBreak';
+
 
 @Component({
   selector: 'app-tab3',
@@ -10,21 +18,18 @@ type TimerPhase = 'pomodoro' | 'shortBreak' | 'longBreak';
 })
 export class Tab3Page implements OnInit, OnDestroy {
 
-  // TEMPOS
+
+  // =====================================================
+  // TEMPOS FIXOS
+  // =====================================================
+
   readonly POMODORO_TIME = 25 * 60;
+
   readonly SHORT_BREAK_TIME = 5 * 60;
+
   readonly LONG_BREAK_TIME = 15 * 60;
+
   readonly POMODOROS_BEFORE_LONG_BREAK = 4;
-
-  // =====================================================
-  // TAREFA
-  // =====================================================
-
-  taskName: string = 'ESTUDAR PARA A PROVA DE BIOLOGIA';
-
-  editandoTarefa: boolean = false;
-
-  tarefaEditada: string = '';
 
 
   // =====================================================
@@ -53,7 +58,8 @@ export class Tab3Page implements OnInit, OnDestroy {
   // CONTROLE INTERNO
   // =====================================================
 
-  private timerInterval: ReturnType<typeof setInterval> | null = null;
+  private timerInterval:
+    ReturnType<typeof setInterval> | null = null;
 
   private endTime: number | null = null;
 
@@ -79,101 +85,25 @@ export class Tab3Page implements OnInit, OnDestroy {
 
     this.hasStarted = false;
 
+    this.currentPhase = 'pomodoro';
+
     this.secondsLeft = this.POMODORO_TIME;
 
+    this.completedPomodoros = 0;
 
-    // Recupera a tarefa salva
-    const tarefaSalva = localStorage.getItem('pomodoroTask');
-
-    if (tarefaSalva && tarefaSalva.trim() !== '') {
-
-      this.taskName = tarefaSalva;
-
-    }
-
+    this.cycleNumber = 1;
 
     this.updateClockHands();
   }
 
 
+  // =====================================================
+  // DESTRUIR
+  // =====================================================
+
   ngOnDestroy(): void {
 
     this.clearTimer();
-
-  }
-
-
-  // =====================================================
-  // COMEÇAR A EDITAR
-  // =====================================================
-
-  editarTarefa(): void {
-
-    this.tarefaEditada = this.taskName;
-
-    this.editandoTarefa = true;
-
-  }
-
-
-  // =====================================================
-  // ALTERAR TEXTO
-  // =====================================================
-
-  alterarTextoTarefa(event: Event): void {
-
-    const input =
-      event.target as HTMLInputElement;
-
-    this.tarefaEditada = input.value;
-
-  }
-
-
-  // =====================================================
-  // SALVAR TAREFA
-  // =====================================================
-
-  salvarTarefa(): void {
-
-    const novaTarefa =
-      this.tarefaEditada.trim();
-
-
-    // Não deixa salvar vazio
-    if (novaTarefa.length === 0) {
-
-      return;
-
-    }
-
-
-    // Atualiza a variável principal
-    this.taskName = novaTarefa;
-
-
-    // Salva no navegador
-    localStorage.setItem(
-      'pomodoroTask',
-      novaTarefa
-    );
-
-
-    // Fecha o modo de edição
-    this.editandoTarefa = false;
-
-  }
-
-
-  // =====================================================
-  // CANCELAR EDIÇÃO
-  // =====================================================
-
-  cancelarEdicao(): void {
-
-    this.tarefaEditada = this.taskName;
-
-    this.editandoTarefa = false;
 
   }
 
@@ -246,7 +176,10 @@ export class Tab3Page implements OnInit, OnDestroy {
     this.updateClockHands();
 
 
+    // ===================================================
     // TEMPO DE FOCO
+    // ===================================================
+
     if (
       this.currentPhase === 'pomodoro' &&
       this.isRunning
@@ -270,7 +203,10 @@ export class Tab3Page implements OnInit, OnDestroy {
     }
 
 
+    // ===================================================
     // TERMINOU
+    // ===================================================
+
     if (millisecondsLeft <= 0) {
 
       this.finishPhase();
@@ -281,7 +217,7 @@ export class Tab3Page implements OnInit, OnDestroy {
 
 
   // =====================================================
-  // PAUSAR / CONTINUAR
+  // INICIAR / PAUSAR / CONTINUAR
   // =====================================================
 
   togglePause(): void {
@@ -422,6 +358,10 @@ export class Tab3Page implements OnInit, OnDestroy {
     this.endTime = null;
 
 
+    // ===================================================
+    // POMODORO → PAUSA
+    // ===================================================
+
     if (
       this.currentPhase === 'pomodoro'
     ) {
@@ -455,6 +395,10 @@ export class Tab3Page implements OnInit, OnDestroy {
 
     }
 
+
+    // ===================================================
+    // PAUSA → POMODORO
+    // ===================================================
 
     this.currentPhase =
       'pomodoro';
@@ -501,6 +445,10 @@ export class Tab3Page implements OnInit, OnDestroy {
     this.secondsLeft = 0;
 
 
+    // ===================================================
+    // POMODORO TERMINOU
+    // ===================================================
+
     if (
       this.currentPhase === 'pomodoro'
     ) {
@@ -536,6 +484,10 @@ export class Tab3Page implements OnInit, OnDestroy {
 
     }
 
+
+    // ===================================================
+    // PAUSA TERMINOU
+    // ===================================================
 
     if (
       this.currentPhase === 'shortBreak' ||
@@ -587,6 +539,9 @@ export class Tab3Page implements OnInit, OnDestroy {
       case 'longBreak':
         return this.LONG_BREAK_TIME;
 
+      default:
+        return this.POMODORO_TIME;
+
     }
 
   }
@@ -609,6 +564,9 @@ export class Tab3Page implements OnInit, OnDestroy {
       case 'longBreak':
         return 'Pausa longa';
 
+      default:
+        return 'Estudar alquimia';
+
     }
 
   }
@@ -630,6 +588,9 @@ export class Tab3Page implements OnInit, OnDestroy {
 
       case 'longBreak':
         return 'Você merece uma pausa maior.';
+
+      default:
+        return '';
 
     }
 

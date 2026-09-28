@@ -1,192 +1,479 @@
-.settings-content {
-  --background: #090a14 url('/assets/bg-stars.jpg') no-repeat center center / cover;
 
-  .background-overlay {
-    min-height: 100%;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-  }
+.settings-content {
+  --background: #080711;
+  color: #f5f0ff;
 }
 
-// Cabeçalho
+.background-overlay {
+  min-height: 100%;
+  padding: 12px 16px 30px;
+  background:
+    radial-gradient(ellipse at top, #241538 0%, transparent 55%),
+    #080711;
+}
+
 .header-nav {
   display: flex;
   align-items: center;
-  position: relative;
-  justify-content: center;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 20px;
 
   .btn-back {
-    position: absolute;
-    left: -10px;
-    --color: #ffffff;
-    font-size: 1.2rem;
+    --color: #f1e8ff;
+    margin: 0;
   }
 
   .titulo-guilda {
-    color: #e2cb92; // Dourado místico do título
-    font-size: 1.4rem;
-    font-weight: 600;
     margin: 0;
-    font-family: serif, 'Times New Roman';
-    letter-spacing: 0.5px;
+    color: #e9d7a5;
+    font-family: Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
   }
 }
 
-// Estilização Fiel ao Design dos Segmentos (Abas)
-ion-segment.custom-segment {
-  background: transparent;
-  margin-bottom: 20px;
+.custom-segment {
+  margin: 0 0 22px;
+  padding: 4px;
+  border-radius: 12px;
+  background: #211832;
 
   ion-segment-button {
-    --background: #3a3250;
-    --background-checked: #ffffff;
-    --color: #ffffff;
-    --color-checked: #1d172e;
-    --border-radius: 10px;
+    --background: transparent;
+    --background-checked: #f4f0fa;
+    --color: #d6c9e9;
+    --color-checked: #241633;
     --indicator-color: transparent;
-    margin: 0 4px;
-    min-height: 36px;
+    min-height: 38px;
+    border-radius: 9px;
+    font-size: 11px;
     font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: none;
+    text-transform: uppercase;
   }
 }
 
 .cards-container {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
-// Estilo dos Cards em Tom Roxo Escuro Translúcido com Borda Dourada/Acinzentada
 .card-rpg {
-  background: rgba(33, 29, 49, 0.9);
-  border-radius: 16px;
-  padding: 14px 16px;
-  border: 1px solid rgba(226, 203, 146, 0.25);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  padding: 15px;
+  border: 1px solid #453753;
+  border-radius: 13px;
+  background: #1c1629;
+  box-shadow: 0 4px 12px #00000030;
 }
 
-// Feed e Membros
 .item-feed {
   display: flex;
   align-items: center;
   gap: 12px;
+}
 
-  .posicao-rank {
-    color: #e2cb92;
-    font-weight: bold;
-    font-size: 1.1rem;
-  }
+.avatar-ring {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 43px;
+  height: 43px;
+  overflow: hidden;
+  border: 1px solid #b78aff;
+  border-radius: 50%;
+  background: #30203f;
 
-  .avatar-ring {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid #e2cb92;
-    flex-shrink: 0;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  .feed-info {
-    flex: 1;
-
-    h2 {
-      color: #ffffff;
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin: 0;
-    }
-
-    p {
-      color: #a8a3bd;
-      font-size: 0.8rem;
-      margin: 3px 0 0 0;
-    }
-
-    .xp-rank {
-      color: #b182f0;
-      font-weight: 600;
-    }
-  }
-
-  .tempo-feed {
-    color: #7b7593;
-    font-size: 0.75rem;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 
-// Desafios da Guilda
+.feed-info {
+  flex: 1;
+  min-width: 0;
+
+  h2 {
+    margin: 0 0 4px;
+    color: #f3eaff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    color: #bcb0cc;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+}
+
+.tempo-feed {
+  color: #b8a7cc;
+  font-size: 10px;
+}
+
+.secao-titulo {
+  margin: 12px 0 0;
+  color: #e5d5ff;
+  font-size: 15px;
+}
+
 .card-desafio {
   h3 {
-    color: #a8a3bd;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin: 0 0 4px 0;
+    margin: 0;
+    color: #eee3ff;
+    font-size: 14px;
   }
+}
 
-  .desc-desafio {
-    color: #ffffff;
-    font-size: 0.9rem;
-    margin: 0 0 14px 0;
+.titulo-card-desafio {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 23px;
   }
+}
 
-  .progress-box {
+.desc-desafio {
+  margin: 8px 0 14px;
+  color: #c9bfd7;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.progress-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.progress-track {
+  position: relative;
+  flex: 1;
+  height: 16px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #100d19;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8739e8, #bc64ff);
+  transition: width 0.35s ease;
+}
+
+.progresso-texto {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  z-index: 1;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  transform: translateY(-50%);
+  text-shadow: 0 1px 3px #000;
+}
+
+.icone-desafio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bd82ff;
+  font-size: 23px;
+}
+
+.texto-progresso {
+  margin: 6px 0 12px;
+  color: #bca6d8;
+  font-size: 11px;
+  text-align: right;
+}
+
+.btn-desafio {
+  --background: #4b3474;
+  --background-hover: #61448f;
+  --color: #fff;
+  --border-radius: 9px;
+  margin: 12px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: none;
+}
+
+.posicao-rank {
+  min-width: 22px;
+  color: #d6bbff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.xp-rank {
+  color: #b68aff !important;
+}
+
+.icone-trofeu {
+  color: #e8ce82;
+  font-size: 21px;
+}
+
+/* DETALHES DO DESAFIO */
+
+.detalhes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-retornar {
+  align-self: flex-start;
+  --color: #d8c1ff;
+  margin: 0;
+  font-size: 12px;
+  text-transform: none;
+}
+
+.detalhe-card {
+  padding: 20px 16px;
+}
+
+.detalhe-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 14px;
+  border: 1px solid #8756b6;
+  border-radius: 16px;
+  background: #2b1c40;
+  color: #c18bff;
+  font-size: 29px;
+}
+
+.subtitulo-detalhe {
+  display: block;
+  margin-bottom: 10px;
+  color: #b78aff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.detalhe-card > h2,
+.detalhe-card > div > h2 {
+  color: #f0e5ff;
+  font-family: Georgia, serif;
+  font-size: 21px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.detalhe-card > .desc-desafio,
+.detalhe-card > div > .desc-desafio {
+  margin: 10px 0 20px;
+  text-align: center;
+}
+
+.progresso-detalhado {
+  padding: 15px 0;
+  border-top: 1px solid #41334f;
+  border-bottom: 1px solid #41334f;
+}
+
+.progresso-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: #e5d9f5;
+  font-size: 12px;
+
+  strong {
+    color: #c18bff;
+  }
+}
+
+.progresso-detalhado .progress-track {
+  height: 13px;
+}
+
+.porcentagem {
+  margin: 8px 0 0;
+  color: #bca6d8;
+  font-size: 11px;
+  text-align: right;
+}
+
+/* ETAPAS */
+
+.etapas-container {
+  margin-top: 20px;
+
+  h3 {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
-
-    .progress-track {
-      flex: 1;
-      height: 24px;
-      background: #191428;
-      border-radius: 12px;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-
-      .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #8b5cf6, #a855f7);
-        border-radius: 12px;
-      }
-
-      .progresso-texto {
-        position: absolute;
-        right: 12px;
-        color: #ffffff;
-        font-size: 0.75rem;
-        font-weight: bold;
-      }
-    }
-
-    .icone-desafio {
-      ion-icon {
-        font-size: 2.2rem;
-        color: #c084fc;
-      }
-    }
+    gap: 8px;
+    margin: 0 0 8px;
+    color: #e8d9ff;
+    font-size: 15px;
   }
 
-  .btn-desafio {
-    --background: #4c3f71;
-    --color: #ffffff;
-    --border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: none;
-    height: 40px;
+  h3 ion-icon {
+    color: #bc82ff;
+    font-size: 20px;
+  }
+}
+
+.texto-ajuda {
+  margin: 0 0 14px;
+  color: #a99bb9;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.etapa-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 13px 10px;
+  border: 1px solid #40314e;
+  border-radius: 10px;
+  background: #151020;
+
+  ion-checkbox {
+    --checkbox-background: #21172e;
+    --checkbox-background-checked: #9a54e9;
+    --border-color: #806399;
+    --border-color-checked: #b88aff;
+    --checkmark-color: #fff;
+    flex-shrink: 0;
     margin: 0;
+  }
+}
+
+.etapa-texto {
+  flex: 1;
+
+  strong {
+    color: #e8dcf7;
+    font-size: 12px;
+  }
+
+  p {
+    margin: 5px 0 0;
+    color: #b8abc8;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+}
+
+.etapa-concluida {
+  opacity: 0.65;
+
+  strong,
+  p {
+    text-decoration: line-through;
+  }
+}
+
+.icone-etapa {
+  flex-shrink: 0;
+  color: #71617f;
+  font-size: 19px;
+}
+
+.icone-concluido {
+  color: #b77bff;
+}
+
+.mensagem-concluido {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 12px;
+  border: 1px solid #6d4a8f;
+  border-radius: 10px;
+  background: #2c1c3e;
+  color: #e6c8ff;
+  font-size: 12px;
+  line-height: 1.5;
+
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 22px;
+  }
+}
+
+/* EDIÇÃO */
+
+.form-edicao {
+  margin-top: 16px;
+}
+
+.campo-edicao {
+  --background: #151020;
+  --color: #f0e5ff;
+  --border-color: #49375c;
+  --highlight-color-focused: #b77bff;
+  margin-bottom: 12px;
+  border: 1px solid #40314e;
+  border-radius: 10px;
+
+  ion-label {
+    color: #c5a8e8 !important;
+    font-size: 12px;
+  }
+
+  ion-input,
+  ion-textarea {
+    --color: #fff;
+    font-size: 13px;
+  }
+}
+
+.botoes-edicao {
+  margin-top: 18px;
+}
+
+.btn-editar {
+  --background: #352342;
+  --color: #e5c8ff;
+  --border-color: #9c6ac4;
+  --border-style: solid;
+  --border-width: 1px;
+  --border-radius: 9px;
+  margin-top: 22px;
+  font-size: 12px;
+  text-transform: none;
+}
+
+.btn-cancelar {
+  --color: #d2c2e5;
+  --border-color: #695779;
+  --border-radius: 9px;
+  font-size: 12px;
+  text-transform: none;
+}
+
+@media (min-width: 600px) {
+  .background-overlay {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .detalhe-card {
+    padding: 24px;
   }
 }

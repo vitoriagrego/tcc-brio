@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { ToastController, LoadingController } from '@ionic/angular';
+import { SupabaseService } from 'src/app/services/supabase';
 
 @Component({
   selector: 'app-login',
@@ -8,37 +9,50 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['./login.page.scss'],
   standalone: false,
 })
-export class LoginPage implements OnInit {
-
+export class LoginPage {
   credenciais = {
     email: '',
     senha: ''
   };
 
-  isModalOpen: boolean = false;
-  emailRecuperacao: string = '';
-
-  loginInvalido: boolean = false;
-  mensagemErro: string = '';
+  loginInvalido = false;
+  mensagemErro = '';
+  isModalOpen = false;
+  emailRecuperacao = '';
 
   constructor(
+    private supabaseService: SupabaseService,
     private router: Router,
-    private alertCtrl: AlertController
-  ) { }
+    private toastController: ToastController,
+    private loadingController: LoadingController
+  ) {}
 
-  ngOnInit() { }
-
-  executarLogin() {
-    this.loginInvalido = false;
-
+  async executarLogin() {
     if (!this.credenciais.email || !this.credenciais.senha) {
       this.loginInvalido = true;
-      this.mensagemErro = 'Por favor, preencha todos os campos.';
+      this.mensagemErro = 'Por favor, preencha o e-mail e a senha.';
       return;
     }
 
-    console.log('Login realizado com sucesso:', this.credenciais);
-    this.router.navigate(['/tabs/tab1']);
+    const loading = await this.loadingController.create({
+      message: 'Entrando...'
+    });
+    await loading.present();
+
+    const { data, error } = await this.supabaseService.signIn(
+      this.credenciais.email,
+      this.credenciais.senha
+    );
+
+    await loading.dismiss();
+
+    if (error) {
+      this.loginInvalido = true;
+      this.mensagemErro = 'E-mail ou senha inválidos.';
+    } else {
+      this.loginInvalido = false;
+      this.router.navigate(['/tabs', 'tab1']);
+    }
   }
 
   abrirModalRecuperacao() {
@@ -47,29 +61,30 @@ export class LoginPage implements OnInit {
 
   fecharModalRecuperacao() {
     this.isModalOpen = false;
-    this.emailRecuperacao = '';
   }
 
   async enviarEmailRecuperacao() {
     if (!this.emailRecuperacao) {
-      const alert = await this.alertCtrl.create({
-        header: 'Atenção',
-        message: 'Por favor, digite seu e-mail de recuperação.',
-        buttons: ['OK']
-      });
-      await alert.present();
+      this.exibirToast('Por favor, informe seu e-mail.');
       return;
     }
 
-    const emailEnviado = this.emailRecuperacao;
-    this.fecharModalRecuperacao();
+    const { error } = await this.supabaseService.resetPassword(this.emailRecuperacao);
 
-    const alert = await this.alertCtrl.create({
-      header: 'E-mail Enviado!',
-      message: `Se o e-mail ${emailEnviado} estiver cadastrado, você receberá o link em instantes.`,
-      buttons: ['OK']
+    if (error) {
+      this.exibirToast('Erro ao enviar e-mail: ' + error.message);
+    } else {
+      this.exibirToast('E-mail de recuperação enviado com sucesso!');
+      this.fecharModalRecuperacao();
+    }
+  }
+
+  private async exibirToast(mensagem: string) {
+    const toast = await this.toastController.create({
+      message: mensagem,
+      duration: 3000,
+      position: 'bottom'
     });
-
-    await alert.present();
+    toast.present();
   }
 }

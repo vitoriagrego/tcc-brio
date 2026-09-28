@@ -1,148 +1,360 @@
 // ==========================================
-// PALETA DE CORES MÍSTICA (RPG/ALQUIMIA)
+// PALETA DE CORES - RPG / ALQUIMIA
 // ==========================================
-$fundo-escuro:      #161b1d; 
-$papel-pergaminho:  #faedd2; 
-$vinho-titulo:      #4a1c37; 
-$marrom-texto:      #261d15; 
-$borda-suave:       #e8dfca; 
-$verde-botao:       #1e3839; 
+$fundo-escuro: #0d121b;
+$fundo-card: rgba(34, 24, 46, 0.94);
+$dourado: #dfcb94;
+$dourado-claro: #f0dfad;
+$roxo: #a078bd;
+$roxo-claro: #c19ad5;
+$texto: #eee7da;
+$texto-secundario: #c5b9ca;
+$borda: rgba(164, 125, 190, 0.52);
+$borda-dourada: rgba(223, 203, 148, 0.6);
 
+// ==========================================
+// FUNDO PRINCIPAL
+// ==========================================
 .rpg-theme {
   --background: #{$fundo-escuro};
   padding-top: env(safe-area-inset-top);
-  background: radial-gradient(circle at center, #242c2f 0%, #111516 100%);
+  min-height: 100%;
+  background:
+    linear-gradient(
+      rgba(5, 8, 15, 0.28),
+      rgba(5, 7, 14, 0.48)
+    ),
+    url('/assets/pomodoro.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: $texto;
 }
 
+// ==========================================
+// CONTAINER PRINCIPAL
+// ==========================================
 .quiz-container {
-  background-color: $papel-pergaminho;
+  width: calc(100% - 30px);
   max-width: 480px;
-  margin: 20px auto;
-  padding: 36px 24px;
-  border-radius: 24px;
-  box-shadow: 
-    0px 20px 40px rgba(0, 0, 0, 0.4),
-    inset 0px 0px 60px rgba(218, 201, 166, 0.2);
-  border: 1px solid #8a7d66;
-  outline: 5px solid $papel-pergaminho;
-  outline-offset: -10px;
+  margin: 20px auto 40px;
+  padding: 30px 20px 35px;
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(34, 24, 46, 0.94),
+      rgba(16, 13, 27, 0.94)
+    );
+  border: 1px solid rgba(164, 125, 190, 0.55);
+  box-shadow:
+    0 15px 45px rgba(0, 0, 0, 0.5),
+    inset 0 0 35px rgba(150, 105, 180, 0.08);
+  position: relative;
+  overflow: hidden;
 }
 
+// ==========================================
+// LINHA DECORATIVA SUPERIOR
+// ==========================================
+.quiz-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      $dourado,
+      transparent
+    );
+  opacity: 0.7;
+}
+
+// ==========================================
+// CABEÇALHO
+// ==========================================
 .quiz-header {
   text-align: center;
-  margin-bottom: 40px;
-  padding-bottom: 24px;
-  border-bottom: 2px dashed #d6c5a5;
-
-  h1 {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    color: $vinho-titulo;
-    font-size: 1.75rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin: 0 0 12px 0;
-    line-height: 1.2;
-    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.8);
-  }
-
-  h3 {
-    font-family: 'Georgia', serif;
-    font-style: italic;
-    color: #556772;
-    font-size: 0.95rem;
-    margin: 0;
-    line-height: 1.5;
-  }
+  margin-bottom: 30px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(223, 203, 148, 0.3);
+  position: relative;
 }
 
+.quiz-header h1 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  color: $dourado;
+  font-size: 1.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0 0 10px 0;
+  line-height: 1.25;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.quiz-header h3 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-style: normal;
+  color: $texto-secundario;
+  font-size: 0.85rem;
+  margin: 0 auto;
+  line-height: 1.5;
+  max-width: 330px;
+}
+
+.quiz-header::after {
+  content: '✦';
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #171020;
+  color: $dourado;
+  font-size: 13px;
+}
+
+// ==========================================
+// BLOCOS DAS QUESTÕES
+// ==========================================
 .question-block {
-  margin-bottom: 28px;
-  padding: 16px;
-  border-radius: 14px;
-  background-color: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(230, 215, 185, 0.5);
-  box-shadow: 0 4px 10px rgba(160, 140, 110, 0.05);
+  margin-bottom: 22px;
+  padding: 18px;
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(39, 27, 51, 0.94),
+      rgba(22, 16, 31, 0.94)
+    );
+  border: 1px solid rgba(164, 125, 190, 0.48);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
 
-  h2 {
-    font-family: 'Georgia', serif;
-    color: $marrom-texto;
-    font-size: 1.08rem;
-    line-height: 1.45;
-    font-weight: bold;
-    margin: 0;
-  }
+.question-block::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15px;
+  right: 15px;
+  height: 1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(223, 203, 148, 0.45),
+      transparent
+    );
+}
+
+.question-block h2 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  color: $texto;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 // ==========================================
-// CONFIGURAÇÃO DOS CHECKBOXES (CORREÇÃO DO TEXTO CORTE)
+// ESTILIZAÇÃO DOS RADIOS E LABELS
 // ==========================================
-.checkbox-group {
+ion-radio-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   margin-top: 16px;
+}
 
-  ion-checkbox {
+.radio-item {
+  --background: rgba(22, 17, 29, 0.82);
+  --border-radius: 9px;
+  --inner-padding-end: 12px;
+  --padding-start: 12px;
+  --min-height: 48px;
+  border: 1px solid rgba(164, 125, 190, 0.42);
+  transition: all 0.2s ease-in-out;
+
+  ion-radio {
+    margin-right: 12px;
+    align-self: center;
+    --color: #{$texto-secundario};
+    --color-checked: #{$dourado};
+  }
+
+  ion-label {
+    color: $texto;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 0.95rem;
-    color: #40352d;
-    font-weight: 500;
-    width: 100%;
-    
-    padding: 14px 12px; // Um pouco mais de respiro vertical para o texto quebrado
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid #ebdcb9;
-    
-    --size: 20px;
-    --checkbox-background: #ffffff;
-    --checkbox-background-checked: #{$vinho-titulo};
-    --border-color: #a6937c;
-    --border-color-checked: #{$vinho-titulo};
-    --border-radius: 5px;
-    
-    // ---- SOLUÇÃO PARA NÃO CORTAR O TEXTO ----
-    white-space: normal !important;      // Permite que o texto quebre linhas normalmente
-    overflow: visible !important;        // Garante que o texto oculto apareça
-    text-overflow: clip !important;      // Remove os três pontinhos (...)
-    align-items: flex-start;             // Alinha o quadrado no topo quando o texto for longo
-    
-    // Customização do container interno do Shadow DOM do Ionic
-    &::part(label) {
-      white-space: normal;
-      text-overflow: initial;
-      overflow: visible;
-      line-height: 1.3;
-    }
-    // -----------------------------------------
-    
-    transition: all 0.2s ease-in-out;
-
-    &.checkbox-checked {
-      background: #a09096;
-      border-color: #d4b2c8;
-      color: $vinho-titulo;
-      transform: translateX(4px); 
-    }
-
-    &:active {
-      transform: scale(0.98);
-    }
+    font-size: 0.9rem;
+    line-height: 1.4;
+    white-space: normal !important;
+    word-break: break-word;
   }
 }
 
-// Ícones Místicos
+// Hover e Efeito visual ao selecionar
+.radio-item:hover {
+  border-color: rgba(223, 203, 148, 0.65);
+  --background: rgba(42, 29, 53, 0.92);
+}
+
+// ==========================================
+// ÍCONES
+// ==========================================
 ion-icon {
-  font-size: 1.75rem;
-  filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.15));
+  font-size: 1.65rem;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.4));
   transition: transform 0.3s ease;
-
-  &:hover {
-    transform: rotate(15deg) scale(1.1); 
-  }
 }
 
-.rpg-icon-brown  { color: #8a6f56; } 
-.rpg-icon-pink   { color: #d63665; } 
-.rpg-icon-gold   { color: #e6a600; }
+.rpg-icon-brown { color: #b59a7b; }
+.rpg-icon-pink { color: #c181a8; }
+.rpg-icon-gold { color: $dourado; }
+.rpg-icon-purple { color: $roxo-claro; }
+.rpg-icon-orange { color: #c99b72; }
+
+.question-block > ion-icon {
+  color: $roxo-claro;
+  opacity: 0.85;
+  font-size: 1.7rem;
+}
+
+// ==========================================
+// CONTAINER DO BOTÃO
+// ==========================================
+.button-container {
+  width: 100%;
+  margin-top: 20px;
+  padding: 0;
+}
+
+// ==========================================
+// BOTÃO ENVIAR - IONIC
+// ==========================================
+ion-button.btn-enviar {
+  width: 100%;
+  height: 50px;
+  margin: 0;
+
+  --background: linear-gradient(135deg, #76518d, #513765);
+  --background-hover: linear-gradient(135deg, #9169aa, #67477a);
+  --background-activated: #684879;
+  --background-focused: #76518d;
+
+  --color: #f0dfad;
+  --border-color: rgba(223, 203, 148, 0.75);
+  --border-style: solid;
+  --border-width: 1px;
+  --border-radius: 9px;
+  --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+ion-button.btn-enviar::part(native) {
+  width: 100%;
+  height: 100%;
+  border-radius: 9px;
+  border: 1px solid rgba(223, 203, 148, 0.75);
+  background: linear-gradient(135deg, #76518d, #513765);
+  color: #f0dfad;
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+ion-button.btn-enviar:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+  --border-color: #f0dfad;
+  --box-shadow:
+    0 7px 20px rgba(137, 91, 164, 0.4),
+    0 0 12px rgba(216, 197, 143, 0.15);
+}
+
+ion-button.btn-enviar:hover::part(native) {
+  background: linear-gradient(135deg, #9169aa, #67477a);
+  border-color: #f0dfad;
+}
+
+ion-button.btn-enviar:active {
+  transform: scale(0.98);
+}
+
+// ==========================================
+// ION CONTENT & SCROLL
+// ==========================================
+ion-content {
+  --background: transparent;
+}
+
+ion-content::part(scroll) {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(164, 125, 190, 0.6) rgba(10, 10, 18, 0.4);
+}
+
+// ==========================================
+// RESPONSIVIDADE
+// ==========================================
+@media (max-width: 480px) {
+  .quiz-container {
+    width: calc(100% - 24px);
+    margin: 14px auto 30px;
+    padding: 24px 14px 30px;
+    border-radius: 16px;
+  }
+
+  .quiz-header {
+    margin-bottom: 25px;
+    padding-bottom: 19px;
+  }
+
+  .quiz-header h1 {
+    font-size: 1.35rem;
+    letter-spacing: 0.7px;
+  }
+
+  .quiz-header h3 {
+    font-size: 0.82rem;
+  }
+
+  .question-block {
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+
+  .question-block h2 {
+    font-size: 0.98rem;
+  }
+
+  .radio-item ion-label {
+    font-size: 0.87rem;
+  }
+
+  ion-button.btn-enviar {
+    height: 48px;
+    font-size: 0.85rem;
+    letter-spacing: 1.3px;
+  }
+}

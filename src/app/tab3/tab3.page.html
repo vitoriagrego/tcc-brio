@@ -1,7 +1,11 @@
 <ion-content [fullscreen]="true" class="tab3-content">
+
   <div class="main-overlay">
 
+    <!-- ========================================= -->
     <!-- TOPO -->
+    <!-- ========================================= -->
+
     <div class="header-section">
 
       <div class="back-link">
@@ -9,63 +13,21 @@
         <span>Transmutação em andamento</span>
       </div>
 
-      <h1 class="activity-title">{{ phaseTitle }}</h1>
+      <h1 class="activity-title">
+        {{ phaseTitle }}
+      </h1>
 
-      <div class="top-timer">{{ formatTime(secondsLeft) }}</div>
-
-      <!-- CARD DA TAREFA -->
-      <div class="task-card">
-
-        <!-- MODO NORMAL -->
-        <div class="task-info" *ngIf="!editandoTarefa">
-
-          <span class="task-name">
-            {{ currentPhase === 'pomodoro'
-            ? taskName
-            : 'MOMENTO DE DESCANSO' }}
-          </span>
-
-          <span class="task-duration">
-            {{ currentPhase === 'pomodoro'
-            ? '1h30m'
-            : (currentPhase === 'shortBreak'
-            ? '5min de pausa'
-            : '15min de pausa') }}
-          </span>
-
-        </div>
-
-
-        <!-- MODO EDITAR -->
-        <div class="task-edit-area" *ngIf="editandoTarefa">
-
-          <input class="task-input" type="text" [value]="tarefaEditada" (input)="alterarTextoTarefa($event)"
-            placeholder="Digite sua tarefa">
-
-          <div class="task-edit-buttons">
-
-            <button class="task-save-button" type="button" (click)="salvarTarefa()">SALVAR</button>
-
-            <button class="task-cancel-button" type="button" (click)="cancelarEdicao()">CANCELAR</button>
-
-          </div>
-
-        </div>
-
-        <!-- BOTÃO DE EDITAR -->
-        <button *ngIf="currentPhase === 'pomodoro' && !editandoTarefa" class="edit-task-button" type="button"
-          (click)="editarTarefa()">
-
-          <ion-icon name="create-outline"></ion-icon>
-
-        </button>
-
+      <div class="top-timer">
+        {{ formatTime(secondsLeft) }}
       </div>
 
     </div>
 
 
+    <!-- ========================================= -->
     <!-- RELÓGIO -->
+    <!-- ========================================= -->
+
     <div class="clock-area">
 
       <div class="magic-ring">
@@ -75,6 +37,7 @@
           <div class="clock-face">
 
             <!-- MARCAÇÕES -->
+
             <span class="clock-dot dot-12"></span>
             <span class="clock-dot dot-1"></span>
             <span class="clock-dot dot-2"></span>
@@ -88,21 +51,33 @@
             <span class="clock-dot dot-10"></span>
             <span class="clock-dot dot-11"></span>
 
+
             <!-- NÚMEROS -->
+
             <span class="num num-12">XII</span>
             <span class="num num-3">III</span>
             <span class="num num-6">VI</span>
             <span class="num num-9">IX</span>
 
+
             <!-- PONTEIRO DAS HORAS -->
-            <div class="hand hour-hand" [style.transform]="'rotate(' + hourRotation + 'deg)'">
+
+            <div
+              class="hand hour-hand"
+              [style.transform]="'rotate(' + hourRotation + 'deg)'">
             </div>
+
 
             <!-- PONTEIRO DOS MINUTOS -->
-            <div class="hand minute-hand" [style.transform]="'rotate(' + minuteRotation + 'deg)'">
+
+            <div
+              class="hand minute-hand"
+              [style.transform]="'rotate(' + minuteRotation + 'deg)'">
             </div>
 
+
             <!-- CENTRO -->
+
             <div class="center-pin">
               <div class="center-gem"></div>
             </div>
@@ -116,40 +91,61 @@
     </div>
 
 
+    <!-- ========================================= -->
     <!-- RODAPÉ -->
+    <!-- ========================================= -->
+
     <div class="footer-section">
 
       <p class="quote">
         "A concentração é o ingrediente secreto da manifestação."
       </p>
 
+
       <div class="timer-controls-panel">
 
-        <!-- INICIAR / PAUSAR -->
-        <div class="control-btn-wrapper" (click)="togglePause()">
+        <!-- INICIAR / PAUSAR / CONTINUAR -->
 
-          <button class="btn-circle" type="button">
+        <div
+          class="control-btn-wrapper"
+          (click)="togglePause()">
 
-            <ion-icon [name]="isRunning ? 'pause-sharp' : 'play-sharp'">
+          <button
+            class="btn-circle"
+            type="button">
+
+            <ion-icon
+              [name]="isRunning ? 'pause-sharp' : 'play-sharp'">
             </ion-icon>
 
           </button>
 
           <span class="btn-label">
-            {{ isRunning
-            ? 'Pausar'
-            : (hasStarted ? 'Continuar' : 'Iniciar') }}
+
+            {{
+              isRunning
+                ? 'Pausar'
+                : (hasStarted ? 'Continuar' : 'Iniciar')
+            }}
+
           </span>
 
         </div>
 
 
         <!-- PULAR PAUSA -->
-        <div class="control-btn-wrapper" (click)="skipToBreak()">
 
-          <button class="btn-circle btn-skip" type="button">
+        <div
+          class="control-btn-wrapper"
+          (click)="skipToBreak()">
 
-            <ion-icon name="play-forward-sharp"></ion-icon>
+          <button
+            class="btn-circle btn-skip"
+            type="button">
+
+            <ion-icon
+              name="play-forward-sharp">
+            </ion-icon>
 
           </button>
 
@@ -160,16 +156,22 @@
         </div>
 
 
-        <!-- TIMER -->
+        <!-- TEMPO -->
+
         <div class="live-timer">
           {{ formatTime(secondsLeft) }}
         </div>
 
 
         <!-- FINALIZAR -->
-        <div class="control-btn-wrapper" (click)="stopTimer()">
 
-          <button class="btn-circle btn-stop" type="button">
+        <div
+          class="control-btn-wrapper"
+          (click)="stopTimer()">
+
+          <button
+            class="btn-circle btn-stop"
+            type="button">
 
             <div class="stop-icon"></div>
 

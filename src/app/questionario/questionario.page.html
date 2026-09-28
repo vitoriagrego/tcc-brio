@@ -8,6 +8,7 @@
 
     <ion-grid class="ion-no-padding">
 
+      <!-- Pergunta 1 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="10">
@@ -17,28 +18,62 @@
             <ion-icon name="paw" class="rpg-icon-brown"></ion-icon>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Distrações (celular, redes sociais, notificações)</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Falta de motivação</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Procrastinação</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Não saber por onde começar</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(1, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Distrações (celular, redes sociais, notificações)"></ion-radio>
+            <ion-label class="ion-text-wrap">Distrações (celular, redes sociais, notificações)</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Falta de motivação"></ion-radio>
+            <ion-label class="ion-text-wrap">Falta de motivação</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Procrastinação"></ion-radio>
+            <ion-label class="ion-text-wrap">Procrastinação</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Não saber por onde começar"></ion-radio>
+            <ion-label class="ion-text-wrap">Não saber por onde começar</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
+      <!-- Pergunta 2 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="12">
             <h2>2. Como você prefere organizar sua rotina?</h2>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Planejo tudo com antecedência</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Faço uma lista diária de tarefas</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Vou ajustando conforme o dia</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Não costumo planejar</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(2, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Planejo tudo com antecedência"></ion-radio>
+            <ion-label class="ion-text-wrap">Planejo tudo com antecedência</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Faço uma lista diária de tarefas"></ion-radio>
+            <ion-label class="ion-text-wrap">Faço uma lista diária de tarefas</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Vou ajustando conforme o dia"></ion-radio>
+            <ion-label class="ion-text-wrap">Vou ajustando conforme o dia</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Não costumo planejar"></ion-radio>
+            <ion-label class="ion-text-wrap">Não costumo planejar</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
+      <!-- Pergunta 3 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="10">
@@ -48,14 +83,31 @@
             <ion-icon name="flask" class="rpg-icon-pink"></ion-icon>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Faço uma pausa curta e volto</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Mudo de ambiente</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Escuto música ou algo motivador</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Desisto da tarefa</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(3, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Faço uma pausa curta e volto"></ion-radio>
+            <ion-label class="ion-text-wrap">Faço uma pausa curta e volto</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Mudo de ambiente"></ion-radio>
+            <ion-label class="ion-text-wrap">Mudo de ambiente</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Escuto música ou algo motivador"></ion-radio>
+            <ion-label class="ion-text-wrap">Escuto música ou algo motivador</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Desisto da tarefa"></ion-radio>
+            <ion-label class="ion-text-wrap">Desisto da tarefa</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
+      <!-- Pergunta 4 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="10">
@@ -65,14 +117,31 @@
             <ion-icon name="paw" class="rpg-icon-brown"></ion-icon>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Ver meu progresso</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Recompensas (após completar tarefas)</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Prazos e compromissos</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Ter um propósito claro</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(4, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Ver meu progresso"></ion-radio>
+            <ion-label class="ion-text-wrap">Ver meu progresso</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Recompensas (após completar tarefas)"></ion-radio>
+            <ion-label class="ion-text-wrap">Recompensas (após completar tarefas)</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Prazos e compromissos"></ion-radio>
+            <ion-label class="ion-text-wrap">Prazos e compromissos</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Ter um propósito claro"></ion-radio>
+            <ion-label class="ion-text-wrap">Ter um propósito claro</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
+      <!-- Pergunta 5 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="10">
@@ -82,14 +151,31 @@
             <ion-icon name="sparkles" class="rpg-icon-gold"></ion-icon>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Desafios diários (streaks)</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Pontuação e níveis</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Metas com recompensas</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Desafios com amigos ou comunidade</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(5, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Desafios diários (streaks)"></ion-radio>
+            <ion-label class="ion-text-wrap">Desafios diários (streaks)</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Pontuação e níveis"></ion-radio>
+            <ion-label class="ion-text-wrap">Pontuação e níveis</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Metas com recompensas"></ion-radio>
+            <ion-label class="ion-text-wrap">Metas com recompensas</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Desafios com amigos ou comunidade"></ion-radio>
+            <ion-label class="ion-text-wrap">Desafios com amigos ou comunidade</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
+      <!-- Pergunta 6 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="10">
@@ -99,15 +185,31 @@
             <ion-icon name="flask" class="rpg-icon-orange"></ion-icon>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Pelo tempo de estudo/trabalho</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Pelo que consegui aprender
-            /fazer</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Pelo número de tarefas concluídas</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Outro jeito</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(6, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Pelo tempo de estudo/trabalho"></ion-radio>
+            <ion-label class="ion-text-wrap">Pelo tempo de estudo/trabalho</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Pelo que consegui aprender/fazer"></ion-radio>
+            <ion-label class="ion-text-wrap">Pelo que consegui aprender/fazer</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Pelo número de tarefas concluídas"></ion-radio>
+            <ion-label class="ion-text-wrap">Pelo número de tarefas concluídas</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Outro jeito"></ion-radio>
+            <ion-label class="ion-text-wrap">Outro jeito</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
+      <!-- Pergunta 7 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="10">
@@ -117,14 +219,31 @@
             <ion-icon name="paw" class="rpg-icon-brown"></ion-icon>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Me desestabilizan e perco o foco</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Me atrapalham, mas consigo me adaptar</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Consigo me adaptar bem e reorganizo</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Vejo como oportunidade e sigo em frente</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(7, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Me desestabilizam e perco o foco"></ion-radio>
+            <ion-label class="ion-text-wrap">Me desestabilizam e perco o foco</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Me atrapalham, mas consigo me adaptar"></ion-radio>
+            <ion-label class="ion-text-wrap">Me atrapalham, mas consigo me adaptar</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Consigo me adaptar bem e reorganizo"></ion-radio>
+            <ion-label class="ion-text-wrap">Consigo me adaptar bem e reorganizo</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Vejo como oportunidade e sigo em frente"></ion-radio>
+            <ion-label class="ion-text-wrap">Vejo como oportunidade e sigo em frente</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
+      <!-- Pergunta 8 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="10">
@@ -134,14 +253,31 @@
             <ion-icon name="sparkles" class="rpg-icon-gold"></ion-icon>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Nunca reviso, mantenho do jeito que está</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Reviso só quando algo dá errado</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Reviso de vez em quando</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Reviso com frequência e faço ajustes constantes</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(8, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Nunca reviso, mantenho do jeito que está"></ion-radio>
+            <ion-label class="ion-text-wrap">Nunca reviso, mantenho do jeito que está</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Reviso só quando algo dá errado"></ion-radio>
+            <ion-label class="ion-text-wrap">Reviso só quando algo dá errado</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Reviso de vez em quando"></ion-radio>
+            <ion-label class="ion-text-wrap">Reviso de vez em quando</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Reviso com frequência e faço ajustes constantes"></ion-radio>
+            <ion-label class="ion-text-wrap">Reviso com frequência e faço ajustes constantes</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
+      <!-- Pergunta 9 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="10">
@@ -151,14 +287,31 @@
             <ion-icon name="flask" class="rpg-icon-purple"></ion-icon>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Recompensas imediatas e pequenas</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Recompensas maiores no longo prazo</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Reconhecimento de outras pessoas</ion-checkbox>
-          <ion-checkbox labelPlacement="end">A sensação de dever cumprido</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(9, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Recompensas imediatas e pequenas"></ion-radio>
+            <ion-label class="ion-text-wrap">Recompensas imediatas e pequenas</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Recompensas maiores no longo prazo"></ion-radio>
+            <ion-label class="ion-text-wrap">Recompensas maiores no longo prazo</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Reconhecimento de outras pessoas"></ion-radio>
+            <ion-label class="ion-text-wrap">Reconhecimento de outras pessoas</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="A sensação de dever cumprido"></ion-radio>
+            <ion-label class="ion-text-wrap">A sensação de dever cumprido</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
+      <!-- Pergunta 10 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="10">
@@ -168,28 +321,62 @@
             <ion-icon name="paw" class="rpg-icon-brown"></ion-icon>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Me culpo e desisto</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Me frustro, mas tento compensar depois</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Aceito o dia e retorno no próximo</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Entendo como parte do processo e sigo meu plano</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(10, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Me culpo e desisto"></ion-radio>
+            <ion-label class="ion-text-wrap">Me culpo e desisto</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Me frustro, mas tento compensar depois"></ion-radio>
+            <ion-label class="ion-text-wrap">Me frustro, mas tento compensar depois</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Aceito o dia e retorno no próximo"></ion-radio>
+            <ion-label class="ion-text-wrap">Aceito o dia e retorno no próximo</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Entendo como parte do processo e sigo meu plano"></ion-radio>
+            <ion-label class="ion-text-wrap">Entendo como parte do processo e sigo meu plano</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
+      <!-- Pergunta 11 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="12">
             <h2>11. Como está sua relação com o tempo no dia a dia?</h2>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Vivo correndo e quase nunca tenho tempo</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Planejo bem, mas acabo me distraindo</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Consigo administrar bem a maior parte do tempo</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Tenho controle total e sigo meu planejamento</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(11, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Vivo correndo e quase nunca tenho tempo"></ion-radio>
+            <ion-label class="ion-text-wrap">Vivo correndo e quase nunca tenho tempo</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Planejo bem, mas acabo me distraindo"></ion-radio>
+            <ion-label class="ion-text-wrap">Planejo bem, mas acabo me distraindo</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Consigo administrar bem a maior parte do tempo"></ion-radio>
+            <ion-label class="ion-text-wrap">Consigo administrar bem a maior parte do tempo</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Tenho controle total e sigo meu planejamento"></ion-radio>
+            <ion-label class="ion-text-wrap">Tenho controle total e sigo meu planejamento</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
+      <!-- Pergunta 12 -->
       <div class="question-block">
         <ion-row class="ion-align-items-center">
           <ion-col size="10">
@@ -199,20 +386,37 @@
             <ion-icon name="paw" class="rpg-icon-brown"></ion-icon>
           </ion-col>
         </ion-row>
-        <div class="checkbox-group">
-          <ion-checkbox labelPlacement="end">Não tenho uma rotina definida</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Tento cuidar, mas não sou consistente</ion-checkbox>
-          <ion-checkbox labelPlacement="end">Cuido da maior parte dos dias</ion-checkbox>
-          <ion-checkbox labelPlacement="end">É uma prioridade e faz parte do meu planejamento</ion-checkbox>
-        </div>
+
+        <ion-radio-group (ionChange)="selecionarOpcao(12, $event.detail.value)">
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Não tenho uma rotina definida"></ion-radio>
+            <ion-label class="ion-text-wrap">Não tenho uma rotina definida</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Tento cuidar, mas não sou consistente"></ion-radio>
+            <ion-label class="ion-text-wrap">Tento cuidar, mas não sou consistente</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="Cuido da maior parte dos dias"></ion-radio>
+            <ion-label class="ion-text-wrap">Cuido da maior parte dos dias</ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="radio-item">
+            <ion-radio value="É uma prioridade e faz parte do meu planejamento"></ion-radio>
+            <ion-label class="ion-text-wrap">É uma prioridade e faz parte do meu planejamento</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </div>
 
     </ion-grid>
 
     <div class="button-container">
-      <ion-button expand="block" routerLink="/tabs/tab1" class="btn-enviar">
+      <ion-button expand="block" (click)="enviarQuestionario()" class="btn-enviar">
         Enviar
       </ion-button>
     </div>
 
   </div>
+</ion-content>

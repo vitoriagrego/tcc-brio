@@ -1,103 +1,287 @@
+
 <ion-content [fullscreen]="true" class="settings-content">
   <div class="background-overlay">
 
-    <!-- Topo da Tela -->
+    <!-- CABEÇALHO -->
     <div class="header-nav">
       <ion-button fill="clear" class="btn-back" (click)="voltar()">
         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
+
       <h1 class="titulo-guilda">Guilda dos Alquimistas</h1>
     </div>
 
-    <!-- Abas / Segmentos idênticos à imagem -->
-    <ion-segment [value]="segmentoSelecionado" (ionChange)="segmentChanged($event)" class="custom-segment">
-      <ion-segment-button value="feed">
-        <ion-label>FEED</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="desafios">
-        <ion-label>Desafios</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="ranking">
-        <ion-label>Ranking</ion-label>
-      </ion-segment-button>
-    </ion-segment>
+    <!-- TELA DE DETALHES DO DESAFIO -->
+    <div *ngIf="desafioSelecionado as desafio" class="detalhes-container">
 
-    <!-- Conteúdo do Segmento FEED -->
-    <div *ngIf="segmentoSelecionado === 'feed'" class="cards-container">
-      
-      <!-- Lista de Feitos dos Membros -->
-      <div *ngFor="let item of feedAtividades" class="card-rpg item-feed">
-        <div class="avatar-ring">
-          <img [src]="item.avatar" alt="Avatar">
+      <ion-button fill="clear" class="btn-retornar"
+        (click)="fecharDetalhes()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        Voltar aos desafios
+      </ion-button>
+
+      <div class="card-rpg detalhe-card">
+
+        <div class="detalhe-icone">
+          <ion-icon [name]="desafio.icone"></ion-icon>
         </div>
-        <div class="feed-info">
-          <h2>{{ item.usuario }}</h2>
-          <p>{{ item.acao }}</p>
+
+        <span class="subtitulo-detalhe">DESAFIO DA GUILDA</span>
+
+        <!-- MODO DE VISUALIZAÇÃO -->
+        <div *ngIf="!editandoDesafio">
+          <h2>{{ desafio.titulo }}</h2>
+          <p class="desc-desafio">{{ desafio.descricao }}</p>
         </div>
-        <span class="tempo-feed">{{ item.tempo }}</span>
-      </div>
 
-      <!-- Desafio no Feed -->
-      <div class="card-rpg card-desafio">
-        <h3>{{ desafios[0].titulo }}</h3>
-        <p class="desc-desafio">{{ desafios[0].descricao }}</p>
+        <!-- MODO DE EDIÇÃO DO ÚLTIMO DESAFIO -->
+        <div *ngIf="editandoDesafio" class="form-edicao">
+          <ion-item class="campo-edicao">
+            <ion-label position="stacked">Título do desafio</ion-label>
+            <ion-input [(ngModel)]="tituloEdicao"
+              placeholder="Digite o título"></ion-input>
+          </ion-item>
 
-        <div class="progress-box">
+          <ion-item class="campo-edicao">
+            <ion-label position="stacked">Descrição</ion-label>
+            <ion-textarea [(ngModel)]="descricaoEdicao"
+              autoGrow="true"
+              placeholder="Descreva o desafio"></ion-textarea>
+          </ion-item>
+
+          <ion-item class="campo-edicao">
+            <ion-label position="stacked">Meta total</ion-label>
+            <ion-input type="number" min="1"
+              [(ngModel)]="metaEdicao"></ion-input>
+          </ion-item>
+
+          <div class="botoes-edicao">
+            <ion-button expand="block" class="btn-desafio"
+              (click)="salvarEdicao()">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
+              Salvar alterações
+            </ion-button>
+
+            <ion-button expand="block" fill="outline"
+              class="btn-cancelar"
+              (click)="cancelarEdicao()">
+              Cancelar
+            </ion-button>
+          </div>
+        </div>
+
+        <!-- PROGRESSO -->
+        <div class="progresso-detalhado">
+          <div class="progresso-cabecalho">
+            <span>Progresso do desafio</span>
+            <strong>
+              {{ desafio.progressoAtual }}/{{ desafio.progressoTotal }}
+            </strong>
+          </div>
+
           <div class="progress-track">
-            <div class="progress-fill" [style.width.%]="(desafios[0].progressoAtual / desafios[0].progressoTotal) * 100"></div>
-            <span class="progresso-texto">{{ desafios[0].progressoAtual }}/{{ desafios[0].progressoTotal }}</span>
+            <div class="progress-fill"
+              [style.width.%]="progressoPercentual(desafio)">
+            </div>
           </div>
-          <div class="icone-desafio">
-            <ion-icon name="flask"></ion-icon>
+
+          <p class="porcentagem">
+            {{ progressoPercentual(desafio) }}% concluído
+          </p>
+        </div>
+
+        <!-- ETAPAS DO DESAFIO -->
+        <div class="etapas-container" *ngIf="!editandoDesafio">
+          <h3>
+            <ion-icon name="list-outline"></ion-icon>
+            Etapas do desafio
+          </h3>
+
+          <p class="texto-ajuda">
+            Marque as etapas conforme forem realizadas para atualizar
+            o progresso.
+          </p>
+
+          <div class="etapa-item"
+            *ngFor="let etapa of desafio.etapas; let i = index">
+
+            <ion-checkbox
+              [checked]="etapa.concluida"
+              [disabled]="etapa.concluida && desafio.progressoAtual === 0"
+              (ionChange)="alternarEtapa(desafio, etapa, $event.detail.checked)">
+            </ion-checkbox>
+
+            <div class="etapa-texto"
+              [class.etapa-concluida]="etapa.concluida">
+              <strong>Etapa {{ i + 1 }}</strong>
+              <p>{{ etapa.descricao }}</p>
+            </div>
+
+            <ion-icon
+              [name]="etapa.concluida ? 'checkmark-circle' : 'ellipse-outline'"
+              class="icone-etapa"
+              [class.icone-concluido]="etapa.concluida">
+            </ion-icon>
+          </div>
+
+          <div class="mensagem-concluido"
+            *ngIf="desafio.progressoAtual >= desafio.progressoTotal">
+            <ion-icon name="trophy-outline"></ion-icon>
+            Desafio concluído! Parabéns, alquimista!
           </div>
         </div>
 
-        <ion-button expand="block" class="btn-desafio" (click)="verDesafio(desafios[0].id)">
-          Ver desafio
+        <!-- EDIÇÃO EXCLUSIVA DO ÚLTIMO DESAFIO -->
+        <ion-button
+          *ngIf="!editandoDesafio && desafio.id === ultimoDesafioId"
+          expand="block"
+          class="btn-editar"
+          (click)="iniciarEdicao()">
+
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          Editar último desafio
         </ion-button>
-      </div>
 
+      </div>
     </div>
 
-    <!-- Conteúdo do Segmento DESAFIOS -->
-    <div *ngIf="segmentoSelecionado === 'desafios'" class="cards-container">
-      
-      <div *ngFor="let desafio of desafios" class="card-rpg card-desafio">
-        <h3>{{ desafio.titulo }}</h3>
-        <p class="desc-desafio">{{ desafio.descricao }}</p>
+    <!-- ABAS: OCULTAS QUANDO OS DETALHES ESTÃO ABERTOS -->
+    <ng-container *ngIf="!desafioSelecionado">
 
-        <div class="progress-box">
-          <div class="progress-track">
-            <div class="progress-fill" [style.width.%]="(desafio.progressoAtual / desafio.progressoTotal) * 100"></div>
-            <span class="progresso-texto">{{ desafio.progressoAtual }}/{{ desafio.progressoTotal }}</span>
+      <ion-segment
+        [value]="segmentoSelecionado"
+        (ionChange)="segmentChanged($event)"
+        class="custom-segment">
+
+        <ion-segment-button value="feed">
+          <ion-label>FEED</ion-label>
+        </ion-segment-button>
+
+        <ion-segment-button value="desafios">
+          <ion-label>Desafios</ion-label>
+        </ion-segment-button>
+
+        <ion-segment-button value="ranking">
+          <ion-label>Ranking</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <!-- FEED -->
+      <div *ngIf="segmentoSelecionado === 'feed'"
+        class="cards-container">
+
+        <div *ngFor="let item of feedAtividades"
+          class="card-rpg item-feed">
+
+          <div class="avatar-ring">
+            <img [src]="item.avatar" [alt]="item.usuario">
           </div>
-          <div class="icone-desafio">
-            <ion-icon [name]="desafio.icone"></ion-icon>
+
+          <div class="feed-info">
+            <h2>{{ item.usuario }}</h2>
+            <p>{{ item.acao }}</p>
           </div>
+
+          <span class="tempo-feed">{{ item.tempo }}</span>
         </div>
 
-        <ion-button expand="block" class="btn-desafio" (click)="verDesafio(desafio.id)">
-          Ver desafio
-        </ion-button>
+        <h3 class="secao-titulo">Desafio em destaque</h3>
+
+        <div class="card-rpg card-desafio"
+          *ngIf="desafios.length > 0">
+
+          <h3>{{ desafios[0].titulo }}</h3>
+          <p class="desc-desafio">{{ desafios[0].descricao }}</p>
+
+          <div class="progress-box">
+            <div class="progress-track">
+              <div class="progress-fill"
+                [style.width.%]="progressoPercentual(desafios[0])">
+              </div>
+              <span class="progresso-texto">
+                {{ desafios[0].progressoAtual }}/{{ desafios[0].progressoTotal }}
+              </span>
+            </div>
+
+            <div class="icone-desafio">
+              <ion-icon [name]="desafios[0].icone"></ion-icon>
+            </div>
+          </div>
+
+          <ion-button expand="block" class="btn-desafio"
+            (click)="verDesafio(desafios[0].id)">
+            Ver desafio
+          </ion-button>
+        </div>
       </div>
 
-    </div>
+      <!-- DESAFIOS -->
+      <div *ngIf="segmentoSelecionado === 'desafios'"
+        class="cards-container">
 
-    <!-- Conteúdo do Segmento RANKING -->
-    <div *ngIf="segmentoSelecionado === 'ranking'" class="cards-container">
-      
-      <div *ngFor="let rank of rankingGuilda" class="card-rpg item-feed">
-        <span class="posicao-rank">#{{ rank.posicao }}</span>
-        <div class="avatar-ring">
-          <img [src]="rank.avatar" alt="Avatar">
-        </div>
-        <div class="feed-info">
-          <h2>{{ rank.nome }}</h2>
-          <p class="xp-rank">{{ rank.xp }}</p>
+        <div *ngFor="let desafio of desafios"
+          class="card-rpg card-desafio">
+
+          <div class="titulo-card-desafio">
+            <h3>{{ desafio.titulo }}</h3>
+            <ion-icon [name]="desafio.icone"
+              [style.color]="desafio.corIcone">
+            </ion-icon>
+          </div>
+
+          <p class="desc-desafio">{{ desafio.descricao }}</p>
+
+          <div class="progress-box">
+            <div class="progress-track">
+              <div class="progress-fill"
+                [style.width.%]="progressoPercentual(desafio)">
+              </div>
+
+              <span class="progresso-texto">
+                {{ desafio.progressoAtual }}/{{ desafio.progressoTotal }}
+              </span>
+            </div>
+          </div>
+
+          <p class="texto-progresso">
+            {{ progressoPercentual(desafio) }}% concluído
+          </p>
+
+          <ion-button expand="block" class="btn-desafio"
+            (click)="verDesafio(desafio.id)">
+            <ion-icon name="eye-outline" slot="start"></ion-icon>
+            Ver desafio
+          </ion-button>
         </div>
       </div>
 
-    </div>
+      <!-- RANKING -->
+      <div *ngIf="segmentoSelecionado === 'ranking'"
+        class="cards-container">
+
+        <div *ngFor="let rank of rankingGuilda"
+          class="card-rpg item-feed">
+
+          <span class="posicao-rank">#{{ rank.posicao }}</span>
+
+          <div class="avatar-ring">
+            <img [src]="rank.avatar" [alt]="rank.nome">
+          </div>
+
+          <div class="feed-info">
+            <h2>{{ rank.nome }}</h2>
+            <p class="xp-rank">{{ rank.xp }}</p>
+          </div>
+
+          <ion-icon
+            *ngIf="rank.posicao === 1"
+            name="trophy-outline"
+            class="icone-trofeu">
+          </ion-icon>
+        </div>
+      </div>
+
+    </ng-container>
 
   </div>
 </ion-content>
