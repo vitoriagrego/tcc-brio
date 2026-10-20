@@ -21,20 +21,27 @@
           </span>
         </div>
 
-        <!-- Lista de Tarefas (Com área de rolagem interna se exceder o tamanho) -->
+        <!-- Lista de Tarefas -->
         <div class="tarefas-scroll-wrapper">
           <div class="tarefas-list">
             <div class="tarefa-card" *ngFor="let tarefa of tarefasDiaAtual">
               
-              <!-- Cabeçalho -->
+              <!-- Cabeçalho da Tarefa -->
               <div class="tarefa-header" (click)="toggleExpansao(tarefa)">
                 <div class="tarefa-textos">
                   <h3>{{ tarefa.titulo }}</h3>
                   <span class="tempo" *ngIf="tarefa.tempo">{{ tarefa.tempo }}</span>
                 </div>
 
-                <div class="gema-container" *ngIf="tarefa.iconeGema">
-                  <img [src]="tarefa.iconeGema" [alt]="tarefa.titulo" class="gema-img" (error)="$event.target.style.display='none'">
+                <div class="header-acoes">
+                  <div class="gema-container" *ngIf="tarefa.iconeGema">
+                    <img [src]="tarefa.iconeGema" [alt]="tarefa.titulo" class="gema-img" (error)="$event.target.style.display='none'">
+                  </div>
+
+                  <!-- Ícone discreto de exclusão -->
+                  <button class="btn-deletar-tarefa" (click)="excluirTarefa(tarefa, $event)" aria-label="Excluir tarefa">
+                    <ion-icon name="trash-bin-outline"></ion-icon>
+                  </button>
                 </div>
               </div>
 
@@ -45,7 +52,7 @@
                   <span [class.concluida]="sub.concluida">{{ sub.titulo }}</span>
                 </div>
 
-                <!-- Novo Campo Estilizado Místico -->
+                <!-- Campo Adicionar Subtarefa -->
                 <div class="add-subtarefa-box" (click)="$event.stopPropagation()">
                   <ion-icon name="add-outline"></ion-icon>
                   <input #inputSub type="text" placeholder="ADICIONAR SUBTAREFA..." (keyup.enter)="adicionarSubtarefa(tarefa, inputSub)">
@@ -56,6 +63,7 @@
           </div>
         </div>
 
+        <!-- Botão Nova Tarefa -->
         <button class="btn-add-tarefa" (click)="abrirModalNovaTarefa()">
           <ion-icon name="add-circle-outline"></ion-icon>
           <span>NOVA TAREFA</span>
@@ -75,10 +83,27 @@
     <ion-icon name="chevron-back-circle-outline"></ion-icon>
   </button>
 
-  <!-- MODAL DE CREAÇÃO -->
+  <!-- MODAL DE CRIAÇÃO DE TAREFA -->
   <div class="modal-mistico-overlay" *ngIf="exibirModal">
     <div class="modal-mistico-card">
       <h2>NOVA TAREFA ARCANA</h2>
+
+      <!-- Seleção Apropriada de Matéria -->
+      <div class="input-group">
+        <label>MATÉRIA</label>
+        <div class="materia-input-row">
+          <select [(ngModel)]="materiaSelecionadaId" class="select-materia-custom">
+            <option [ngValue]="null" disabled selected>Selecione uma matéria</option>
+            <option *ngFor="let mat of listaMaterias" [value]="mat.id">
+              {{ mat.nome }}
+            </option>
+          </select>
+
+          <button type="button" class="btn-criar-materia" (click)="promptCriarNovaMateria()" title="Nova Matéria">
+            <ion-icon name="add-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
 
       <div class="input-group">
         <label>TÍTULO DA TAREFA</label>

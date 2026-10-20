@@ -1,17 +1,17 @@
 <ion-content [fullscreen]="true">
   <div class="background">
-    <!-- TOPO -->
+    <!-- TOPO PERFIL CONECTADO -->
     <div class="headerTotal">
       <div class="header">
         <div class="perfil">
           <a href="tabs/tab5">
-            <img src="assets/perfil.png" alt="avatar">
+            <img [src]="perfil?.avatar_url || 'assets/perfil.png'" alt="avatar">
           </a>
           <div class="dados" [routerLink]="['/tabs/tab4']">
-            <h2>Aprendiz II</h2>
-            <p>Nível 17</p>
+            <h2>{{ perfil?.nickname || 'Aprendiz' }}</h2>
+            <p>Nível {{ perfil?.nivel || 1 }}</p>
             <div class="xp-bar">
-              <div class="xp-fill"></div>
+              <div class="xp-fill" [style.width.%]="xpPorcentagem"></div>
             </div>
           </div>
         </div>
@@ -33,24 +33,23 @@
         <h2>Estudos do dia</h2>
 
         <a href="/grim2">
-        <div class="tarefa" >
-          <div class="texto">
-            <h3>Estudar para a prova de Biologia</h3>
-            <p>1h30m</p>
+          <div class="tarefa">
+            <div class="texto">
+              <h3>Estudar para a prova de Biologia</h3>
+              <p>1h30m</p>
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
 
         <a href="/grim2">
-        <div class="tarefa">
-          <div class="texto">
-            <h3>Leitura longa e profunda</h3>
-            <p>2 horas</p>
+          <div class="tarefa">
+            <div class="texto">
+              <h3>Leitura longa e profunda</h3>
+              <p>2 horas</p>
+            </div>
           </div>
-        </div>
         </a>
       </div>
-    
     </div>
 
     <!-- RESUMO -->
@@ -63,11 +62,13 @@
           <h3>1/3</h3>
         </div>
 
+        <!-- Chama Viva conectada ao campo ofensiva_dias -->
         <div class="card-info">
           <span>Chama Viva</span>
-          <h3>7 dias</h3>
+          <h3>{{ perfil?.ofensiva_dias || 0 }} dias</h3>
         </div>
 
+        <!-- Foco Total conectado ao tempo_foco_maximo_dia -->
         <div class="card-info">
           <span>Foco Total</span>
           <h3>{{ focoTotal }}</h3>

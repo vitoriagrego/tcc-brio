@@ -6,14 +6,20 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class SupabaseService {
-  private supabase: SupabaseClient;
+  // Alterado para 'public client' para permitir que Tab1Page, QuestionarioPage, etc. façam consultas via this.supabaseService.client
+  public client: SupabaseClient;
 
   constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+    this.client = createClient(environment.supabaseUrl, environment.supabaseKey);
+  }
+
+  // Getter para manter funcionamento de métodos ou páginas que chamem this.supabase
+  get supabase(): SupabaseClient {
+    return this.client;
   }
 
   async getUsuarioAtual() {
-    const { data: { user } } = await this.supabase.auth.getUser();
+    const { data: { user } } = await this.client.auth.getUser();
     return user;
   }
 
@@ -21,7 +27,7 @@ export class SupabaseService {
     const user = await this.getUsuarioAtual();
     if (!user) return null;
 
-    const { data, error } = await this.supabase
+    const { data, error } = await this.client
       .from('profiles')
       .select('*')
       .eq('id', user.id)
@@ -35,7 +41,7 @@ export class SupabaseService {
     const user = await this.getUsuarioAtual();
     if (!user) return null;
 
-    const { data, error } = await this.supabase
+    const { data, error } = await this.client
       .from('profiles')
       .update(dadosAtualizados)
       .eq('id', user.id);
@@ -45,28 +51,28 @@ export class SupabaseService {
   }
 
   async signUp(email: string, pass: string) {
-    return await this.supabase.auth.signUp({
+    return await this.client.auth.signUp({
       email,
       password: pass
     });
   }
 
   async signIn(email: string, pass: string) {
-    return await this.supabase.auth.signInWithPassword({
+    return await this.client.auth.signInWithPassword({
       email,
       password: pass
     });
   }
 
   async resetPassword(email: string) {
-    return await this.supabase.auth.resetPasswordForEmail(email);
+    return await this.client.auth.resetPasswordForEmail(email);
   }
 
   async salvarQuestionario(dadosQuestionario: any) {
     const user = await this.getUsuarioAtual();
     if (!user) throw new Error('Usuário não autenticado.');
 
-    const { data, error } = await this.supabase
+    const { data, error } = await this.client
       .from('user_questionnaire')
       .upsert(
         {
@@ -81,3 +87,6 @@ export class SupabaseService {
     return data;
   }
 }
+
+// Exporta o alias Supabase por segurança e compatibilidade
+export { SupabaseService as Supabase };
