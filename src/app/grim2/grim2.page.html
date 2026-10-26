@@ -24,13 +24,21 @@
         <!-- Lista de Tarefas -->
         <div class="tarefas-scroll-wrapper">
           <div class="tarefas-list">
-            <div class="tarefa-card" *ngFor="let tarefa of tarefasDiaAtual">
+            <div class="tarefa-card" *ngFor="let tarefa of tarefasDiaAtual" [class.concluida]="tarefa.concluida">
               
               <!-- Cabeçalho da Tarefa -->
               <div class="tarefa-header" (click)="toggleExpansao(tarefa)">
                 <div class="tarefa-textos">
-                  <h3>{{ tarefa.titulo }}</h3>
-                  <span class="tempo" *ngIf="tarefa.tempo">{{ tarefa.tempo }}</span>
+                  <!-- Check de conclusão (acima do nome; grava em blocos_estudo.concluido) -->
+                  <button class="btn-check-tarefa" (click)="alternarConclusaoTarefa(tarefa, $event)" aria-label="Concluir tarefa">
+                    <ion-icon [name]="tarefa.concluida ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+                  </button>
+
+                  <h3 [class.concluida]="tarefa.concluida">{{ tarefa.titulo }}</h3>
+                  <span class="tempo" *ngIf="tarefa.tempo">
+                    {{ tarefa.tempo }}
+                    <span class="xp-tag" *ngIf="tarefa.xp">+{{ tarefa.xp }} XP</span>
+                  </span>
                 </div>
 
                 <div class="header-acoes">

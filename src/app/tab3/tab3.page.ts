@@ -19,6 +19,9 @@ export class Tab3Page implements OnInit, OnDestroy {
   readonly LONG_BREAK_TIME = 15 * 60;
   readonly POMODOROS_BEFORE_LONG_BREAK = 4;
 
+  // Fuso usado para definir "o dia" (precisa ser o mesmo do trigger no banco)
+  private readonly FUSO_HORARIO = 'America/Sao_Paulo';
+
   // =====================================================
   // TIMER & ESTADO
   // =====================================================
@@ -30,9 +33,11 @@ export class Tab3Page implements OnInit, OnDestroy {
   isRunning: boolean = false;
   hasStarted: boolean = false;
 
+  // Total de minutos focados hoje (vem da tabela foco_diario)
+  focoHojeMinutos: number = 0;
+
   private timerInterval: ReturnType<typeof setInterval> | null = null;
   private endTime: number | null = null;
-  private focoInicial: number = 0;
 
   // =====================================================
   // RELÓGIO
@@ -44,6 +49,7 @@ export class Tab3Page implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.resetTimerState();
+    this.atualizarFocoHoje();
   }
 
   ngOnDestroy(): void {
@@ -69,7 +75,6 @@ export class Tab3Page implements OnInit, OnDestroy {
     this.isRunning = true;
     this.hasStarted = true;
 
-    this.focoInicial = Number(localStorage.getItem('tempoFoco') || 0);
     this.endTime = Date.now() + (this.secondsLeft * 1000);
 
     this.updateTimer();
@@ -86,10 +91,12 @@ export class Tab3Page implements OnInit, OnDestroy {
     this.startTimer();
   }
 
+  /**
+   * Pausar NÃO grava nada no banco: ao continuar, o timer segue do mesmo
+   * secondsLeft, então o tempo só é contabilizado uma vez (ao finalizar,
+   * pular ou concluir o pomodoro).
+   */
   private pauseTimer(): void {
-    if (this.currentPhase === 'pomodoro') {
-      this.persistirTempoFocoLocal();
-    }
     this.isRunning = false;
     this.clearTimer();
     this.endTime = null;
@@ -98,7 +105,8 @@ export class Tab3Page implements OnInit, OnDestroy {
 
   stopTimer(): void {
     if (this.currentPhase === 'pomodoro') {
-      this.persistirTempoFocoLocal();
+      // Salva o tempo parcial estudado (se houver ao menos 1 minuto)
+      this.registrarSessao(this.POMODORO_TIME - this.secondsLeft);
     }
     this.clearTimer();
     this.resetTimerState();
@@ -107,7 +115,8 @@ export class Tab3Page implements OnInit, OnDestroy {
 
   skipToBreak(): void {
     if (this.currentPhase === 'pomodoro') {
-      this.persistirTempoFocoLocal();
+      // Salva o tempo parcial estudado (se houver ao menos 1 minuto)
+      this.registrarSessao(this.POMODORO_TIME - this.secondsLeft);
     }
 
     this.clearTimer();
@@ -117,8 +126,8 @@ export class Tab3Page implements OnInit, OnDestroy {
 
     if (this.currentPhase === 'pomodoro') {
       this.completedPomodoros++;
-      this.currentPhase = (this.completedPomodoros >= this.POMODOROS_BEFORE_LONG_BREAK) 
-        ? 'longBreak' 
+      this.currentPhase = (this.completedPomodoros >= this.POMODOROS_BEFORE_LONG_BREAK)
+        ? 'longBreak'
         : 'shortBreak';
 
       this.secondsLeft = this.getPhaseDuration();
@@ -142,10 +151,6 @@ export class Tab3Page implements OnInit, OnDestroy {
     this.secondsLeft = Math.max(0, Math.ceil(millisecondsLeft / 1000));
     this.updateClockHands();
 
-    if (this.currentPhase === 'pomodoro' && this.isRunning) {
-      this.persistirTempoFocoLocal();
-    }
-
     if (millisecondsLeft <= 0) {
       this.finishPhase();
     }
@@ -158,16 +163,7 @@ export class Tab3Page implements OnInit, OnDestroy {
     this.secondsLeft = 0;
 
     if (this.currentPhase === 'pomodoro') {
-      this.persistirTempoFocoLocal(this.POMODORO_TIME);
-      
-      const minutosGanhos = Math.floor(this.POMODORO_TIME / 60);
-
-      // 1. Salva a sessão individual na tabela sessoes_pomodoro
-      await this.salvarSessaoPomodoro(minutosGanhos);
-
-      // 2. Salva no Supabase os minutos acumulados e atualiza a ofensiva na tabela profiles
-      await this.salvarProgressoNoSupabase(minutosGanhos);
-
+      // Atualiza o estado ANTES de aguardar o banco, para a UI não travar em 00:00
       this.completedPomodoros++;
       this.currentPhase = (this.completedPomodoros >= this.POMODOROS_BEFORE_LONG_BREAK)
         ? 'longBreak'
@@ -176,6 +172,9 @@ export class Tab3Page implements OnInit, OnDestroy {
       this.secondsLeft = this.getPhaseDuration();
       this.hasStarted = false;
       this.updateClockHands();
+
+      // Sessão completa: o trigger do banco soma no total diário (foco_diario)
+      await this.registrarSessao(this.POMODORO_TIME);
       return;
     }
 
@@ -196,14 +195,9 @@ export class Tab3Page implements OnInit, OnDestroy {
   // PERSISTÊNCIA & SUPABASE
   // =====================================================
 
-  private persistirTempoFocoLocal(tempoFixo?: number): void {
-    const tempoDecorrido = tempoFixo ?? (this.POMODORO_TIME - this.secondsLeft);
-    const novoTempoFoco = this.focoInicial + tempoDecorrido;
-    localStorage.setItem('tempoFoco', String(novoTempoFoco));
-  }
-
   /**
-   * Recupera o ID do usuário conectado com verificações adicionais
+   * Recupera o ID do usuário autenticado.
+   * (Sem fallback para outro perfil: evita gravar dados no usuário errado.)
    */
   private async obterUserId(): Promise<string | null> {
     try {
@@ -211,15 +205,7 @@ export class Tab3Page implements OnInit, OnDestroy {
       if (user?.id) return user.id;
 
       const { data: { session } } = await this.supabaseService.client.auth.getSession();
-      if (session?.user?.id) return session.user.id;
-
-      // Fallback para capturar perfil em ambiente de testes local
-      const { data: perfis } = await this.supabaseService.client
-        .from('profiles')
-        .select('id')
-        .limit(1);
-
-      return perfis && perfis.length > 0 ? perfis[0].id : null;
+      return session?.user?.id ?? null;
     } catch (e) {
       console.warn('⚠️ Não foi possível determinar o user_id:', e);
       return null;
@@ -227,90 +213,65 @@ export class Tab3Page implements OnInit, OnDestroy {
   }
 
   /**
-   * Salva o registro individual na tabela sessoes_pomodoro
+   * Grava UMA sessão na tabela sessoes_pomodoro.
+   * O total diário (tabela foco_diario) é somado automaticamente pelo trigger
+   * trg_somar_foco_diario no banco.
+   * Só salva se a sessão tiver ao menos 1 minuto.
    */
-  async salvarSessaoPomodoro(duracaoMinutos: number): Promise<void> {
+  private async registrarSessao(segundos: number): Promise<void> {
+    const minutos = Math.floor(segundos / 60);
+    if (minutos < 1) return;
+
     try {
       const userId = await this.obterUserId();
-
-      const payload: any = {
-        duracao_minutos: duracaoMinutos
-      };
-
-      if (userId) {
-        payload.user_id = userId;
+      if (!userId) {
+        console.warn('⚠️ Usuário não autenticado. Sessão não salva.');
+        return;
       }
 
-      console.log('📤 Gravando em sessoes_pomodoro:', payload);
-
-      const { data, error } = await this.supabaseService.client
+      const { error } = await this.supabaseService.client
         .from('sessoes_pomodoro')
-        .insert([payload])
-        .select();
+        .insert({ user_id: userId, duracao_minutos: minutos });
 
       if (error) {
         console.error('❌ Erro Supabase ao salvar sessoes_pomodoro:', error.message, error.details);
-      } else {
-        console.log('✅ Sessão registrada na tabela sessoes_pomodoro:', data);
+        return;
       }
+
+      console.log(`✅ Sessão de ${minutos} min registrada.`);
+      await this.atualizarFocoHoje();
     } catch (err) {
-      console.error('❌ Erro ao executar salvarSessaoPomodoro:', err);
+      console.error('❌ Erro ao executar registrarSessao:', err);
     }
   }
 
   /**
-   * Salva os minutos acumulados no campo tempo_foco_maximo_dia da tabela profiles
+   * Busca o total de minutos focados hoje (tabela foco_diario).
    */
-  async salvarProgressoNoSupabase(minutosGanhos: number): Promise<void> {
+  async carregarFocoHoje(): Promise<number> {
     try {
-      const userId = await this.obterUserId();
+      const hoje = new Date().toLocaleDateString('en-CA', { timeZone: this.FUSO_HORARIO });
 
-      if (!userId) {
-        console.warn('⚠️ Usuário não autenticado. Impossível atualizar a tabela profiles.');
-        return;
-      }
-
-      // 1. Busca os dados atuais do perfil no Supabase
-      const { data: perfil, error: fetchError } = await this.supabaseService.client
-        .from('profiles')
-        .select('tempo_foco_maximo_dia, ofensiva_dias')
-        .eq('id', userId)
-        .single();
-
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        console.error('❌ Erro ao carregar perfil para atualização de foco:', fetchError.message);
-      }
-
-      const focoAtual = perfil?.tempo_foco_maximo_dia || 0;
-      const novoFocoTotal = focoAtual + minutosGanhos;
-
-      let ofensiva = perfil?.ofensiva_dias || 0;
-      if (ofensiva === 0) {
-        ofensiva = 1;
-      }
-
-      console.log(`📤 Atualizando profiles: Tempo de Foco ${focoAtual}m -> ${novoFocoTotal}m`);
-
-      // 2. Atualiza a tabela profiles com os novos valores de tempo_foco_maximo_dia e ofensiva_dias
       const { data, error } = await this.supabaseService.client
-        .from('profiles')
-        .update({
-          tempo_foco_maximo_dia: novoFocoTotal,
-          ofensiva_dias: ofensiva,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', userId)
-        .select();
+        .from('foco_diario')
+        .select('total_minutos')
+        .eq('dia', hoje)
+        .maybeSingle();
 
       if (error) {
-        console.error('❌ Erro Supabase ao atualizar profiles:', error.message, error.details);
-      } else {
-        console.log('✅ Tempo de foco atualizado com sucesso na tabela profiles:', data);
+        console.error('❌ Erro ao carregar foco_diario:', error.message);
+        return 0;
       }
 
-    } catch (error) {
-      console.error('❌ Erro ao executar salvarProgressoNoSupabase:', error);
+      return data?.total_minutos ?? 0;
+    } catch (err) {
+      console.error('❌ Erro ao executar carregarFocoHoje:', err);
+      return 0;
     }
+  }
+
+  private async atualizarFocoHoje(): Promise<void> {
+    this.focoHojeMinutos = await this.carregarFocoHoje();
   }
 
   // =====================================================

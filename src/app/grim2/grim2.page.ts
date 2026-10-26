@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController, ToastController } from '@ionic/angular';
 import { SupabaseService } from 'src/app/services/supabase';
 
 export interface Subtarefa {
@@ -17,6 +17,7 @@ export interface Tarefa {
   concluida: boolean;
   subtarefas: Subtarefa[];
   materiaId?: string;
+  xp?: number; // recompensa em XP (coluna blocos_estudo.xp)
 }
 
 export interface Materia {
@@ -50,6 +51,7 @@ export class Grim2Page implements OnInit {
   constructor(
     private navCtrl: NavController,
     private ionicAlertCtrl: AlertController,
+    private toastCtrl: ToastController,
     private supabaseService: SupabaseService
   ) {}
 
@@ -225,6 +227,7 @@ export class Grim2Page implements OnInit {
         .from('blocos_estudo')
         .select('*')
         .eq('user_id', user.id)
+        .order('ordem', { ascending: true })
         .order('created_at', { ascending: true });
 
       if (error) {
@@ -233,25 +236,16 @@ export class Grim2Page implements OnInit {
       }
 
       if (blocos) {
-        const { data: progressos } = await this.supabaseService.client
-          .from('progresso_blocos')
-          .select('bloco_id, concluido')
-          .eq('user_id', user.id);
-
-        const concluidosMap = new Map<string, boolean>();
-        if (progressos) {
-          progressos.forEach(p => concluidosMap.set(p.bloco_id, p.concluido));
-        }
-
         const listaMapeada: Tarefa[] = blocos.map((b, index) => ({
           id: b.id,
           titulo: b.titulo,
           tempo: b.conteudo_html_md || '30m',
           iconeGema: `assets/gemas/gema${(index % 3) + 1}.png`,
           expandido: false,
-          concluida: concluidosMap.get(b.id) || false,
+          concluida: b.concluido === true, // vem da coluna blocos_estudo.concluido
           subtarefas: [],
-          materiaId: b.materia_id
+          materiaId: b.materia_id,
+          xp: b.xp ?? 0
         }));
 
         this.tarefasPorDia[this.diaAtivoIndex] = listaMapeada;
@@ -269,6 +263,7 @@ export class Grim2Page implements OnInit {
 
     const tituloValido = this.novaTarefaTitulo.trim().toUpperCase();
     const tempoValido = this.novaTarefaTempo.trim() || '30m';
+    const xpRecompensa = this.calcularXpPorTempo(tempoValido);
 
     try {
       const user = await this.supabaseService.getUsuarioAtual();
@@ -283,7 +278,9 @@ export class Grim2Page implements OnInit {
           user_id: user.id,
           materia_id: this.materiaSelecionadaId || null,
           titulo: tituloValido,
-          conteudo_html_md: tempoValido
+          conteudo_html_md: tempoValido,
+          concluido: false,
+          xp: xpRecompensa
         })
         .select()
         .single();
@@ -303,7 +300,8 @@ export class Grim2Page implements OnInit {
           expandido: false,
           concluida: false,
           subtarefas: [],
-          materiaId: data.materia_id
+          materiaId: data.materia_id,
+          xp: data.xp ?? xpRecompensa
         };
 
         if (!this.tarefasPorDia[this.diaAtivoIndex]) {
@@ -316,6 +314,71 @@ export class Grim2Page implements OnInit {
     } catch (err) {
       console.error('Erro ao conectar com o Supabase:', err);
     }
+  }
+
+  // Marca/desmarca o check da tarefa e grava em blocos_estudo.concluido.
+  // Atualiza a tela na hora e desfaz se o banco recusar.
+  async alternarConclusaoTarefa(tarefa: Tarefa, event: Event) {
+    event.stopPropagation();
+
+    const novoValor = !tarefa.concluida;
+    tarefa.concluida = novoValor;
+
+    try {
+      const { error } = await this.supabaseService.client
+        .from('blocos_estudo')
+        .update({ concluido: novoValor })
+        .eq('id', tarefa.id);
+
+      if (error) {
+        tarefa.concluida = !novoValor;
+        window.alert('Erro ao atualizar conclusão: ' + error.message);
+        return;
+      }
+
+      // O XP é somado/removido no perfil pelo trigger do banco; aqui só avisamos o usuário
+      if (tarefa.xp) {
+        await this.mostrarToastXp(novoValor ? `+${tarefa.xp} XP conquistados!` : `-${tarefa.xp} XP (tarefa reaberta)`);
+      }
+    } catch (err) {
+      tarefa.concluida = !novoValor;
+      console.error('Erro ao atualizar conclusão:', err);
+    }
+  }
+
+  // Converte textos como "1h30m", "10min", "30m", "2 horas" ou "45" em minutos (padrão: 30)
+  private converterTempoParaMinutos(texto: string): number {
+    const t = (texto || '').toLowerCase().replace(',', '.').trim();
+    let minutos = 0;
+
+    const horas = t.match(/(\d+(?:\.\d+)?)\s*h/);
+    if (horas) minutos += parseFloat(horas[1]) * 60;
+
+    const mins = t.match(/(\d+)\s*m/);
+    if (mins) minutos += parseInt(mins[1], 10);
+
+    // Só um número, sem unidade: considera minutos
+    if (!horas && !mins) {
+      const soNumero = t.match(/^\d+$/);
+      if (soNumero) minutos = parseInt(soNumero[0], 10);
+    }
+
+    return minutos > 0 ? Math.round(minutos) : 30;
+  }
+
+  // Recompensa de XP proporcional ao tempo: 1 XP a cada 3 minutos (mín. 5, máx. 100)
+  private calcularXpPorTempo(tempoTexto: string): number {
+    const minutos = this.converterTempoParaMinutos(tempoTexto);
+    return Math.max(5, Math.min(100, Math.round(minutos / 3)));
+  }
+
+  private async mostrarToastXp(mensagem: string) {
+    const toast = await this.toastCtrl.create({
+      message: mensagem,
+      duration: 1800,
+      position: 'top'
+    });
+    await toast.present();
   }
 
   async excluirTarefa(tarefa: Tarefa, event?: Event) {

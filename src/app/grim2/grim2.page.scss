@@ -389,3 +389,91 @@
     opacity: 0;
   }
 }
+.btn-deletar-tarefa {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  margin-left: 8px;          // afasta da gema
+  position: relative;
+  left: 8px;                  // empurra mais para a direita
+  color: #000;                // preto
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 20px;          // maior (antes estava ~16px)
+    color: #000;
+  }
+}
+.materia-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .select-materia-custom {
+    flex: 1;
+    appearance: none;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.5)
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%235a3d28' stroke-width='2'/></svg>")
+      no-repeat right 10px center / 12px;
+    border: 1px solid #a28b6e;
+    border-radius: 6px;
+    padding: 8px 30px 8px 10px;
+    font-size: 0.8rem;
+    color: #241608;
+    outline: none;
+    cursor: pointer;
+
+    option {
+      background: #e8dcc4;
+      color: #241608;
+    }
+  }
+
+  .btn-criar-materia {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #5a3d28;
+    border: none;
+    border-radius: 6px;
+    color: #e2cb92;
+    cursor: pointer;
+
+    ion-icon {
+      font-size: 1.2rem;
+    }
+  }
+}
+/* Check de conclusão */
+.btn-check-tarefa {
+  background: transparent;
+  border: none;
+  padding: 0 4px;
+  font-size: 22px;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Bloco concluído: fundo colorido */
+.tarefa-card {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+
+  &.concluida {
+    background-color: rgba(102, 82, 173, 0.35);
+    border-color: rgb(55, 75, 167);
+    box-shadow: 0 0 10px #1c29e285;
+
+    .tarefa-textos h3 {
+      text-decoration: line-through;
+      opacity: 0.75;
+    }
+
+    .btn-check-tarefa {
+      color: #213f23;
+    }
+  }
+}

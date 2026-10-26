@@ -32,20 +32,22 @@
         <br><br>
         <h2>Estudos do dia</h2>
 
-        <a href="/grim2">
+        <!-- Blocos de estudo pendentes da grim2 (concluido = false) -->
+        <a href="/grim2" *ngFor="let estudo of estudosDia">
           <div class="tarefa">
             <div class="texto">
-              <h3>Estudar para a prova de Biologia</h3>
-              <p>1h30m</p>
+              <h3>{{ estudo.titulo }}</h3>
+              <p>{{ estudo.tempo }}</p>
             </div>
           </div>
         </a>
 
-        <a href="/grim2">
+        <!-- Nenhum bloco pendente -->
+        <a href="/grim2" *ngIf="!carregandoEstudos && estudosDia.length === 0">
           <div class="tarefa">
             <div class="texto">
-              <h3>Leitura longa e profunda</h3>
-              <p>2 horas</p>
+              <h3>Nenhum estudo pendente</h3>
+              <p>Toque para criar um bloco no grimório</p>
             </div>
           </div>
         </a>
@@ -59,7 +61,7 @@
       <div class="cards">
         <div class="card-info">
           <span>Estudos</span>
-          <h3>1/3</h3>
+          <h3>{{ estudosConcluidos }}/{{ estudosTotal }}</h3>
         </div>
 
         <!-- Chama Viva conectada ao campo ofensiva_dias -->
