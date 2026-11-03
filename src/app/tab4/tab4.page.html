@@ -1,70 +1,343 @@
 <ion-content class="progress-page">
   <section class="profile-card">
     <img src="../../assets/gatoProgresso.png">
-    <h1>Ciclo Arcano</h1><br>
-    <div class="level-progress">
-      <div *ngFor="let step of levels" class="step" [class.active]="step.active">
-        <span>{{ step.id }}</span>
-      </div>
-    </div>
+    <h1>Ciclo Arcano</h1>
+  </section>
 
-    <div class="level-labels">
-      <span *ngFor="let step of levels">
-        {{ step.label }}
-      </span>
-    </div>
-  </section><br><br>
-
-
+  <!-- ===================== MAESTRIA ===================== -->
   <ion-card class="card-section">
     <ion-card-header>
-      <ion-card-title>
-        Recompensas da classe:
-      </ion-card-title>
+      <ion-card-title>Maestria:</ion-card-title>
     </ion-card-header>
-
     <ion-card-content>
-      <div class="rewards">
-        <div class="reward" *ngFor="let reward of rewards">
-          <img [src]="reward.image" [alt]="reward.title">
-          <p>{{ reward.title }}</p>
-        </div>
+      <div class="mastery-head">
+        <span class="mastery-name">
+          <span class="mastery-lv">Nv {{ nivelAtual }}</span> {{ nivelNome }}
+        </span>
+        <span class="mastery-pct">{{ maestriaPercent | number: '1.0-0' }}%</span>
+      </div>
+
+      <div class="mastery-track">
+        <div class="mastery-fill" [style.width.%]="maestriaPercent"></div>
+        <span
+          class="mastery-tick"
+          *ngFor="let t of ticks"
+          [style.left.%]="t.pos"
+          [class.reached]="t.reached"
+        ></span>
+      </div>
+
+      <div class="mastery-ends">
+        <span>{{ nomeInicio }}</span>
+        <span>{{ nomeFim }}</span>
       </div>
     </ion-card-content>
   </ion-card>
+
+  <!-- ===================== RECOMPENSAS DA CLASSE ===================== -->
+  <ion-card class="card-section">
+    <ion-card-header class="rw-header">
+      <ion-card-title>Recompensas da classe:</ion-card-title>
+      <span class="rw-pending" *ngIf="pendentes > 0">
+        <ion-icon name="gift"></ion-icon> {{ pendentes }} p/ coletar
+      </span>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="class-group" *ngFor="let g of grupos" [class.group-locked]="!g.desbloqueado">
+        <div class="group-head">
+          <span class="group-badge">Nv {{ g.nivelId }}</span>
+          <span class="group-name">{{ g.nome }}</span>
+          <span class="group-count">
+            <ng-container *ngIf="g.desbloqueado">{{ g.coletadas }}/{{ g.itens.length }}</ng-container>
+            <ion-icon *ngIf="!g.desbloqueado" name="lock-closed"></ion-icon>
+          </span>
+        </div>
+
+        <div class="rw-grid">
+          <button
+            type="button"
+            class="rw-card"
+            *ngFor="let r of g.itens"
+            (click)="abrirRecompensa(r)"
+            [ngClass]="'rarity-' + r.raridade"
+            [class.locked]="!r.desbloqueada"
+            [class.collectable]="r.desbloqueada && !r.coletada"
+            [class.collected]="r.coletada"
+            [class.fx]="fxId === r.id"
+          >
+            <span class="rw-flag flag-collect" *ngIf="r.desbloqueada && !r.coletada">
+              <ion-icon name="gift"></ion-icon>
+            </span>
+            <span class="rw-flag flag-done" *ngIf="r.coletada">
+              <ion-icon name="checkmark"></ion-icon>
+            </span>
+            <span class="rw-flag flag-lock" *ngIf="!r.desbloqueada">
+              <ion-icon name="lock-closed"></ion-icon>
+            </span>
+
+            <div class="rw-img">
+              <img [src]="'../../' + r.imagem" [alt]="r.titulo">
+            </div>
+            <p class="rw-title">{{ r.titulo }}</p>
+            <span class="rw-rarity">{{ rotuloRaridade(r.raridade) }}</span>
+          </button>
+        </div>
+      </div>
+
+      <button type="button" class="rw-collection-btn" (click)="abrirColecao()">
+        <ion-icon name="albums"></ion-icon>
+        Ver minha coleção
+        <span class="rw-collection-count">{{ colecao.length }}/{{ totalRecompensas }}</span>
+      </button>
+
+      <p class="rw-teaser" *ngIf="futuras > 0">
+        <ion-icon name="sparkles"></ion-icon>
+        +{{ futuras }} recompensa(s) misteriosa(s) em níveis futuros
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ===================== PRÓXIMA RECOMPENSA ===================== -->
   <ion-card class="card-section">
     <ion-card-header>
-      <ion-card-title>
-        Próximo recompensa:
-      </ion-card-title>
+      <ion-card-title>Próxima recompensa:</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <div class="next-reward">
         <div class="progress-text">
-          Faltam 240 XP para liberar a próxima recompensa
+          <ng-container *ngIf="!nivelMaximo; else maxLevel">
+            Faltam {{ xpFaltante }} XP para liberar
+            {{ proximaRecompensa?.titulo || 'a próxima recompensa' }}
+            <div class="xp-bar">
+              <div class="xp-fill" [style.width.%]="progressoNivel"></div>
+            </div>
+          </ng-container>
+          <ng-template #maxLevel>Você alcançou o nível máximo!</ng-template>
+
+          <div class="collect-hint" *ngIf="pendentes > 0">
+            <ion-icon name="gift"></ion-icon>
+            Você tem {{ pendentes }} recompensa(s) para coletar!
+          </div>
+          <div class="tap-hint" *ngIf="proximaRecompensa">Toque no baú para ver</div>
         </div>
-        <div class="treasure">
-          <img src="../../assets/bauRecompensa.png">
-        </div>
+
+        <button
+          type="button"
+          class="treasure"
+          [class.ready]="pendentes > 0"
+          [disabled]="!proximaRecompensa"
+          (click)="abrirProxima()"
+        >
+          <img src="../../assets/bauRecompensa.png" alt="Baú de recompensa">
+        </button>
       </div>
     </ion-card-content>
   </ion-card>
 
-
+  <!-- ===================== GRÁFICO DE DESEMPENHO ===================== -->
   <ion-card class="card-section">
     <ion-card-header>
-      <ion-card-title>
-        Gráfico de desempenho:
-      </ion-card-title>
+      <ion-card-title>Gráfico de desempenho:</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <div class="chart">
-        <div
-          *ngFor="let value of chartData"
-          class="bar"
-          [style.height.%]="value"
-        ></div>
+      <div class="perf-summary">
+        <div>
+          <strong>{{ fmtMin(totalSemana) }}</strong>
+          <span>de foco nos últimos 8 dias</span>
+        </div>
+        <div>
+          <strong>{{ melhorDia }}</strong>
+          <span>melhor dia</span>
+        </div>
       </div>
+
+      <div class="perf-chart">
+        <button
+          type="button"
+          class="perf-col"
+          *ngFor="let b of barras; let i = index"
+          (click)="selecionarBarra(i)"
+          [class.sel]="barraSel === i"
+          [style.--i]="i"
+        >
+          <span class="perf-val">{{ b.minutos > 0 ? b.minutos : '' }}</span>
+          <div class="perf-track">
+            <div
+              class="perf-bar"
+              [class.zero]="b.minutos === 0"
+              [class.today]="b.hoje"
+              [style.height.%]="b.altura"
+            ></div>
+          </div>
+          <span class="perf-day" [class.today]="b.hoje">{{ b.hoje ? 'hoje' : b.rotulo }}</span>
+        </button>
+      </div>
+
+      <p class="perf-hint" *ngIf="barraSel !== null">
+        {{ barras[barraSel].hoje ? 'Hoje' : barras[barraSel].rotulo }}:
+        {{ fmtMin(barras[barraSel].minutos) }} de foco
+      </p>
+      <p class="perf-hint" *ngIf="barraSel === null">Toque em uma barra para ver os minutos.</p>
     </ion-card-content>
   </ion-card>
+
+  <!-- ===================== LEVEL UP ===================== -->
+  <div slot="fixed" class="levelup" *ngIf="levelUp.aberto" (click)="fecharLevelUp()">
+    <div class="levelup-rays"></div>
+    <span
+      class="spark"
+      *ngFor="let s of sparks"
+      [style.--dx]="s.dx"
+      [style.--dy]="s.dy"
+      [style.animation-delay]="s.delay"
+      [style.background]="s.cor"
+    ></span>
+
+    <div class="levelup-card" (click)="$event.stopPropagation()">
+      <div class="levelup-title">NÍVEL ALCANÇADO!</div>
+      <div class="levelup-badge">{{ levelUp.nivel }}</div>
+      <div class="levelup-name">{{ levelUp.nome }}</div>
+
+      <div class="levelup-rewards" *ngIf="levelUp.novas.length > 0">
+        <p>Recompensas liberadas:</p>
+        <div class="levelup-row">
+          <img
+            *ngFor="let n of levelUp.novas; let i = index"
+            [src]="'../../' + n.imagem"
+            [alt]="n.titulo"
+            [style.animation-delay.ms]="700 + i * 150"
+          >
+        </div>
+      </div>
+
+      <button type="button" class="levelup-btn" (click)="fecharLevelUp()">Continuar</button>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL DA COLEÇÃO ===================== -->
+  <ion-modal
+    class="reward-modal"
+    [isOpen]="colecaoAberta"
+    [initialBreakpoint]="0.85"
+    [breakpoints]="[0, 0.85, 1]"
+    (didDismiss)="fecharColecao()"
+  >
+    <ng-template>
+      <ion-content class="ion-padding">
+        <div class="col">
+          <h2>Minha coleção</h2>
+          <p class="col-sub">{{ colecao.length }} de {{ totalRecompensas }} recompensas coletadas</p>
+          <div class="xp-bar">
+            <div
+              class="xp-fill"
+              [style.width.%]="totalRecompensas ? (colecao.length / totalRecompensas) * 100 : 0"
+            ></div>
+          </div>
+
+          <div class="col-chips">
+            <button
+              type="button"
+              *ngFor="let f of filtros"
+              [class.on]="filtroColecao === f.id"
+              (click)="filtroColecao = f.id"
+            >{{ f.nome }}</button>
+          </div>
+
+          <div class="rw-grid" *ngIf="colecaoFiltrada.length > 0">
+            <button
+              type="button"
+              class="rw-card collected"
+              *ngFor="let r of colecaoFiltrada"
+              [ngClass]="'rarity-' + r.raridade"
+              (click)="abrirRecompensa(r)"
+            >
+              <span class="rw-flag flag-done"><ion-icon name="checkmark"></ion-icon></span>
+              <div class="rw-img">
+                <img [src]="'../../' + r.imagem" [alt]="r.titulo">
+              </div>
+              <p class="rw-title">{{ r.titulo }}</p>
+              <span class="rw-date">{{ formatarData(r.coletadaEm) }}</span>
+            </button>
+          </div>
+
+          <div class="col-empty" *ngIf="colecaoFiltrada.length === 0">
+            <ion-icon name="albums-outline"></ion-icon>
+            <p *ngIf="colecao.length === 0">Você ainda não coletou nenhuma recompensa.<br>Suba de nível e toque nas recompensas liberadas!</p>
+            <p *ngIf="colecao.length > 0">Nenhuma recompensa dessa raridade ainda.</p>
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- ===================== MODAL DA RECOMPENSA ===================== -->
+  <ion-modal
+    class="reward-modal"
+    [isOpen]="modalAberto"
+    [initialBreakpoint]="0.72"
+    [breakpoints]="[0, 0.72, 1]"
+    (didDismiss)="fecharModal()"
+  >
+    <ng-template>
+      <ion-content class="ion-padding" *ngIf="recompensaSel as r">
+        <div class="rm" [ngClass]="'rarity-' + r.raridade">
+          <span class="rm-rarity">{{ rotuloRaridade(r.raridade) }}</span>
+
+          <div class="rm-stage" [class.locked]="!r.desbloqueada" [class.fx]="fxId === r.id">
+            <div class="rm-glow"></div>
+            <img [src]="'../../' + r.imagem" [alt]="r.titulo">
+            <span
+              class="spark small"
+              *ngFor="let s of burst"
+              [style.--dx]="s.dx"
+              [style.--dy]="s.dy"
+              [style.animation-delay]="s.delay"
+              [style.background]="s.cor"
+            ></span>
+          </div>
+
+          <h2>{{ r.titulo }}</h2>
+          <p class="rm-desc">{{ r.descricao }}</p>
+
+          <div class="rm-info">
+            <div>
+              <span>Nível necessário</span>
+              <strong>{{ r.nivel_requerido }} · {{ nomeDoNivel(r.nivel_requerido) }}</strong>
+            </div>
+            <div>
+              <span>Status</span>
+              <strong *ngIf="!r.desbloqueada">Bloqueada</strong>
+              <strong *ngIf="r.desbloqueada && !r.coletada">Pronta para coletar</strong>
+              <strong *ngIf="r.coletada">Coletada em {{ formatarData(r.coletadaEm) }}</strong>
+            </div>
+          </div>
+
+          <div class="rm-lock" *ngIf="!r.desbloqueada">
+            <ion-icon name="lock-closed"></ion-icon>
+            Faltam <strong>{{ r.xpFaltante }} XP</strong> para liberar
+            <div class="xp-bar">
+              <div class="xp-fill" [style.width.%]="progressoNivel"></div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="rm-btn collect"
+            *ngIf="r.desbloqueada && !r.coletada"
+            [disabled]="coletando === r.id"
+            (click)="coletar(r, $event)"
+          >
+            <ion-icon name="gift"></ion-icon> Coletar recompensa
+          </button>
+          <button type="button" class="rm-btn done" *ngIf="r.coletada" disabled>
+            <ion-icon name="checkmark-circle"></ion-icon> Recompensa coletada
+          </button>
+          <button type="button" class="rm-btn locked" *ngIf="!r.desbloqueada" disabled>
+            Alcance o nível {{ r.nivel_requerido }} para coletar
+          </button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
