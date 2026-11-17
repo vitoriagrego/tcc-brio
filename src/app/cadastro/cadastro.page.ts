@@ -45,7 +45,7 @@ export class CadastroPage {
       this.exibirToast('Erro ao cadastrar: ' + error.message);
     } else {
       this.exibirToast('Conta criada com sucesso!');
-      this.router.navigate(['/questionario']);
+      this.router.navigate(['/tabs/tab1']);
     }
   }
 
