@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { SupabaseService } from 'src/app/services/supabase';
 
@@ -17,7 +17,7 @@ export interface Materia {
   styleUrls: ['./materias.page.scss'],
   standalone: false,
 })
-export class MateriasPage implements OnInit {
+export class MateriasPage {
 
   filtroSelecionado: string = 'todas';
   materias: Materia[] = [];
@@ -68,22 +68,22 @@ export class MateriasPage implements OnInit {
     private supabaseService: SupabaseService
   ) {}
 
-  async ngOnInit() {
-    await this.carregarOuPovoarMaterias();
-  }
-
+  // O Ionic já dispara ionViewWillEnter na primeira entrada. Antes, o ngOnInit
+  // também carregava, e com a tabela vazia as duas chamadas rodavam juntas e
+  // inseriam as 6 matérias em duplicidade.
   async ionViewWillEnter() {
     await this.carregarOuPovoarMaterias();
   }
 
   async carregarOuPovoarMaterias() {
+    if (this.carregando) return;
     this.carregando = true;
 
     try {
-      // 1. Tenta buscar os dados do Supabase
+      // 1. Busca as matérias do catálogo
       const { data, error } = await this.supabaseService.client
         .from('materias')
-        .select('*')
+        .select('id, nome, icone_url, rota_estudo, descricao, cor_hex')
         .order('nome', { ascending: true });
 
       if (error) {
@@ -92,14 +92,14 @@ export class MateriasPage implements OnInit {
         return;
       }
 
-      // 2. Se a tabela no banco estiver vazia, faz o povoamento automático
+      // 2. Se o catálogo estiver vazio, faz o povoamento automático
       if (!data || data.length === 0) {
-        console.log('Tabela materias está vazia no Supabase. Povoando registros...');
-        
+        console.log('Catálogo de matérias vazio no Supabase. Povoando registros...');
+
         const { data: dadosInseridos, error: erroInsercao } = await this.supabaseService.client
           .from('materias')
           .insert(this.materiasIniciais)
-          .select();
+          .select('id, nome, icone_url, rota_estudo, descricao, cor_hex');
 
         if (erroInsercao) {
           console.error('Erro de permissão/inserção no Supabase:', erroInsercao);

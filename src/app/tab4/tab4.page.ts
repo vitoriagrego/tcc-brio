@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 // Ajuste para onde ficam suas chaves do Supabase:
@@ -25,14 +25,7 @@ interface RecompensaView extends Recompensa {
   coletada: boolean;
   coletadaEm: string | null;
   xpFaltante: number; // XP que falta para o nível que libera a recompensa
-}
-
-interface GrupoRecompensas {
-  nivelId: number;
-  nome: string;
-  desbloqueado: boolean;
-  coletadas: number;
-  itens: RecompensaView[];
+  misteriosa: boolean; // 2+ níveis à frente: aparece como "???"
 }
 
 interface BarraGrafico {
@@ -90,9 +83,11 @@ export class Tab4Page {
   nomeInicio = '';
   nomeFim = '';
 
-  // ---- recompensas ----
-  grupos: GrupoRecompensas[] = [];
-  futuras = 0;
+  // ---- recompensas (carrossel horizontal) ----
+  @ViewChild('trilhoEl') trilhoEl?: ElementRef<HTMLDivElement>;
+  trilho: RecompensaView[] = [];
+  podeVoltar = false;
+  podeAvancar = false;
   pendentes = 0;
 
   // ---- próxima recompensa ----
@@ -189,6 +184,9 @@ export class Tab4Page {
         const alvo = this.niveis.find((n) => n.id === r.nivel_requerido);
         return {
           ...r,
+          raridade: r.raridade ?? 'comum',
+          ordem: r.ordem ?? 0,
+          misteriosa: r.nivel_requerido > perfil.nivel + 1,
           desbloqueada: r.nivel_requerido <= perfil.nivel,
           coletada: coletadasEm.has(r.id),
           coletadaEm: coletadasEm.get(r.id) ?? null,
@@ -197,9 +195,10 @@ export class Tab4Page {
       });
 
       this.montarNiveis();
-      this.montarGrupos();
+      this.montarTrilho();
       this.montarProximoNivel();
       this.montarGrafico((sessoesRes.data ?? []) as any[], 8);
+      setTimeout(() => this.posicionarTrilho(), 80);
 
       // Maestria + animação de level-up
       const finalPct = this.calcMaestria(perfil.nivel, this.progressoNivel / 100);
@@ -252,23 +251,11 @@ export class Tab4Page {
     }));
   }
 
-  private montarGrupos() {
-    // Mostra níveis já alcançados + o próximo. Os demais viram "teaser".
-    const visiveis = this.niveis.filter((n) => n.id <= this.nivelAtual + 1);
-    this.grupos = visiveis
-      .map((n) => {
-        const itens = this.todas.filter((r) => r.nivel_requerido === n.id);
-        return {
-          nivelId: n.id,
-          nome: n.nome,
-          desbloqueado: n.id <= this.nivelAtual,
-          coletadas: itens.filter((i) => i.coletada).length,
-          itens,
-        };
-      })
-      .filter((g) => g.itens.length > 0);
-
-    this.futuras = this.todas.filter((r) => r.nivel_requerido > this.nivelAtual + 1).length;
+  private montarTrilho() {
+    // Todas as recompensas lado a lado, na ordem dos níveis
+    this.trilho = [...this.todas].sort(
+      (a, b) => a.nivel_requerido - b.nivel_requerido || a.ordem - b.ordem
+    );
     this.pendentes = this.todas.filter((r) => r.desbloqueada && !r.coletada).length;
 
     // coleção: só o que já foi coletado, da mais recente para a mais antiga
@@ -390,7 +377,7 @@ export class Tab4Page {
     r.coletada = true;
     r.coletadaEm = new Date().toISOString();
     this.fxId = r.id;
-    this.montarGrupos();
+    this.montarTrilho();
 
     setTimeout(() => {
       this.fxId = null;
@@ -419,6 +406,43 @@ export class Tab4Page {
     const dd = String(d.getDate()).padStart(2, '0');
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     return `${dd}/${mm}/${d.getFullYear()}`;
+  }
+
+  // ---------- carrossel de recompensas ----------
+  atualizarSetas() {
+    const el = this.trilhoEl?.nativeElement;
+    if (!el) return;
+    this.podeVoltar = el.scrollLeft > 4;
+    this.podeAvancar = el.scrollLeft + el.clientWidth < el.scrollWidth - 4;
+  }
+
+  rolar(direcao: -1 | 1) {
+    const el = this.trilhoEl?.nativeElement;
+    if (!el) return;
+    el.scrollBy({ left: direcao * el.clientWidth * 0.85, behavior: 'smooth' });
+  }
+
+  /** Abre o carrossel já na primeira recompensa para coletar (ou na próxima a conquistar). */
+  private posicionarTrilho() {
+    const el = this.trilhoEl?.nativeElement;
+    if (!el) return;
+
+    let idx = this.trilho.findIndex((r) => r.desbloqueada && !r.coletada);
+    if (idx < 0) idx = this.trilho.findIndex((r) => !r.desbloqueada && !r.misteriosa);
+    if (idx < 0) idx = 0;
+
+    const card = el.children[idx] as HTMLElement | undefined;
+    el.scrollTo({ left: card ? Math.max(card.offsetLeft - 2, 0) : 0, behavior: 'auto' });
+    this.atualizarSetas();
+  }
+
+  async recarregar() {
+    await this.carregar();
+  }
+
+  /** Aceita caminho de assets (assets/x.png) ou URL completa (Supabase Storage). */
+  img(caminho: string): string {
+    return /^(https?:|data:)/.test(caminho) ? caminho : '../../' + caminho;
   }
 
   selecionarBarra(i: number) {

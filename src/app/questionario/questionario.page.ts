@@ -11,7 +11,7 @@ import { SupabaseService } from 'src/app/services/supabase';
 })
 export class QuestionarioPage implements OnInit {
 
-  // Objeto para armazenar as respostas das 12 perguntas do seu HTML
+  // Armazena as respostas das perguntas do formulário
   respostas: { [key: number]: any } = {};
 
   constructor(
@@ -23,34 +23,67 @@ export class QuestionarioPage implements OnInit {
 
   ngOnInit() {}
 
-  // Registra a resposta selecionada em cada ion-radio-group do HTML
   selecionarOpcao(perguntaId: number, valor: any) {
     this.respostas[perguntaId] = valor;
   }
 
-  // Função acionada pelo botão (click)="enviarQuestionario()" do HTML
+  // Envio realizado diretamente pelo cliente sem precisar alterar o supabase.ts
   async enviarQuestionario() {
     const loading = await this.loadingController.create({
-      message: 'Salvando suas preferências...'
+      message: 'Salvando suas preferências...',
+      spinner: 'crescent'
     });
     await loading.present();
 
     try {
-      // Salva todas as respostas no formato JSONB na tabela 'user_questionnaire'
-      await this.supabaseService.salvarQuestionario({
-        respostas_completas: this.respostas
-      });
+      if (typeof (this.supabaseService as any).salvarQuestionario === 'function') {
+        await (this.supabaseService as any).salvarQuestionario({
+          respostas_completas: this.respostas
+        });
+      } else {
+        const client = (this.supabaseService as any).client || (this.supabaseService as any).supabase;
+
+        let userId: string | null = null;
+        if (typeof (this.supabaseService as any).getUsuarioAtual === 'function') {
+          const u = await (this.supabaseService as any).getUsuarioAtual();
+          userId = u?.id || null;
+        }
+
+        if (!userId && client) {
+          const { data: sessData } = await client.auth.getSession();
+          userId = sessData?.session?.user?.id || null;
+
+          if (!userId) {
+            const { data: userData } = await client.auth.getUser();
+            userId = userData?.user?.id || null;
+          }
+        }
+
+        if (!userId) {
+          throw new Error('Usuário não autenticado. Por favor, faça login para salvar.');
+        }
+
+        const { error } = await client
+          .from('user_questionnaire')
+          .upsert({
+            user_id: userId,
+            respostas_completas: this.respostas,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'user_id' });
+
+        if (error) throw error;
+      }
 
       await loading.dismiss();
       
       const toast = await this.toastController.create({
         message: 'Questionário salvo com sucesso!',
         duration: 2000,
+        color: 'success',
         position: 'bottom'
       });
-      toast.present();
+      await toast.present();
 
-      // Redireciona para o aplicativo principal
       this.router.navigate(['/tabs', 'tab1']);
 
     } catch (error: any) {
@@ -58,13 +91,13 @@ export class QuestionarioPage implements OnInit {
       const toast = await this.toastController.create({
         message: 'Erro ao salvar questionário: ' + (error.message || error),
         duration: 3000,
+        color: 'danger',
         position: 'bottom'
       });
-      toast.present();
+      await toast.present();
     }
   }
 
-  // Mantido caso também queira usar em outro lugar
   async finalizarQuestionario() {
     await this.enviarQuestionario();
   }

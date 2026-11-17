@@ -11,15 +11,43 @@
     <div class="pagina-base">
       <img src="assets/grim1.png" alt="Livro Base" class="bg-pagina-img">
       <div class="pagina-conteudo">
-        <div class="runa-item" *ngFor="let runa of runasPaginaAtual" [class.bloqueada]="!runa.desbloqueada">
+        <div
+          class="runa-item"
+          *ngFor="let runa of runasPaginaAtual"
+          [class.bloqueada]="!runa.desbloqueada"
+          [class.nova]="runa.nova"
+        >
           <div class="runa-icon-container">
             <img [src]="runa.icone" [alt]="runa.nome" class="runa-img" (error)="$event.target.style.display='none'">
           </div>
           <div class="runa-details">
-            <h2>{{ runa.nome }}</h2>
-            <p>{{ runa.descricao }}</p>
+            <h2>
+              {{ runa.nome }}
+              <span class="runa-novo" *ngIf="runa.nova">NOVA</span>
+            </h2>
+
+            <!-- desbloqueada: descrição da runa -->
+            <p *ngIf="runa.desbloqueada">{{ runa.descricao }}</p>
+
+            <!-- bloqueada: como conquistar + progresso -->
+            <ng-container *ngIf="!runa.desbloqueada">
+              <p>{{ runa.dica }}</p>
+              <div class="runa-prog-linha">
+                <div class="runa-prog">
+                  <div class="runa-prog-fill" [style.width.%]="percentual(runa)"></div>
+                </div>
+                <span class="runa-prog-texto">{{ runa.valor }}/{{ runa.meta }}</span>
+              </div>
+            </ng-container>
           </div>
         </div>
+
+        <!-- estados de carregamento / erro / vazio -->
+        <p class="runas-estado" *ngIf="carregando && todasRunas.length === 0">Folheando o grimório...</p>
+        <p class="runas-estado" *ngIf="erro">
+          Não foi possível carregar as runas.
+          <button type="button" (click)="carregar()">Tentar de novo</button>
+        </p>
       </div>
     </div>
 
@@ -31,7 +59,7 @@
       <button class="btn-pag" (click)="paginaAnterior()" [disabled]="paginaAtual === 0 || animando">
         <ion-icon name="chevron-back-outline"></ion-icon>
       </button>
-      <span class="num-pagina">{{ paginaAtual + 1 }}/{{ totalPaginas }}</span>
+      <span class="num-pagina">{{ paginaAtual + 1 }}/{{ totalPaginas || 1 }}</span>
       <button class="btn-pag" (click)="proximaPagina()" [disabled]="paginaAtual >= totalPaginas - 1 || animando">
         <ion-icon name="chevron-forward-outline"></ion-icon>
       </button>

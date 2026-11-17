@@ -2,11 +2,47 @@
   
   <!-- Cabeçalho Customizado -->
   <div class="custom-header">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/" text="" icon="arrow-back-outline" class="back-btn"></ion-back-button>
-    </ion-buttons>
-    <div class="header-card">
-      <h1>Espírito Alquímico</h1>
+    <div class="header-left">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/" text="" icon="arrow-back-outline" class="back-btn"></ion-back-button>
+      </ion-buttons>
+      <div class="header-titles">
+        <h1>Espírito Alquímico</h1>
+        <div class="plano-tag" [ngClass]="{'tag-premium': planoUsuario === 'premium', 'tag-gratis': planoUsuario !== 'premium'}">
+          <ion-icon [name]="planoUsuario === 'premium' ? 'star' : 'sparkles-outline'"></ion-icon>
+          <span>{{ planoUsuario === 'premium' ? 'PREMIUM' : 'GRÁTIS' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações do Cabeçalho -->
+    <div class="header-actions">
+      <!-- Botão de Relatório Semanal de Desempenho -->
+      <button 
+        class="action-header-btn relatorio-btn" 
+        [class.btn-premium]="planoUsuario === 'premium'"
+        (click)="solicitarRelatorioDesempenho()"
+        title="Gerar Relatório de Desempenho com IA">
+        <ion-icon name="analytics-outline"></ion-icon>
+        <span class="btn-text">Relatório</span>
+        <span *ngIf="planoUsuario !== 'premium'" class="lock-mini"><ion-icon name="lock-closed"></ion-icon></span>
+      </button>
+
+      <!-- Botão de Preferências de Estudo -->
+      <button 
+        class="action-header-btn" 
+        (click)="abrirModalPreferencias()"
+        title="Preferências de Estudo">
+        <ion-icon name="options-outline"></ion-icon>
+      </button>
+
+      <!-- Botão de Limpar Chat -->
+      <button 
+        class="action-header-btn" 
+        (click)="confirmarLimparHistorico()"
+        title="Limpar Conversa">
+        <ion-icon name="trash-outline"></ion-icon>
+      </button>
     </div>
   </div>
 
@@ -18,18 +54,173 @@
       *ngFor="let msg of messages" 
       [ngClass]="{'user-msg': msg.sender === 'user', 'ai-msg': msg.sender === 'ai'}" 
       class="message-bubble">
-      <p>{{ msg.text }}</p>
+      <div class="bubble-header" *ngIf="msg.sender === 'ai'">
+        <ion-icon name="flask-outline"></ion-icon>
+        <span>Espírito Alquímico</span>
+      </div>
+      <p class="bubble-text">{{ msg.text }}</p>
     </div>
 
+    <!-- Indicador de Carregamento da IA -->
     <div *ngIf="isLoading" class="message-bubble ai-msg loading">
+      <div class="bubble-header">
+        <ion-icon name="flask-outline"></ion-icon>
+        <span>Transmutando resposta...</span>
+      </div>
       <ion-spinner name="dots" color="tertiary"></ion-spinner>
     </div>
 
-    <!-- Imagem Central Mística da IA -->
-    <div class="avatar-center-container">
-      <img src="assets/ia.png" alt="Espírito Alquímico" class="avatar-center" />
+    <!-- Indicador de Geração de Relatório -->
+    <div *ngIf="gerandoRelatorio" class="message-bubble ai-msg loading relatorio-loading">
+      <div class="bubble-header">
+        <ion-icon name="sparkles"></ion-icon>
+        <span>Compilando Diagnóstico Semanal com IA...</span>
+      </div>
+      <ion-spinner name="lines" color="warning"></ion-spinner>
+      <p class="loading-subtext">Analisando suas sessões de estudo, quizzes e métricas de desempenho...</p>
     </div>
 
+    <!-- Imagem Central Mística da IA -->
+    <div class="avatar-center-container" *ngIf="messages.length <= 2">
+      <img src="assets/ia.png" alt="Espírito Alquímico" class="avatar-center" />
+      <p class="avatar-quote">"O estudo constante é o verdadeiro elixir da sabedoria."</p>
+    </div>
+
+  </div>
+
+  <!-- ======================================================= -->
+  <!-- MODAL FLUTUANTE: RELATÓRIO SEMANAL DE DESEMPENHO (IA) -->
+  <!-- ======================================================= -->
+  <div class="modal-overlay" *ngIf="modalRelatorioAberto">
+    <div class="modal-alquimico modal-relatorio">
+      <div class="modal-header">
+        <div class="header-badge">
+          <ion-icon name="ribbon-outline"></ion-icon>
+          <span>DIAGNÓSTICO SEMANAL</span>
+        </div>
+        <button class="close-btn" (click)="fecharModalRelatorio()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="relatorio-info-bar">
+          <span>📅 Semana de referência: <strong>{{ relatorioSemana }}</strong></span>
+          <span class="tag-ia">Gerado por IA</span>
+        </div>
+
+        <div class="relatorio-conteudo-box">
+          <pre class="relatorio-texto">{{ relatorioConteudo }}</pre>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-copiar" (click)="copiarRelatorio()">
+          <ion-icon name="copy-outline"></ion-icon>
+          <span>Copiar Relatório</span>
+        </button>
+        <button class="btn-fechar" (click)="fecharModalRelatorio()">
+          <span>Fechar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================= -->
+  <!-- MODAL: PREFERÊNCIAS DE ESTUDO (ia_preferencias)         -->
+  <!-- ======================================================= -->
+  <div class="modal-overlay" *ngIf="modalPreferenciasAberto">
+    <div class="modal-alquimico modal-preferencias">
+      <div class="modal-header">
+        <div class="header-badge">
+          <ion-icon name="options-outline"></ion-icon>
+          <span>PREFERÊNCIAS DE ESTUDO</span>
+        </div>
+        <button class="close-btn" (click)="fecharModalPreferencias()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p class="pref-desc">Personalize como o Espírito Alquímico orienta sua rotina e gera seus diagnósticos:</p>
+
+        <!-- Matérias em Foco -->
+        <div class="pref-secao">
+          <label>Matérias em Foco:</label>
+          <div class="chips-container">
+            <button 
+              type="button"
+              *ngFor="let mat of opcoesMaterias" 
+              class="chip-btn"
+              [class.chip-ativo]="preferencias.materias_foco.includes(mat)"
+              (click)="alternarMateriaFoco(mat)">
+              {{ mat }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Horário Preferido -->
+        <div class="pref-secao">
+          <label>Horário Mais Produtivo:</label>
+          <div class="radio-grupo">
+            <button 
+              type="button"
+              *ngFor="let hor of opcoesHorarios"
+              class="radio-btn"
+              [class.radio-ativo]="preferencias.horario_preferido === hor"
+              (click)="preferencias.horario_preferido = hor">
+              {{ hor }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Técnica Preferida -->
+        <div class="pref-secao">
+          <label>Técnica de Aprendizagem:</label>
+          <div class="radio-grupo">
+            <button 
+              type="button"
+              *ngFor="let tec of opcoesTecnicas"
+              class="radio-btn"
+              [class.radio-ativo]="preferencias.tecnica_preferida === tec"
+              (click)="preferencias.tecnica_preferida = tec">
+              {{ tec }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Meta de Horas por Dia -->
+        <div class="pref-secao">
+          <label>Meta Diária de Estudo: <strong>{{ preferencias.meta_horas_dia }}h / dia</strong></label>
+          <input 
+            type="range" 
+            min="1" 
+            max="12" 
+            step="0.5" 
+            [(ngModel)]="preferencias.meta_horas_dia" 
+            class="range-slider" />
+        </div>
+
+        <!-- Observações Adicionais -->
+        <div class="pref-secao">
+          <label>Observações / Metas Pessoais:</label>
+          <textarea 
+            [(ngModel)]="preferencias.observacoes" 
+            placeholder="Ex: Focar no vestibular, dificuldade em trigonometria..." 
+            class="pref-textarea" 
+            rows="2">
+          </textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancelar" (click)="fecharModalPreferencias()">Cancelar</button>
+        <button class="btn-salvar" (click)="salvarPreferencias()">
+          <ion-icon name="checkmark-outline"></ion-icon>
+          <span>Salvar Preferências</span>
+        </button>
+      </div>
+    </div>
   </div>
 
 </ion-content>
@@ -39,7 +230,7 @@
   <div class="input-card">
     <ion-textarea 
       [(ngModel)]="userInput" 
-      placeholder="O que gostaria de perguntar?" 
+      placeholder="O que gostaria de perguntar ao Espírito Alquímico?" 
       [autoGrow]="true"
       rows="1"
       (keydown.enter)="sendMessageOnEnter($event)">
@@ -47,26 +238,26 @@
 
     <div class="input-actions">
       <div class="left-actions">
-  <!-- Input de arquivo oculto para upload de imagem -->
-  <input type="file" #fileInput (change)="onImageSelected($event)" accept="image/*" style="display: none;">
+        <!-- Input de arquivo oculto para upload de imagem -->
+        <input type="file" #fileInput (change)="onImageSelected($event)" accept="image/*" style="display: none;">
 
-  <!-- Botão de Imagem -->
-  <ion-button fill="clear" size="small" class="icon-btn" (click)="fileInput.click()">
-    <ion-icon name="image-outline"></ion-icon>
-  </ion-button>
+        <!-- Botão de Imagem -->
+        <ion-button fill="clear" size="small" class="icon-btn" (click)="fileInput.click()" title="Anexar imagem">
+          <ion-icon name="image-outline"></ion-icon>
+        </ion-button>
 
-  <!-- Botão de Formatação de Código -->
-  <ion-button fill="clear" size="small" class="icon-btn" (click)="insertCodeSnippet()">
-    <ion-icon name="code-slash-outline"></ion-icon>
-  </ion-button>
+        <!-- Botão de Formatação de Código -->
+        <ion-button fill="clear" size="small" class="icon-btn" (click)="insertCodeSnippet()" title="Inserir bloco de código">
+          <ion-icon name="code-slash-outline"></ion-icon>
+        </ion-button>
 
-  <!-- Botão de Microfone (Voz para Texto) -->
-  <ion-button fill="clear" size="small" class="icon-btn" (click)="toggleVoiceRecognition()">
-    <ion-icon [name]="isRecording ? 'mic' : 'mic-outline'"></ion-icon>
-  </ion-button>
-</div>
+        <!-- Botão de Microfone (Voz para Texto) -->
+        <ion-button fill="clear" size="small" class="icon-btn" [class.mic-recording]="isRecording" (click)="toggleVoiceRecognition()" title="Gravar áudio">
+          <ion-icon [name]="isRecording ? 'mic' : 'mic-outline'"></ion-icon>
+        </ion-button>
+      </div>
 
-      <ion-button class="send-btn" (click)="sendMessage()" [disabled]="isLoading">
+      <ion-button class="send-btn" (click)="sendMessage()" [disabled]="isLoading || !userInput.trim()">
         <ion-icon name="arrow-up-outline"></ion-icon>
       </ion-button>
     </div>

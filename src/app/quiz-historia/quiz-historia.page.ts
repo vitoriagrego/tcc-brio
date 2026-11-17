@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { NavController, ToastController } from '@ionic/angular';
 import { SupabaseService } from 'src/app/services/supabase';
 
 interface Pergunta {
@@ -28,6 +28,14 @@ export class QuizHistoriaPage implements OnInit {
   pontuacao: number = 0;
   finalizado: boolean = false;
   carregando: boolean = true;
+
+  // =======================================================
+  // CONTROLE DE ACESSO AOS QUIZZES POR PLANO (GRÁTIS vs PREMIUM)
+  // =======================================================
+  usuarioPlano: 'gratis' | 'premium' = 'gratis';
+  limiteDiarioAtingido: boolean = false;
+  verificandoLimite: boolean = true;
+  quizzesHoje: number = 0;
 
   private bancoDePerguntasLocal: { [key: string]: Pergunta[] } = {
     'Matemática': [
@@ -77,6 +85,7 @@ export class QuizHistoriaPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private navCtrl: NavController,
+    private toastCtrl: ToastController,
     private supabaseService: SupabaseService
   ) {}
 
@@ -92,7 +101,75 @@ export class QuizHistoriaPage implements OnInit {
       this.materiaId = materiaIdRecebido;
     }
 
-    await this.carregarOuPovoarQuestoes();
+    await this.verificarPlanoELimiteQuiz();
+  }
+
+  // ====================================================================
+  // VERIFICA SE O USUÁRIO TEM ACESSO ILIMITADO OU SE JÁ USOU O QUIZ DIÁRIO
+  // ====================================================================
+  async verificarPlanoELimiteQuiz() {
+    this.verificandoLimite = true;
+    try {
+      let user = await this.supabaseService.getUsuarioAtual();
+      if (!user) {
+        const { data: { session } } = await this.supabaseService.client.auth.getSession();
+        user = session?.user || null;
+      }
+
+      if (!user) {
+        // Se não autenticado, libera o quiz local
+        this.usuarioPlano = 'gratis';
+        this.limiteDiarioAtingido = false;
+        await this.carregarOuPovoarQuestoes();
+        return;
+      }
+
+      // 1. Consulta o perfil para verificar o plano
+      const { data: profile } = await this.supabaseService.client
+        .from('profiles')
+        .select('plano')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      this.usuarioPlano = profile?.plano === 'premium' ? 'premium' : 'gratis';
+
+      // 2. Se for PREMIUM: acesso total e ilimitado!
+      if (this.usuarioPlano === 'premium') {
+        this.limiteDiarioAtingido = false;
+        await this.carregarOuPovoarQuestoes();
+        return;
+      }
+
+      // 3. Se for GRATIS: limite de 1 quiz por dia
+      // Calcula o início do dia atual (00:00:00)
+      const inicioDoDia = new Date();
+      inicioDoDia.setHours(0, 0, 0, 0);
+
+      const { data: tentativasHoje, error } = await this.supabaseService.client
+        .from('historico_quizzes')
+        .select('id, created_at')
+        .eq('user_id', user.id)
+        .gte('created_at', inicioDoDia.toISOString())
+        .limit(1);
+
+      if (!error && tentativasHoje && tentativasHoje.length > 0) {
+        // Usuário gratuito já realizou um quiz hoje!
+        this.limiteDiarioAtingido = true;
+        this.quizzesHoje = tentativasHoje.length;
+        this.carregando = false;
+      } else {
+        // Ainda não fez quiz hoje
+        this.limiteDiarioAtingido = false;
+        await this.carregarOuPovoarQuestoes();
+      }
+
+    } catch (err) {
+      console.error('Erro ao verificar limite de quiz:', err);
+      // Fallback em caso de erro de conexão
+      await this.carregarOuPovoarQuestoes();
+    } finally {
+      this.verificandoLimite = false;
+    }
   }
 
   private async carregarOuPovoarQuestoes() {
@@ -224,7 +301,6 @@ export class QuizHistoriaPage implements OnInit {
         return;
       }
 
-      // 1. Busca os dados atuais do perfil (XP e nível)
       const { data: perfil, error: fetchError } = await this.supabaseService.client
         .from('profiles')
         .select('xp, nivel')
@@ -238,11 +314,8 @@ export class QuizHistoriaPage implements OnInit {
 
       const xpAtual = perfil.xp || 0;
       const novoXp = xpAtual + xpGanha;
-
-      // 2. Regra de nível: A cada 100 XP o usuário sobe 1 Nível
       const novoNivel = Math.floor(novoXp / 100) + 1;
 
-      // 3. Atualiza na tabela 'profiles'
       const { error: updateError } = await this.supabaseService.client
         .from('profiles')
         .update({
@@ -281,7 +354,8 @@ export class QuizHistoriaPage implements OnInit {
 
       const payload: any = {
         resposta_usuario: textoResposta,
-        acertou: acertou
+        acertou: acertou,
+        created_at: new Date().toISOString()
       };
 
       if (this.pergunta?.id) payload.questao_id = this.pergunta.id;
@@ -304,10 +378,20 @@ export class QuizHistoriaPage implements OnInit {
   }
 
   reiniciarQuiz(): void {
+    // Se for usuário gratuito que acabou de completar, bloqueia a repetição
+    if (this.usuarioPlano === 'gratis' && this.finalizado) {
+      this.limiteDiarioAtingido = true;
+      return;
+    }
+
     this.perguntaAtual = 0;
     this.respostaSelecionada = null;
     this.pontuacao = 0;
     this.finalizado = false;
+  }
+
+  irParaPlanos(): void {
+    this.navCtrl.navigateForward('/tabs/tab5');
   }
 
   voltar(): void {

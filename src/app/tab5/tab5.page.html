@@ -1,18 +1,31 @@
 <ion-content [fullscreen]="true" class="settings-content">
+  
   <div class="background-overlay">
 
     <!-- Card Perfil Principal -->
     <div class="card-rpg card-perfil">
-      <h1 class="titulo-gotic">Perfil do Estudante</h1>
+      <div class="perfil-top-header">
+        <h1 class="titulo-gotic">Perfil do Estudante</h1>
+        <!-- Selo do Plano no Perfil -->
+        <div class="selo-plano" [class.selo-premium]="usuario.plano === 'premium'">
+          <ion-icon [name]="usuario.plano === 'premium' ? 'star' : 'sparkles-outline'"></ion-icon>
+          <span>{{ usuario.plano === 'premium' ? 'PREMIUM' : 'GRÁTIS' }}</span>
+        </div>
+      </div>
 
       <div class="user-info-row">
-        <div class="avatar-container">
-          <!-- Apenas esta linha foi corrigida para vincular ao atributo [src] -->
+        <div class="avatar-container" [class.avatar-premium-glow]="usuario.plano === 'premium'">
           <img [src]="usuario.avatar" alt="Avatar">
+          <div class="crown-badge" *ngIf="usuario.plano === 'premium'">
+            <ion-icon name="star"></ion-icon>
+          </div>
         </div>
         <div class="text-container">
           <h2>{{ usuario.nickname }}</h2>
-          <p>{{ usuario.nome }}</p>
+          <p>{{ usuario.email }}</p>
+          <span class="plano-validade-txt" *ngIf="usuario.plano === 'premium' && usuario.planoExpiraEm">
+            Válido até: {{ dataExpiracaoFormatada }}
+          </span>
         </div>
       </div>
 
@@ -42,23 +55,23 @@
 
     <!-- Card de Estatísticas -->
     <div class="card-rpg card-estatisticas">
-      
+
       <div class="secao-prestigio">
         <h3>MATÉRIA DE PRESTÍGIO:</h3>
         <div class="materia-badge">
-          <div class="materia-icon">
+          <div class="materia-icon" [style.color]="materiaPrestigio.cor">
             <ion-icon name="flask"></ion-icon>
           </div>
           <div class="materia-detalhes">
             <h4>{{ materiaPrestigio.nome }}</h4>
             <p>Nível {{ materiaPrestigio.nivel }}</p>
             <div class="materia-progress-bg">
-              <div class="materia-progress-fill" [style.width.%]="materiaPrestigio.progresso * 100"></div>
+              <div class="materia-progress-fill"
+                   [style.width.%]="materiaPrestigio.progresso * 100"
+                   [style.background]="materiaPrestigio.cor"></div>
             </div>
           </div>
-          <div class="materia-porcentagem">
-            {{ materiaPrestigio.progresso * 100 }}%
-          </div>
+          <div class="materia-porcentagem">{{ porcentagemMateria }}%</div>
         </div>
       </div>
 
@@ -89,5 +102,253 @@
 
     </div>
 
+    <!-- ======================================================== -->
+    <!-- PARTE INFERIOR: ESPAÇO DE PLANOS (GRATUITO E PREMIUM)    -->
+    <!-- ======================================================== -->
+    <div class="card-rpg card-planos">
+      
+      <div class="planos-header">
+        <ion-icon name="diamond-outline" class="planos-header-icon"></ion-icon>
+        <div class="planos-header-titles">
+          <h2>Planos de Aprendizado</h2>
+          <p>Escolha a melhor jornada para transmutar seus estudos</p>
+        </div>
+      </div>
+
+      <!-- GRID COM OS DOIS PLANOS -->
+      <div class="planos-container">
+
+        <!-- ======================= -->
+        <!-- PLANO GRATUITO          -->
+        <!-- ======================= -->
+        <div class="card-plano card-plano-gratis" [class.plano-atual]="usuario.plano !== 'premium'">
+          
+          <div class="plano-topo">
+            <div class="plano-nome-row">
+              <h3>Plano Gratuito</h3>
+              <span class="badge-status-plano" *ngIf="usuario.plano !== 'premium'">SEU PLANO</span>
+            </div>
+            <div class="plano-preco">
+              <span class="cifrao">R$</span>
+              <span class="valor">0</span>
+              <span class="periodo">/ sempre</span>
+            </div>
+          </div>
+
+          <p class="plano-descricao">
+            Oferece as funcionalidades essenciais para o uso diário, incluindo o Timer Pomodoro básico, limite diário na resolução de quizzes e a visualização de matérias.
+          </p>
+
+          <div class="recursos-lista">
+            <div class="recurso-item">
+              <ion-icon name="checkmark-circle-outline" class="icon-ok"></ion-icon>
+              <span>Timer Pomodoro básico</span>
+            </div>
+            <div class="recurso-item">
+              <ion-icon name="alert-circle-outline" class="icon-aviso"></ion-icon>
+              <span>Limite diário de 1 quiz por dia</span>
+            </div>
+            <div class="recurso-item">
+              <ion-icon name="checkmark-circle-outline" class="icon-ok"></ion-icon>
+              <span>Visualização de matérias e conteúdos</span>
+            </div>
+            <div class="recurso-item">
+              <ion-icon name="lock-closed-outline" class="icon-bloqueado"></ion-icon>
+              <span>3 Avatares exclusivos bloqueados</span>
+            </div>
+            <div class="recurso-item">
+              <ion-icon name="close-circle-outline" class="icon-bloqueado"></ion-icon>
+              <span>Sem relatórios analíticos de IA</span>
+            </div>
+          </div>
+
+          <div class="plano-rodape" *ngIf="usuario.plano !== 'premium'">
+            <div class="status-ativo-txt">
+              <ion-icon name="checkmark"></ion-icon> Plano Ativo
+            </div>
+          </div>
+        </div>
+
+        <!-- ======================= -->
+        <!-- PLANO PREMIUM           -->
+        <!-- ======================= -->
+        <div class="card-plano card-plano-premium" [class.plano-atual]="usuario.plano === 'premium'">
+          
+          <div class="ribbon-destaque" *ngIf="usuario.plano !== 'premium'">EXPERIÊNCIA COMPLETA</div>
+          <div class="ribbon-destaque ribbon-ativo" *ngIf="usuario.plano === 'premium'">⭐ ASSINATURA ATIVA</div>
+
+          <div class="plano-topo">
+            <div class="plano-nome-row">
+              <h3>Plano Premium</h3>
+              <span class="badge-status-plano gold" *ngIf="usuario.plano === 'premium'">ATIVO</span>
+            </div>
+            <div class="plano-precos-opcoes">
+              <div class="preco-opcao">
+                <span class="opcao-rotulo">Mensal:</span>
+                <span class="opcao-valor">R$ 9,90 <small>/ mês</small></span>
+              </div>
+              <div class="preco-opcao anual-destaque">
+                <span class="opcao-rotulo">Anual:</span>
+                <span class="opcao-valor">R$ 79,90 <small>/ ano</small></span>
+                <span class="tag-economia">Economize 33%</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="plano-descricao">
+            Desbloqueia a experiência completa da plataforma, concedendo acesso a quizzes ilimitados, personalização de avatares e relatórios semanais gerados por Inteligência Artificial com diagnósticos detalhados de desempenho.
+          </p>
+
+          <div class="recursos-lista">
+            <div class="recurso-item premium-item">
+              <ion-icon name="sparkles" class="icon-star"></ion-icon>
+              <span><strong>Quizzes Ilimitados</strong> todos os dias</span>
+            </div>
+            <div class="recurso-item premium-item">
+              <ion-icon name="sparkles" class="icon-star"></ion-icon>
+              <span><strong>Todos os 7 Avatares</strong> de Alquimista Liberados</span>
+            </div>
+            <div class="recurso-item premium-item">
+              <ion-icon name="sparkles" class="icon-star"></ion-icon>
+              <span><strong>Relatórios Semanais de IA</strong> com diagnóstico e melhorias</span>
+            </div>
+            <div class="recurso-item premium-item">
+              <ion-icon name="sparkles" class="icon-star"></ion-icon>
+              <span>Mentor Alquímico com contexto de estudo personalizado</span>
+            </div>
+          </div>
+
+          <!-- BOTÕES DE PAGAMENTO (SE O USUÁRIO FOR GRATUITO) -->
+          <div class="botoes-compra-container" *ngIf="usuario.plano !== 'premium'">
+            <button class="btn-assinar btn-mensal" type="button" (click)="abrirModalPagamento('mensal')">
+              <div class="btn-txt-principal">Assinar Mensal</div>
+              <div class="btn-txt-preco">R$ 9,90/mês</div>
+            </button>
+
+            <button class="btn-assinar btn-anual" type="button" (click)="abrirModalPagamento('anual')">
+              <div class="btn-txt-principal">
+                <ion-icon name="flash"></ion-icon> Assinar Anual
+              </div>
+              <div class="btn-txt-preco">R$ 79,90/ano (Mais vantajoso)</div>
+            </button>
+          </div>
+
+          <!-- SE JÁ FOR PREMIUM -->
+          <div class="plano-ativo-info" *ngIf="usuario.plano === 'premium'">
+            <div class="ativo-box">
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <div>
+                <strong>Assinatura {{ usuario.planoPeriodo === 'anual' ? 'Anual' : 'Mensal' }} Ativa</strong>
+                <p *ngIf="usuario.planoExpiraEm">Expira em: {{ dataExpiracaoFormatada }}</p>
+              </div>
+            </div>
+            <button class="btn-gerenciar" type="button" (click)="gerenciarAssinatura()">
+              Gerenciar Assinatura
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL DE CHECKOUT / PAGAMENTO SIMULADO                    -->
+  <!-- ======================================================== -->
+  <div class="modal-checkout-overlay" *ngIf="modalPagamentoAberto">
+    <div class="modal-checkout-card">
+      
+      <div class="checkout-header">
+        <div class="header-tit">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <span>PAGAMENTO SEGURO</span>
+        </div>
+        <button class="checkout-close" (click)="fecharModalPagamento()" [disabled]="processandoPagamento">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="checkout-body">
+        
+        <!-- RESUMO DO PEDIDO -->
+        <div class="resumo-pedido">
+          <div class="resumo-linha">
+            <span>Plano Selecionado:</span>
+            <strong>Plano Premium ({{ planoEscolhido === 'mensal' ? 'Mensal' : 'Anual' }})</strong>
+          </div>
+          <div class="resumo-linha">
+            <span>Valor Total:</span>
+            <strong class="destaque-valor">{{ valorPlanoEscolhido }}</strong>
+          </div>
+        </div>
+
+        <!-- ESCOLHA DO MÉTODO -->
+        <div class="metodo-selecao">
+          <button 
+            type="button" 
+            class="metodo-btn" 
+            [class.metodo-ativo]="metodoPagamento === 'pix'"
+            (click)="metodoPagamento = 'pix'">
+            <ion-icon name="qr-code-outline"></ion-icon>
+            <span>PIX (Instantâneo)</span>
+          </button>
+
+          <button 
+            type="button" 
+            class="metodo-btn" 
+            [class.metodo-ativo]="metodoPagamento === 'cartao'"
+            (click)="metodoPagamento = 'cartao'">
+            <ion-icon name="card-outline"></ion-icon>
+            <span>Cartão de Crédito</span>
+          </button>
+        </div>
+
+        <!-- ABA PIX -->
+        <div class="conteudo-pix" *ngIf="metodoPagamento === 'pix'">
+          <div class="qr-code-simulado">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=brio-premium-pagamento-simulado" alt="QR Code PIX">
+          </div>
+          <p class="pix-instrucao">Escaneie o QR Code ou copie o código abaixo para aprovação instantânea:</p>
+          <div class="pix-copia-cola">
+            <input type="text" [value]="pixChaveCopiaCola" readonly>
+            <button type="button" (click)="copiarPix()">
+              <ion-icon name="copy-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- ABA CARTÃO DE CRÉDITO -->
+        <div class="conteudo-cartao" *ngIf="metodoPagamento === 'cartao'">
+          <div class="cartao-visual">
+            <div class="chip"></div>
+            <div class="num-cartao">{{ dadosCartao.numero }}</div>
+            <div class="cartao-rodape">
+              <span>{{ dadosCartao.nome }}</span>
+              <span>{{ dadosCartao.validade }}</span>
+            </div>
+          </div>
+          <p class="cartao-aviso">Ambiente de teste simulado: os dados acima estão prontos para confirmação imediata.</p>
+        </div>
+
+      </div>
+
+      <div class="checkout-footer">
+        <button class="btn-cancelar-checkout" (click)="fecharModalPagamento()" [disabled]="processandoPagamento">
+          Cancelar
+        </button>
+
+        <button class="btn-confirmar-pagamento" (click)="efetuarPagamento()" [disabled]="processandoPagamento">
+          <ion-spinner *ngIf="processandoPagamento" name="crescent"></ion-spinner>
+          <span *ngIf="!processandoPagamento">
+            <ion-icon name="lock-closed"></ion-icon> Pagar {{ valorPlanoEscolhido }} e Ativar
+          </span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+  
 </ion-content>

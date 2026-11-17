@@ -1,21 +1,19 @@
-
 <ion-content [fullscreen]="true" class="settings-content">
   <div class="background-overlay">
 
-    <!-- CABEÇALHO -->
+    <!-- CABEÇALHO DA GUILDA -->
     <div class="header-nav">
       <ion-button fill="clear" class="btn-back" (click)="voltar()">
         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
 
-      <h1 class="titulo-guilda">Guilda dos Alquimistas</h1>
+      <h1 class="titulo-guilda">{{ minhaGuildaNome || 'Guilda dos Alquimistas' }}</h1>
     </div>
 
-    <!-- TELA DE DETALHES DO DESAFIO -->
-    <div *ngIf="desafioSelecionado as desafio" class="detalhes-container">
+    <!-- TELA DE DETALHES DO DESAFIO (só existe para quem está em uma guilda) -->
+    <div *ngIf="minhaGuildaId && desafioSelecionado as desafio" class="detalhes-container">
 
-      <ion-button fill="clear" class="btn-retornar"
-        (click)="fecharDetalhes()">
+      <ion-button fill="clear" class="btn-retornar" (click)="fecharDetalhes()">
         <ion-icon name="arrow-back-outline"></ion-icon>
         Voltar aos desafios
       </ion-button>
@@ -23,54 +21,18 @@
       <div class="card-rpg detalhe-card">
 
         <div class="detalhe-icone">
-          <ion-icon [name]="desafio.icone"></ion-icon>
+          <ion-icon [name]="desafio.icone" [style.color]="desafio.corIcone"></ion-icon>
         </div>
 
         <span class="subtitulo-detalhe">DESAFIO DA GUILDA</span>
 
-        <!-- MODO DE VISUALIZAÇÃO -->
-        <div *ngIf="!editandoDesafio">
+        <!-- VISUALIZAÇÃO DO DESAFIO -->
+        <div>
           <h2>{{ desafio.titulo }}</h2>
           <p class="desc-desafio">{{ desafio.descricao }}</p>
         </div>
 
-        <!-- MODO DE EDIÇÃO DO ÚLTIMO DESAFIO -->
-        <div *ngIf="editandoDesafio" class="form-edicao">
-          <ion-item class="campo-edicao">
-            <ion-label position="stacked">Título do desafio</ion-label>
-            <ion-input [(ngModel)]="tituloEdicao"
-              placeholder="Digite o título"></ion-input>
-          </ion-item>
-
-          <ion-item class="campo-edicao">
-            <ion-label position="stacked">Descrição</ion-label>
-            <ion-textarea [(ngModel)]="descricaoEdicao"
-              autoGrow="true"
-              placeholder="Descreva o desafio"></ion-textarea>
-          </ion-item>
-
-          <ion-item class="campo-edicao">
-            <ion-label position="stacked">Meta total</ion-label>
-            <ion-input type="number" min="1"
-              [(ngModel)]="metaEdicao"></ion-input>
-          </ion-item>
-
-          <div class="botoes-edicao">
-            <ion-button expand="block" class="btn-desafio"
-              (click)="salvarEdicao()">
-              <ion-icon name="save-outline" slot="start"></ion-icon>
-              Salvar alterações
-            </ion-button>
-
-            <ion-button expand="block" fill="outline"
-              class="btn-cancelar"
-              (click)="cancelarEdicao()">
-              Cancelar
-            </ion-button>
-          </div>
-        </div>
-
-        <!-- PROGRESSO -->
+        <!-- BARRA DE PROGRESSO DO DESAFIO -->
         <div class="progresso-detalhado">
           <div class="progresso-cabecalho">
             <span>Progresso do desafio</span>
@@ -80,9 +42,7 @@
           </div>
 
           <div class="progress-track">
-            <div class="progress-fill"
-              [style.width.%]="progressoPercentual(desafio)">
-            </div>
+            <div class="progress-fill" [style.width.%]="progressoPercentual(desafio)"></div>
           </div>
 
           <p class="porcentagem">
@@ -90,29 +50,24 @@
           </p>
         </div>
 
-        <!-- ETAPAS DO DESAFIO -->
-        <div class="etapas-container" *ngIf="!editandoDesafio">
+        <!-- LISTA DE ETAPAS -->
+        <div class="etapas-container">
           <h3>
             <ion-icon name="list-outline"></ion-icon>
             Etapas do desafio
           </h3>
 
           <p class="texto-ajuda">
-            Marque as etapas conforme forem realizadas para atualizar
-            o progresso.
+            Marque as etapas conforme forem realizadas para atualizar o progresso.
           </p>
 
-          <div class="etapa-item"
-            *ngFor="let etapa of desafio.etapas; let i = index">
-
+          <div class="etapa-item" *ngFor="let etapa of desafio.etapas; let i = index">
             <ion-checkbox
               [checked]="etapa.concluida"
-              [disabled]="etapa.concluida && desafio.progressoAtual === 0"
               (ionChange)="alternarEtapa(desafio, etapa, $event.detail.checked)">
             </ion-checkbox>
 
-            <div class="etapa-texto"
-              [class.etapa-concluida]="etapa.concluida">
+            <div class="etapa-texto" [class.etapa-concluida]="etapa.concluida">
               <strong>Etapa {{ i + 1 }}</strong>
               <p>{{ etapa.descricao }}</p>
             </div>
@@ -124,162 +79,288 @@
             </ion-icon>
           </div>
 
-          <div class="mensagem-concluido"
-            *ngIf="desafio.progressoAtual >= desafio.progressoTotal">
+          <div class="mensagem-concluido" *ngIf="desafio.progressoAtual >= desafio.progressoTotal">
             <ion-icon name="trophy-outline"></ion-icon>
             Desafio concluído! Parabéns, alquimista!
           </div>
         </div>
 
-        <!-- EDIÇÃO EXCLUSIVA DO ÚLTIMO DESAFIO -->
-        <ion-button
-          *ngIf="!editandoDesafio && desafio.id === ultimoDesafioId"
-          expand="block"
-          class="btn-editar"
-          (click)="iniciarEdicao()">
-
-          <ion-icon name="create-outline" slot="start"></ion-icon>
-          Editar último desafio
-        </ion-button>
-
       </div>
     </div>
 
-    <!-- ABAS: OCULTAS QUANDO OS DETALHES ESTÃO ABERTOS -->
     <ng-container *ngIf="!desafioSelecionado">
 
-      <ion-segment
-        [value]="segmentoSelecionado"
-        (ionChange)="segmentChanged($event)"
-        class="custom-segment">
+      <!-- CARREGANDO (primeira carga) -->
+      <p class="texto-ajuda" *ngIf="carregando">Consultando o grimório...</p>
 
-        <ion-segment-button value="feed">
-          <ion-label>FEED</ion-label>
-        </ion-segment-button>
+      <!-- =====================================================================
+           SEM GUILDA: só ingresso (convites, busca de guildas e criação).
+           Feed, desafios e ranking ficam bloqueados.
+           ===================================================================== -->
+      <div *ngIf="!carregando && !minhaGuildaId" class="cards-container">
 
-        <ion-segment-button value="desafios">
-          <ion-label>Desafios</ion-label>
-        </ion-segment-button>
+        <p class="texto-ajuda">
+          Para acessar o feed, os desafios e o ranking, entre em uma guilda ou crie a sua.
+        </p>
 
-        <ion-segment-button value="ranking">
-          <ion-label>Ranking</ion-label>
-        </ion-segment-button>
-      </ion-segment>
+        <!-- Convites recebidos -->
+        <h3 class="secao-titulo" *ngIf="solicitacoes.length > 0">Convites recebidos</h3>
 
-      <!-- FEED -->
-      <div *ngIf="segmentoSelecionado === 'feed'"
-        class="cards-container">
-
-        <div *ngFor="let item of feedAtividades"
-          class="card-rpg item-feed">
-
-          <div class="avatar-ring">
-            <img [src]="item.avatar" [alt]="item.usuario">
-          </div>
-
+        <div class="card-rpg item-feed" *ngFor="let s of solicitacoes">
           <div class="feed-info">
-            <h2>{{ item.usuario }}</h2>
-            <p>{{ item.acao }}</p>
+            <h2>{{ s.guilda }}</h2>
+            <p>convidou você para a guilda</p>
           </div>
-
-          <span class="tempo-feed">{{ item.tempo }}</span>
+          <ion-button size="small" (click)="responder(s, true)">Aceitar</ion-button>
+          <ion-button size="small" fill="outline" (click)="responder(s, false)">Recusar</ion-button>
         </div>
 
-        <h3 class="secao-titulo">Desafio em destaque</h3>
+        <!-- Busca de guildas -->
+        <h3 class="secao-titulo">Encontrar uma guilda</h3>
 
-        <div class="card-rpg card-desafio"
-          *ngIf="desafios.length > 0">
+        <ion-searchbar
+          placeholder="Buscar guilda pelo nome"
+          [debounce]="400"
+          (ionInput)="buscarGuildas($event)">
+        </ion-searchbar>
 
-          <h3>{{ desafios[0].titulo }}</h3>
-          <p class="desc-desafio">{{ desafios[0].descricao }}</p>
-
-          <div class="progress-box">
-            <div class="progress-track">
-              <div class="progress-fill"
-                [style.width.%]="progressoPercentual(desafios[0])">
-              </div>
-              <span class="progresso-texto">
-                {{ desafios[0].progressoAtual }}/{{ desafios[0].progressoTotal }}
-              </span>
-            </div>
-
-            <div class="icone-desafio">
-              <ion-icon [name]="desafios[0].icone"></ion-icon>
-            </div>
+        <div class="card-rpg item-feed" *ngFor="let g of guildasBusca">
+          <div class="feed-info">
+            <h2>{{ g.nome }}</h2>
+            <p>{{ g.descricao || 'Sem descrição.' }}</p>
           </div>
-
-          <ion-button expand="block" class="btn-desafio"
-            (click)="verDesafio(desafios[0].id)">
-            Ver desafio
+          <ion-button
+            size="small"
+            [disabled]="pedidosEnviados.has(g.id)"
+            (click)="pedirEntrada(g.id)">
+            {{ pedidosEnviados.has(g.id) ? 'Pedido enviado' : 'Pedir entrada' }}
           </ion-button>
         </div>
+
+        <p class="texto-ajuda" *ngIf="guildasBusca.length === 0">
+          Nenhuma guilda encontrada. Que tal criar a sua?
+        </p>
+
+        <!-- Criar guilda -->
+        <ion-button expand="block" class="btn-desafio" (click)="abrirCriarGuilda()">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          Criar minha guilda
+        </ion-button>
+
       </div>
 
-      <!-- DESAFIOS -->
-      <div *ngIf="segmentoSelecionado === 'desafios'"
-        class="cards-container">
+      <!-- =====================================================================
+           COM GUILDA: navegação por abas
+           ===================================================================== -->
+      <ng-container *ngIf="!carregando && minhaGuildaId">
 
-        <div *ngFor="let desafio of desafios"
-          class="card-rpg card-desafio">
+        <ion-segment
+          [value]="segmentoSelecionado"
+          (ionChange)="segmentChanged($event)"
+          class="custom-segment">
 
-          <div class="titulo-card-desafio">
-            <h3>{{ desafio.titulo }}</h3>
-            <ion-icon [name]="desafio.icone"
-              [style.color]="desafio.corIcone">
-            </ion-icon>
-          </div>
+          <ion-segment-button value="feed">
+            <ion-label>FEED</ion-label>
+          </ion-segment-button>
 
-          <p class="desc-desafio">{{ desafio.descricao }}</p>
+          <ion-segment-button value="desafios">
+            <ion-label>Desafios</ion-label>
+          </ion-segment-button>
 
-          <div class="progress-box">
-            <div class="progress-track">
-              <div class="progress-fill"
-                [style.width.%]="progressoPercentual(desafio)">
-              </div>
+          <ion-segment-button value="ranking">
+            <ion-label>Ranking</ion-label>
+          </ion-segment-button>
 
-              <span class="progresso-texto">
-                {{ desafio.progressoAtual }}/{{ desafio.progressoTotal }}
-              </span>
+          <ion-segment-button value="membros">
+            <ion-label>
+              Guilda
+              <ion-badge *ngIf="solicitacoes.length > 0" color="danger">{{ solicitacoes.length }}</ion-badge>
+            </ion-label>
+          </ion-segment-button>
+        </ion-segment>
+
+        <!-- ABA 1: FEED DE ATIVIDADES (usuários reais da guilda) -->
+        <div *ngIf="segmentoSelecionado === 'feed'" class="cards-container">
+
+          <div *ngFor="let item of feedAtividades" class="card-rpg item-feed">
+            <div class="avatar-ring">
+              <img [src]="item.avatar" [alt]="item.usuario" (error)="onImgError($event)">
             </div>
+
+            <div class="feed-info">
+              <h2>{{ item.usuario }}</h2>
+              <p>{{ item.acao }}</p>
+            </div>
+
+            <span class="tempo-feed">{{ item.tempo }}</span>
           </div>
 
-          <p class="texto-progresso">
-            {{ progressoPercentual(desafio) }}% concluído
+          <p class="texto-ajuda" *ngIf="feedAtividades.length === 0">
+            Nenhuma atividade ainda. Conclua etapas de desafios para aparecer aqui!
           </p>
 
-          <ion-button expand="block" class="btn-desafio"
-            (click)="verDesafio(desafio.id)">
-            <ion-icon name="eye-outline" slot="start"></ion-icon>
-            Ver desafio
+          <ng-container *ngIf="desafios.length > 0">
+            <h3 class="secao-titulo">Desafio em destaque</h3>
+
+            <div class="card-rpg card-desafio">
+              <h3>{{ desafios[0].titulo }}</h3>
+              <p class="desc-desafio">{{ desafios[0].descricao }}</p>
+
+              <div class="progress-box">
+                <div class="progress-track">
+                  <div class="progress-fill" [style.width.%]="progressoPercentual(desafios[0])"></div>
+                  <span class="progresso-texto">
+                    {{ desafios[0].progressoAtual }}/{{ desafios[0].progressoTotal }}
+                  </span>
+                </div>
+
+                <div class="icone-desafio">
+                  <ion-icon [name]="desafios[0].icone" [style.color]="desafios[0].corIcone"></ion-icon>
+                </div>
+              </div>
+
+              <ion-button expand="block" class="btn-desafio" (click)="verDesafio(desafios[0].id)">
+                Ver desafio
+              </ion-button>
+            </div>
+          </ng-container>
+
+        </div>
+
+        <!-- ABA 2: LISTA DE DESAFIOS -->
+        <div *ngIf="segmentoSelecionado === 'desafios'" class="cards-container">
+
+          <div *ngFor="let desafio of desafios" class="card-rpg card-desafio">
+            <div class="titulo-card-desafio">
+              <h3>{{ desafio.titulo }}</h3>
+              <ion-icon [name]="desafio.icone" [style.color]="desafio.corIcone"></ion-icon>
+            </div>
+
+            <p class="desc-desafio">{{ desafio.descricao }}</p>
+
+            <div class="progress-box">
+              <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="progressoPercentual(desafio)"></div>
+                <span class="progresso-texto">
+                  {{ desafio.progressoAtual }}/{{ desafio.progressoTotal }}
+                </span>
+              </div>
+            </div>
+
+            <p class="texto-progresso">
+              {{ progressoPercentual(desafio) }}% concluído
+            </p>
+
+            <ion-button expand="block" class="btn-desafio" (click)="verDesafio(desafio.id)">
+              <ion-icon name="eye-outline" slot="start"></ion-icon>
+              Ver desafio
+            </ion-button>
+          </div>
+
+          <p class="texto-ajuda" *ngIf="desafios.length === 0">
+            Nenhum desafio disponível no momento.
+          </p>
+
+        </div>
+
+        <!-- ABA 3: RANKING DA GUILDA (membros da guilda, ordenados por XP) -->
+        <div *ngIf="segmentoSelecionado === 'ranking'" class="cards-container">
+
+          <div *ngFor="let rank of rankingGuilda" class="card-rpg item-feed">
+            <span class="posicao-rank">#{{ rank.posicao }}</span>
+
+            <div class="avatar-ring">
+              <img [src]="rank.avatar" [alt]="rank.nome" (error)="onImgError($event)">
+            </div>
+
+            <div class="feed-info">
+              <h2>{{ rank.nome }}</h2>
+              <p class="xp-rank">{{ rank.xp }}</p>
+            </div>
+
+            <ion-icon *ngIf="rank.posicao === 1" name="trophy-outline" class="icone-trofeu"></ion-icon>
+          </div>
+
+          <p class="texto-ajuda" *ngIf="rankingGuilda.length === 0">
+            Nenhum membro no ranking ainda.
+          </p>
+
+        </div>
+
+        <!-- ABA 4: GUILDA (pendências, membros, convites e sair) -->
+        <div *ngIf="segmentoSelecionado === 'membros'" class="cards-container">
+
+          <!-- Pedidos de entrada recebidos (somente criador) -->
+          <h3 class="secao-titulo" *ngIf="solicitacoes.length > 0">Pendências</h3>
+
+          <div class="card-rpg item-feed" *ngFor="let s of solicitacoes">
+            <div class="feed-info">
+              <h2>{{ s.nome }}</h2>
+              <p>quer entrar na sua guilda</p>
+            </div>
+            <ion-button size="small" (click)="responder(s, true)">Aceitar</ion-button>
+            <ion-button size="small" fill="outline" (click)="responder(s, false)">Recusar</ion-button>
+          </div>
+
+          <!-- Membros: todos veem; só o criador pode remover -->
+          <h3 class="secao-titulo">Membros ({{ membros.length }})</h3>
+
+          <div class="card-rpg item-feed" *ngFor="let m of membros">
+            <div class="avatar-ring">
+              <img [src]="m.avatar" [alt]="m.nickname" (error)="onImgError($event)">
+            </div>
+
+            <div class="feed-info">
+              <h2>
+                {{ m.nickname }}
+                <ion-icon *ngIf="m.papel === 'criador'" name="shield-outline" class="icone-trofeu"></ion-icon>
+              </h2>
+              <p>{{ m.papel === 'criador' ? 'Criador' : 'Membro' }} · {{ m.xp }} XP</p>
+              <p>Na guilda desde {{ formatarData(m.entrouEm) }}</p>
+            </div>
+
+            <ion-button
+              *ngIf="souCriador && m.papel !== 'criador'"
+              size="small"
+              fill="outline"
+              color="danger"
+              (click)="removerMembro(m)">
+              Remover
+            </ion-button>
+          </div>
+
+          <!-- Criador: convidar usuários -->
+          <ng-container *ngIf="souCriador">
+            <h3 class="secao-titulo">Convidar alquimistas</h3>
+
+            <ion-searchbar
+              placeholder="Buscar por nickname"
+              [debounce]="400"
+              (ionInput)="buscarUsuarios($event)">
+            </ion-searchbar>
+
+            <div class="card-rpg item-feed" *ngFor="let u of usuariosBusca">
+              <div class="feed-info">
+                <h2>{{ u.nickname }}</h2>
+              </div>
+              <ion-button size="small" (click)="convidar(u.id)">Convidar</ion-button>
+            </div>
+          </ng-container>
+
+          <!-- Membro comum: aviso -->
+          <p class="texto-ajuda" *ngIf="!souCriador">
+            Você faz parte da guilda {{ minhaGuildaNome }}. Apenas o criador pode convidar ou remover membros.
+          </p>
+
+          <!-- Sair da guilda (criador e membros) -->
+          <ion-button expand="block" fill="outline" color="danger" class="btn-sair" (click)="sairDaGuilda()">
+            <ion-icon name="exit-outline" slot="start"></ion-icon>
+            Sair da guilda
           </ion-button>
+
         </div>
-      </div>
 
-      <!-- RANKING -->
-      <div *ngIf="segmentoSelecionado === 'ranking'"
-        class="cards-container">
-
-        <div *ngFor="let rank of rankingGuilda"
-          class="card-rpg item-feed">
-
-          <span class="posicao-rank">#{{ rank.posicao }}</span>
-
-          <div class="avatar-ring">
-            <img [src]="rank.avatar" [alt]="rank.nome">
-          </div>
-
-          <div class="feed-info">
-            <h2>{{ rank.nome }}</h2>
-            <p class="xp-rank">{{ rank.xp }}</p>
-          </div>
-
-          <ion-icon
-            *ngIf="rank.posicao === 1"
-            name="trophy-outline"
-            class="icone-trofeu">
-          </ion-icon>
-        </div>
-      </div>
+      </ng-container>
 
     </ng-container>
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController, AlertController, ToastController } from '@ionic/angular';
 import { SupabaseService } from 'src/app/services/supabase';
 
@@ -17,12 +17,14 @@ export interface Tarefa {
   concluida: boolean;
   subtarefas: Subtarefa[];
   materiaId?: string;
+  materiaNome?: string; // nome da matéria exibido no bloco
   xp?: number; // recompensa em XP (coluna blocos_estudo.xp)
 }
 
 export interface Materia {
   id: string;
   nome: string;
+  local?: boolean; // true = digitada aqui, existe só nesta página (não vai para o banco)
 }
 
 @Component({
@@ -31,7 +33,7 @@ export interface Materia {
   styleUrls: ['./grim2.page.scss'],
   standalone: false
 })
-export class Grim2Page implements OnInit {
+export class Grim2Page {
   diasSemana: string[] = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'];
   diaAtivoIndex: number = 0;
   folhaVirando: boolean = false;
@@ -42,7 +44,13 @@ export class Grim2Page implements OnInit {
   novaTarefaTempo: string = '';
   materiaSelecionadaId: string | null = null;
 
+  // lista exibida no seletor = catálogo (banco) + matérias digitadas aqui
   listaMaterias: Materia[] = [];
+  private materiasCatalogo: Materia[] = [];
+  private materiasLocais: Materia[] = [];
+
+  // nome da matéria digitada de cada bloco (id do bloco -> nome), só em memória
+  private nomesLocaisPorTarefa = new Map<string, string>();
 
   tarefasPorDia: { [key: number]: Tarefa[] } = {
     0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []
@@ -55,11 +63,8 @@ export class Grim2Page implements OnInit {
     private supabaseService: SupabaseService
   ) {}
 
-  async ngOnInit() {
-    await this.carregarMaterias();
-    await this.carregarTarefasDoBanco();
-  }
-
+  // O Ionic já dispara ionViewWillEnter na primeira entrada, então
+  // não carregamos também no ngOnInit (evita consulta duplicada).
   async ionViewWillEnter() {
     await this.carregarMaterias();
     await this.carregarTarefasDoBanco();
@@ -73,6 +78,7 @@ export class Grim2Page implements OnInit {
   // GERENCIAMENTO DE MATÉRIAS (MÉTODOS CHAMADOS NO HTML)
   // =====================================================
 
+  // Lê só o catálogo do banco; as matérias digitadas aqui ficam em memória
   async carregarMaterias() {
     try {
       const { data, error } = await this.supabaseService.client
@@ -85,16 +91,22 @@ export class Grim2Page implements OnInit {
         return;
       }
 
-      if (data && data.length > 0) {
-        this.listaMaterias = data;
-        if (!this.materiaSelecionadaId) {
-          this.materiaSelecionadaId = data[0].id;
-        }
-      } else {
-        this.listaMaterias = [];
-      }
+      this.materiasCatalogo = (data ?? []) as Materia[];
+      this.montarListaMaterias();
     } catch (err) {
       console.error('Erro de conexão ao carregar matérias:', err);
+    }
+  }
+
+  private montarListaMaterias() {
+    this.listaMaterias = [...this.materiasCatalogo, ...this.materiasLocais].sort((a, b) =>
+      a.nome.localeCompare(b.nome, 'pt-BR')
+    );
+
+    // mantém a seleção válida (ex.: depois de excluir a matéria selecionada)
+    const aindaExiste = this.listaMaterias.some(m => m.id === this.materiaSelecionadaId);
+    if (!aindaExiste) {
+      this.materiaSelecionadaId = this.listaMaterias.length > 0 ? this.listaMaterias[0].id : null;
     }
   }
 
@@ -122,7 +134,7 @@ export class Grim2Page implements OnInit {
               return false;
             }
 
-            this.executarCadastroMateria(nomeFormatado);
+            this.adicionarMateriaLocal(nomeFormatado);
             return true;
           }
         }
@@ -132,37 +144,31 @@ export class Grim2Page implements OnInit {
     await alertPrompt.present();
   }
 
-  private async executarCadastroMateria(nome: string) {
-    try {
-      const { data: novaMat, error } = await this.supabaseService.client
-        .from('materias')
-        .insert({ nome })
-        .select()
-        .single();
-
-      if (error) {
-        window.alert('Erro ao salvar matéria: ' + error.message);
-        return;
-      }
-
-      if (novaMat) {
-        await this.carregarMaterias();
-        this.materiaSelecionadaId = novaMat.id;
-      }
-    } catch (err) {
-      console.error('Erro ao cadastrar matéria:', err);
-    }
-  }
-
-  async excluirMateria() {
-    await this.carregarMaterias();
-
-    if (this.listaMaterias.length === 0) {
-      window.alert('Nenhuma matéria cadastrada para excluir.');
+  // NÃO grava no banco: a matéria existe só aqui e vai apenas para o bloco criado
+  private adicionarMateriaLocal(nome: string) {
+    // se já existe (do catálogo ou digitada antes), só seleciona
+    const existente = this.listaMaterias.find(
+      m => m.nome.trim().toLowerCase() === nome.toLowerCase()
+    );
+    if (existente) {
+      this.materiaSelecionadaId = existente.id;
       return;
     }
 
-    const inputsOptions = this.listaMaterias.map((m) => ({
+    const nova: Materia = { id: `local-${Date.now()}`, nome, local: true };
+    this.materiasLocais.push(nova);
+    this.montarListaMaterias();
+    this.materiaSelecionadaId = nova.id;
+  }
+
+  // Só remove as matérias digitadas aqui (nunca as do catálogo)
+  async excluirMateria() {
+    if (this.materiasLocais.length === 0) {
+      window.alert('Você não tem matérias próprias para excluir.');
+      return;
+    }
+
+    const inputsOptions = this.materiasLocais.map((m) => ({
       label: m.nome,
       type: 'radio' as const,
       value: m.id
@@ -182,7 +188,11 @@ export class Grim2Page implements OnInit {
           role: 'destructive',
           handler: (materiaId: string) => {
             if (!materiaId) return false;
-            this.executarExclusaoMateria(materiaId);
+            this.materiasLocais = this.materiasLocais.filter(m => m.id !== materiaId);
+            if (this.materiaSelecionadaId === materiaId) {
+              this.materiaSelecionadaId = null;
+            }
+            this.montarListaMaterias();
             return true;
           }
         }
@@ -190,28 +200,6 @@ export class Grim2Page implements OnInit {
     });
 
     await alertDelete.present();
-  }
-
-  private async executarExclusaoMateria(materiaId: string) {
-    try {
-      const { error } = await this.supabaseService.client
-        .from('materias')
-        .delete()
-        .eq('id', materiaId);
-
-      if (error) {
-        window.alert('Erro ao excluir matéria: ' + error.message);
-        return;
-      }
-
-      if (this.materiaSelecionadaId === materiaId) {
-        this.materiaSelecionadaId = null;
-      }
-
-      await this.carregarMaterias();
-    } catch (err) {
-      console.error('Erro ao excluir matéria:', err);
-    }
   }
 
   // =====================================================
@@ -225,7 +213,7 @@ export class Grim2Page implements OnInit {
 
       const { data: blocos, error } = await this.supabaseService.client
         .from('blocos_estudo')
-        .select('*')
+        .select('id, titulo, conteudo_html_md, concluido, materia_id, xp')
         .eq('user_id', user.id)
         .order('ordem', { ascending: true })
         .order('created_at', { ascending: true });
@@ -245,6 +233,9 @@ export class Grim2Page implements OnInit {
           concluida: b.concluido === true, // vem da coluna blocos_estudo.concluido
           subtarefas: [],
           materiaId: b.materia_id,
+          materiaNome:
+            this.materiasCatalogo.find(m => m.id === b.materia_id)?.nome ??
+            this.nomesLocaisPorTarefa.get(b.id),
           xp: b.xp ?? 0
         }));
 
@@ -265,6 +256,10 @@ export class Grim2Page implements OnInit {
     const tempoValido = this.novaTarefaTempo.trim() || '30m';
     const xpRecompensa = this.calcularXpPorTempo(tempoValido);
 
+    // matéria escolhida: do catálogo (vai o id) ou digitada aqui (só o nome, sem id no banco)
+    const materia = this.listaMaterias.find(m => m.id === this.materiaSelecionadaId);
+    const materiaIdBanco = materia && !materia.local ? materia.id : null;
+
     try {
       const user = await this.supabaseService.getUsuarioAtual();
       if (!user) {
@@ -276,13 +271,13 @@ export class Grim2Page implements OnInit {
         .from('blocos_estudo')
         .insert({
           user_id: user.id,
-          materia_id: this.materiaSelecionadaId || null,
+          materia_id: materiaIdBanco,
           titulo: tituloValido,
           conteudo_html_md: tempoValido,
           concluido: false,
           xp: xpRecompensa
         })
-        .select()
+        .select('id, titulo, conteudo_html_md, materia_id, xp')
         .single();
 
       if (error) {
@@ -292,6 +287,10 @@ export class Grim2Page implements OnInit {
       }
 
       if (data) {
+        if (materia?.local) {
+          this.nomesLocaisPorTarefa.set(data.id, materia.nome);
+        }
+
         const novaTarefa: Tarefa = {
           id: data.id,
           titulo: data.titulo,
@@ -301,6 +300,7 @@ export class Grim2Page implements OnInit {
           concluida: false,
           subtarefas: [],
           materiaId: data.materia_id,
+          materiaNome: materia?.nome,
           xp: data.xp ?? xpRecompensa
         };
 
@@ -418,6 +418,7 @@ export class Grim2Page implements OnInit {
         return;
       }
 
+      this.nomesLocaisPorTarefa.delete(tarefa.id);
       this.tarefasPorDia[this.diaAtivoIndex] = this.tarefasPorDia[this.diaAtivoIndex].filter(
         t => t.id !== tarefa.id
       );

@@ -1,59 +1,87 @@
-<ion-content [fullscreen]="true" class="settings-content">
+<ion-content [fullscreen]="true" class="editar-perfil-content">
+
   <div class="background-overlay">
 
-    <!-- Header Nav -->
-    <div class="header-nav">
-      <ion-button fill="clear" class="btn-back" (click)="goBack()">
-        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-      <h2>Editar Perfil</h2>
+    <!-- CABEÇALHO -->
+    <div class="header-editar">
+      <button class="back-button" type="button" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+      <h1>Editar Perfil</h1>
+      <div class="spacer"></div>
     </div>
 
-    <!-- Card Principal -->
-    <div class="card-rpg">
-      
-      <!-- Preview do Avatar e Nome -->
-      <div class="preview-section">
-        <div class="avatar-preview">
-          <img [src]="avatarSelecionado" alt="Preview Avatar">
+    <!-- PREVIEW DO AVATAR SELECIONADO -->
+    <div class="preview-section">
+      <div class="avatar-preview-container">
+        <img [src]="avatarSelecionado" alt="Avatar Selecionado" class="avatar-preview-img">
+        <div class="preview-badge" *ngIf="isAvatarBloqueado(avatarSelecionado)">
+          <ion-icon name="lock-closed"></ion-icon>
         </div>
-        <span class="preview-label">{{ nickname || 'Seu Nickname' }}</span>
+      </div>
+      <p class="preview-label">Prévia do Avatar</p>
+    </div>
+
+    <!-- CAMPO NICKNAME -->
+    <div class="form-group">
+      <label for="nickname">Nome de Alquimista:</label>
+      <div class="input-container">
+        <ion-icon name="person-outline"></ion-icon>
+        <input 
+          id="nickname" 
+          type="text" 
+          [(ngModel)]="nickname" 
+          maxlength="30" 
+          placeholder="Seu nickname..." 
+          class="custom-input" />
+      </div>
+    </div>
+
+    <!-- SELEÇÃO DE AVATARES -->
+    <div class="avatares-section">
+      <div class="secao-header">
+        <label>Escolha seu Avatar:</label>
+        <span class="plano-info-badge" [class.badge-gold]="planoUsuario === 'premium'">
+          {{ planoUsuario === 'premium' ? 'TODOS LIBERADOS ⭐' : '3 BLOQUEADOS (PREMIUM)' }}
+        </span>
       </div>
 
-      <!-- Campo de Alteração de Nickname -->
-      <div class="form-group">
-        <h3>NOME DE USUÁRIO (NICKNAME)</h3>
-        <ion-item lines="none" class="input-item">
-          <ion-icon name="person-outline" slot="start"></ion-icon>
-          <ion-input 
-            type="text" 
-            [(ngModel)]="nickname" 
-            placeholder="Digite seu nickname"
-            maxlength="20">
-          </ion-input>
-        </ion-item>
-      </div>
+      <div class="avatares-grid">
+        <div 
+          *ngFor="let av of opcoesAvatares; let i = index" 
+          class="avatar-item" 
+          [class.avatar-selecionado]="avatarSelecionado === av"
+          [class.avatar-item-bloqueado]="isAvatarBloqueado(av)"
+          (click)="selecionarAvatar(av)">
 
-      <!-- Grade de Opções de Avatar -->
-      <div class="avatar-section">
-        <h3>ESCOLHA SEU AVATAR</h3>
-        <div class="avatar-grid">
-          <div 
-            *ngFor="let avatar of opcoesAvatares" 
-            class="avatar-option" 
-            [class.selected]="avatar === avatarSelecionado"
-            (click)="selecionarAvatar(avatar)">
-            <img [src]="avatar" alt="Opção Avatar">
+          <img [src]="av" [alt]="'Avatar ' + (i + 1)" class="avatar-thumb" />
+
+          <!-- OVERLAY DE BLOQUEIO PARA AVATARES PREMIUM -->
+          <div class="bloqueio-overlay" *ngIf="isAvatarBloqueado(av)">
+            <ion-icon name="lock-closed"></ion-icon>
+            <span class="tag-premium-mini">PREMIUM</span>
+          </div>
+
+          <!-- CHECKMARK DE SELECIONADO -->
+          <div class="check-overlay" *ngIf="avatarSelecionado === av && !isAvatarBloqueado(av)">
+            <ion-icon name="checkmark-circle"></ion-icon>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Botão para Salvar Tudo -->
-      <ion-button expand="block" class="btn-salvar" (click)="salvarPerfil()">
-        Salvar Alterações
-      </ion-button>
-
+    <!-- BOTÃO SALVAR -->
+    <div class="acoes-section">
+      <button 
+        class="btn-salvar-perfil" 
+        type="button" 
+        [disabled]="salvando" 
+        (click)="salvarPerfil()">
+        <ion-spinner *ngIf="salvando" name="dots"></ion-spinner>
+        <span *ngIf="!salvando">Salvar Alterações</span>
+      </button>
     </div>
 
   </div>
+
 </ion-content>

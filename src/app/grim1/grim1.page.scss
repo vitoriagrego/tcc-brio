@@ -210,3 +210,133 @@
   }
 
 }
+// =====================================================================
+// SUBSTITUI o bloco que você colou antes (apague o anterior e cole este
+// no FINAL do grim1.page.scss). Seletores mais específicos, para ganhar
+// de qualquer estilo antigo de .bloqueada / opacidade.
+// =====================================================================
+
+$marrom-escuro: #3a210e;
+$marrom-texto: #4b2e16;
+$deslocamento: 14px; // quanto as runas vão para a direita (ajuste a gosto)
+
+.pagina-conteudo .runa-item {
+  // empurra a runa para a direita sem mexer no resto do layout
+  position: relative;
+  left: $deslocamento;
+  max-width: calc(100% - #{$deslocamento});
+
+  // ---------- textos legíveis ----------
+  .runa-details {
+    h2 {
+      margin: 0 0 2px;
+      font-size: 0.95rem;
+      line-height: 1.15;
+      font-weight: 800;
+      color: $marrom-escuro;
+      opacity: 1;
+      text-shadow: 0 1px 0 rgba(255, 244, 214, 0.55);
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.68rem;
+      line-height: 1.25;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: $marrom-texto;
+      opacity: 1;
+      text-shadow: 0 1px 0 rgba(255, 244, 214, 0.45);
+    }
+  }
+
+  // runa bloqueada: só o ícone fica apagado; o texto continua nítido
+  &.bloqueada {
+    .runa-details h2,
+    .runa-details p {
+      opacity: 1;
+      color: $marrom-texto;
+    }
+    .runa-img { opacity: 0.8; }
+  }
+
+  // runa recém-conquistada
+  &.nova .runa-img {
+    animation: runaBrilho 1.6s ease-in-out infinite;
+  }
+}
+
+// selo "NOVA"
+.pagina-conteudo .runa-novo {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+  color: #fff;
+  background: #8b3a1a;
+  text-shadow: none;
+}
+
+// barra de progresso + contador na MESMA linha
+.pagina-conteudo .runa-prog-linha {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+
+  .runa-prog {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(58, 33, 14, 0.25);
+    border: 1px solid rgba(58, 33, 14, 0.35);
+    overflow: hidden;
+  }
+
+  .runa-prog-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #8b5a2b, #c9a227);
+    transition: width 0.6s ease;
+  }
+
+  // contador no mesmo tamanho/cor do texto da descrição
+  .runa-prog-texto {
+    flex-shrink: 0;
+    font-size: 0.68rem;
+    font-weight: 800;
+    line-height: 1;
+    color: $marrom-escuro;
+    text-shadow: 0 1px 0 rgba(255, 244, 214, 0.45);
+  }
+}
+
+// mensagens de carregamento / erro
+.pagina-conteudo .runas-estado {
+  margin: 12px 0;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: $marrom-texto;
+
+  button {
+    display: block;
+    margin: 6px auto 0;
+    padding: 5px 14px;
+    border: 0;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #fff;
+    background: #8b3a1a;
+  }
+}
+
+@keyframes runaBrilho {
+  0%, 100% { filter: drop-shadow(0 0 2px rgba(255, 200, 80, 0.4)); }
+  50%      { filter: drop-shadow(0 0 10px rgba(255, 200, 80, 0.95)); }
+}

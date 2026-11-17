@@ -5,243 +5,192 @@
   <div class="quiz-page">
 
     <!-- CABEÇALHO -->
-
     <div class="quiz-header">
-
       <button
         class="back-button"
         type="button"
         (click)="voltar()">
-
-        <ion-icon
-          name="arrow-back-outline">
-        </ion-icon>
-
+        <ion-icon name="arrow-back-outline"></ion-icon>
       </button>
 
       <div class="header-text">
-
-        <span>QUIZ</span>
-
+        <div class="header-top-row">
+          <span>QUIZ</span>
+          <span class="badge-plano" [class.badge-premium]="usuarioPlano === 'premium'">
+            <ion-icon [name]="usuarioPlano === 'premium' ? 'star' : 'sparkles-outline'"></ion-icon>
+            {{ usuarioPlano === 'premium' ? 'ILIMITADO' : '1/DIA (GRÁTIS)' }}
+          </span>
+        </div>
         <h1>{{ materia }}</h1>
-
       </div>
-
     </div>
 
+    <!-- TELA DE VERIFICAÇÃO / CARREGAMENTO -->
+    <div *ngIf="verificandoLimite || carregando" class="loading-container">
+      <ion-spinner name="crescent" color="warning"></ion-spinner>
+      <p>Carregando alquimia do saber...</p>
+    </div>
 
-    <!-- QUIZ -->
+    <!-- ======================================================== -->
+    <!-- TELA DE BLOQUEIO: LIMITE DIÁRIO ATINGIDO NO PLANO GRÁTIS -->
+    <!-- ======================================================== -->
+    <div *ngIf="!verificandoLimite && limiteDiarioAtingido" class="bloqueio-card">
+      <div class="bloqueio-icon">
+        <ion-icon name="lock-closed-outline"></ion-icon>
+      </div>
 
+      <span class="bloqueio-badge">LIMITE DIÁRIO ATINGIDO</span>
+      <h2>Você completou seu quiz de hoje!</h2>
+
+      <p class="bloqueio-descricao">
+        No <strong>Plano Gratuito</strong>, você tem acesso a <strong>1 quiz por dia</strong> para testar seus conhecimentos.
+      </p>
+
+      <div class="vantagens-box">
+        <h3>Desbloqueie com o Plano Premium:</h3>
+        <ul>
+          <li><ion-icon name="checkmark-circle"></ion-icon> <strong>Quizzes Ilimitados</strong> todos os dias</li>
+          <li><ion-icon name="checkmark-circle"></ion-icon> Todos os <strong>Avatares Alquímicos</strong> liberados</li>
+          <li><ion-icon name="checkmark-circle"></ion-icon> <strong>Relatórios Semanais</strong> com diagnóstico de IA</li>
+        </ul>
+      </div>
+
+      <div class="bloqueio-botoes">
+        <button class="upgrade-btn" type="button" (click)="irParaPlanos()">
+          <ion-icon name="star"></ion-icon>
+          <span>Assinar Premium (a partir de R$ 9,90)</span>
+        </button>
+
+        <button class="voltar-btn" type="button" (click)="voltar()">
+          Voltar para Matérias
+        </button>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- QUIZ EM ANDAMENTO                                        -->
+    <!-- ======================================================== -->
     <div
-      *ngIf="!finalizado && perguntas.length > 0"
+      *ngIf="!verificandoLimite && !limiteDiarioAtingido && !finalizado && perguntas.length > 0"
       class="quiz-card">
 
-
       <!-- PROGRESSO -->
-
       <div class="progress-area">
-
         <div class="progress-info">
-
-          <span>
-            QUESTÃO {{ perguntaAtual + 1 }}
-          </span>
-
-          <span>
-            {{ perguntas.length }} QUESTÕES
-          </span>
-
+          <span>QUESTÃO {{ perguntaAtual + 1 }}</span>
+          <span>{{ perguntas.length }} QUESTÕES</span>
         </div>
 
         <div class="progress-bar">
-
           <div
             class="progress-fill"
-            [style.width.%]="
-              ((perguntaAtual + 1) / perguntas.length) * 100
-            ">
+            [style.width.%]="((perguntaAtual + 1) / perguntas.length) * 100">
           </div>
-
         </div>
-
       </div>
-
 
       <!-- PERGUNTA -->
-
       <div class="question-area">
-
-        <span class="question-number">
-          PERGUNTA {{ perguntaAtual + 1 }}
-        </span>
-
-        <h2>
-          {{ pergunta.pergunta }}
-        </h2>
-
+        <span class="question-number">PERGUNTA {{ perguntaAtual + 1 }}</span>
+        <h2>{{ pergunta.pergunta }}</h2>
       </div>
 
-
       <!-- ALTERNATIVAS -->
-
       <div class="alternativas">
-
         <button
-          *ngFor="
-            let alternativa of pergunta.alternativas;
-            let i = index
-          "
+          *ngFor="let alternativa of pergunta.alternativas; let i = index"
           type="button"
           class="alternativa"
-
-          [class.selecionada]="
-            respostaSelecionada === i
-          "
-
-          [class.correta]="
-            respostaSelecionada !== null &&
-            i === pergunta.respostaCorreta
-          "
-
-          [class.errada]="
-            respostaSelecionada === i &&
-            respostaSelecionada !== pergunta.respostaCorreta
-          "
-
+          [class.selecionada]="respostaSelecionada === i"
+          [class.correta]="respostaSelecionada !== null && i === pergunta.respostaCorreta"
+          [class.errada]="respostaSelecionada === i && respostaSelecionada !== pergunta.respostaCorreta"
           (click)="selecionarResposta(i)">
 
-
-          <span class="letra">
-            {{ ['A', 'B', 'C', 'D'][i] }}
-          </span>
-
-
-          <span class="texto-alternativa">
-            {{ alternativa }}
-          </span>
-
+          <span class="letra">{{ ['A', 'B', 'C', 'D'][i] }}</span>
+          <span class="texto-alternativa">{{ alternativa }}</span>
 
           <ion-icon
-            *ngIf="
-              respostaSelecionada !== null &&
-              i === pergunta.respostaCorreta
-            "
+            *ngIf="respostaSelecionada !== null && i === pergunta.respostaCorreta"
             name="checkmark-circle-outline">
           </ion-icon>
 
-
           <ion-icon
-            *ngIf="
-              respostaSelecionada === i &&
-              respostaSelecionada !== pergunta.respostaCorreta
-            "
+            *ngIf="respostaSelecionada === i && respostaSelecionada !== pergunta.respostaCorreta"
             name="close-circle-outline">
           </ion-icon>
-
         </button>
-
       </div>
 
-
       <!-- PRÓXIMA PERGUNTA -->
-
       <button
         class="next-button"
         type="button"
-
-        [disabled]="
-          respostaSelecionada === null
-        "
-
+        [disabled]="respostaSelecionada === null"
         (click)="proximaPergunta()">
-
         <span>
-
-          {{
-            perguntaAtual === perguntas.length - 1
-              ? 'FINALIZAR QUIZ'
-              : 'PRÓXIMA PERGUNTA'
-          }}
-
+          {{ perguntaAtual === perguntas.length - 1 ? 'FINALIZAR QUIZ' : 'PRÓXIMA PERGUNTA' }}
         </span>
-
-        <ion-icon
-          name="arrow-forward-outline">
-        </ion-icon>
-
+        <ion-icon name="arrow-forward-outline"></ion-icon>
       </button>
 
     </div>
 
-
-    <!-- RESULTADO -->
-
+    <!-- ======================================================== -->
+    <!-- RESULTADO DO QUIZ                                        -->
+    <!-- ======================================================== -->
     <div
-      *ngIf="finalizado"
+      *ngIf="!verificandoLimite && !limiteDiarioAtingido && finalizado"
       class="resultado-card">
 
       <div class="resultado-icon">
-
-        <ion-icon
-          name="trophy-outline">
-        </ion-icon>
-
+        <ion-icon name="trophy-outline"></ion-icon>
       </div>
 
-      <span class="resultado-label">
-        QUIZ FINALIZADO
-      </span>
-
-      <h2>
-        Parabéns!
-      </h2>
-
-      <p>
-        Você terminou o quiz de {{ materia }}.
-      </p>
+      <span class="resultado-label">QUIZ FINALIZADO</span>
+      <h2>Parabéns!</h2>
+      <p>Você terminou o quiz de {{ materia }}.</p>
 
       <div class="pontuacao">
-
-        <strong>
-          {{ pontuacao }}
-        </strong>
-
-        <span>
-          / {{ perguntas.length }}
-        </span>
-
+        <strong>{{ pontuacao }}</strong>
+        <span>/ {{ perguntas.length }}</span>
       </div>
 
       <p class="mensagem">
-
-        {{
-          pontuacao === perguntas.length
-            ? 'Você acertou todas as questões!'
-            : 'Continue estudando e tente novamente!'
-        }}
-
+        {{ pontuacao === perguntas.length ? 'Você acertou todas as questões!' : 'Continue estudando e tente novamente!' }}
       </p>
 
-      <div class="resultado-botoes">
+      <!-- AVISO DE PLANO GRATUITO APÓS CONCLUIR -->
+      <div *ngIf="usuarioPlano === 'gratis'" class="aviso-plano-gratis">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <span>Você utilizou seu quiz gratuito de hoje. Assine o <strong>Plano Premium</strong> para continuar praticando com quizzes ilimitados!</span>
+      </div>
 
+      <div class="resultado-botoes">
+        <!-- Se for premium, pode tentar novamente -->
         <button
+          *ngIf="usuarioPlano === 'premium'"
           class="restart-button"
           type="button"
           (click)="reiniciarQuiz()">
-
           Tentar novamente
+        </button>
 
+        <!-- Se for grátis, convite para upgrade -->
+        <button
+          *ngIf="usuarioPlano === 'gratis'"
+          class="upgrade-btn"
+          type="button"
+          (click)="irParaPlanos()">
+          <ion-icon name="star"></ion-icon>
+          <span>Quizzes Ilimitados (Premium)</span>
         </button>
 
         <button
           class="back-result-button"
           type="button"
           (click)="voltar()">
-
           Voltar para matérias
-
         </button>
-
       </div>
 
     </div>

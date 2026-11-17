@@ -4,6 +4,13 @@
     <h1>Ciclo Arcano</h1>
   </section>
 
+  <ion-card class="card-section" *ngIf="erro">
+    <ion-card-content class="state-msg">
+      Não foi possível carregar seu progresso.
+      <button type="button" (click)="recarregar()">Tentar de novo</button>
+    </ion-card-content>
+  </ion-card>
+
   <!-- ===================== MAESTRIA ===================== -->
   <ion-card class="card-section">
     <ion-card-header>
@@ -44,45 +51,68 @@
     </ion-card-header>
 
     <ion-card-content>
-      <div class="class-group" *ngFor="let g of grupos" [class.group-locked]="!g.desbloqueado">
-        <div class="group-head">
-          <span class="group-badge">Nv {{ g.nivelId }}</span>
-          <span class="group-name">{{ g.nome }}</span>
-          <span class="group-count">
-            <ng-container *ngIf="g.desbloqueado">{{ g.coletadas }}/{{ g.itens.length }}</ng-container>
-            <ion-icon *ngIf="!g.desbloqueado" name="lock-closed"></ion-icon>
-          </span>
+      <div class="rw-carousel">
+        <button
+          type="button"
+          class="rw-arrow left"
+          [disabled]="!podeVoltar"
+          (click)="rolar(-1)"
+          aria-label="Recompensas anteriores"
+        >
+          <ion-icon name="chevron-back"></ion-icon>
+        </button>
+
+        <div class="rw-track" #trilhoEl (scroll)="atualizarSetas()">
+          <ng-container *ngFor="let r of trilho">
+            <button
+              *ngIf="!r.misteriosa; else misterio"
+              type="button"
+              class="rw-card"
+              (click)="abrirRecompensa(r)"
+              [ngClass]="'rarity-' + r.raridade"
+              [class.locked]="!r.desbloqueada"
+              [class.collectable]="r.desbloqueada && !r.coletada"
+              [class.collected]="r.coletada"
+              [class.fx]="fxId === r.id"
+            >
+              <span class="rw-lv">Nv {{ r.nivel_requerido }}</span>
+              <span class="rw-flag flag-collect" *ngIf="r.desbloqueada && !r.coletada">
+                <ion-icon name="gift"></ion-icon>
+              </span>
+              <span class="rw-flag flag-done" *ngIf="r.coletada">
+                <ion-icon name="checkmark"></ion-icon>
+              </span>
+              <span class="rw-flag flag-lock" *ngIf="!r.desbloqueada">
+                <ion-icon name="lock-closed"></ion-icon>
+              </span>
+
+              <div class="rw-img">
+                <img [src]="img(r.imagem)" [alt]="r.titulo">
+              </div>
+              <p class="rw-title">{{ r.titulo }}</p>
+              <span class="rw-rarity">{{ rotuloRaridade(r.raridade) }}</span>
+            </button>
+
+            <ng-template #misterio>
+              <div class="rw-card mystery">
+                <span class="rw-lv">Nv {{ r.nivel_requerido }}</span>
+                <div class="rw-img"><ion-icon name="help"></ion-icon></div>
+                <p class="rw-title">???</p>
+                <span class="rw-rarity">Misteriosa</span>
+              </div>
+            </ng-template>
+          </ng-container>
         </div>
 
-        <div class="rw-grid">
-          <button
-            type="button"
-            class="rw-card"
-            *ngFor="let r of g.itens"
-            (click)="abrirRecompensa(r)"
-            [ngClass]="'rarity-' + r.raridade"
-            [class.locked]="!r.desbloqueada"
-            [class.collectable]="r.desbloqueada && !r.coletada"
-            [class.collected]="r.coletada"
-            [class.fx]="fxId === r.id"
-          >
-            <span class="rw-flag flag-collect" *ngIf="r.desbloqueada && !r.coletada">
-              <ion-icon name="gift"></ion-icon>
-            </span>
-            <span class="rw-flag flag-done" *ngIf="r.coletada">
-              <ion-icon name="checkmark"></ion-icon>
-            </span>
-            <span class="rw-flag flag-lock" *ngIf="!r.desbloqueada">
-              <ion-icon name="lock-closed"></ion-icon>
-            </span>
-
-            <div class="rw-img">
-              <img [src]="'../../' + r.imagem" [alt]="r.titulo">
-            </div>
-            <p class="rw-title">{{ r.titulo }}</p>
-            <span class="rw-rarity">{{ rotuloRaridade(r.raridade) }}</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          class="rw-arrow right"
+          [disabled]="!podeAvancar"
+          (click)="rolar(1)"
+          aria-label="Próximas recompensas"
+        >
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
       </div>
 
       <button type="button" class="rw-collection-btn" (click)="abrirColecao()">
@@ -90,11 +120,6 @@
         Ver minha coleção
         <span class="rw-collection-count">{{ colecao.length }}/{{ totalRecompensas }}</span>
       </button>
-
-      <p class="rw-teaser" *ngIf="futuras > 0">
-        <ion-icon name="sparkles"></ion-icon>
-        +{{ futuras }} recompensa(s) misteriosa(s) em níveis futuros
-      </p>
     </ion-card-content>
   </ion-card>
 
@@ -204,7 +229,7 @@
         <div class="levelup-row">
           <img
             *ngFor="let n of levelUp.novas; let i = index"
-            [src]="'../../' + n.imagem"
+            [src]="img(n.imagem)"
             [alt]="n.titulo"
             [style.animation-delay.ms]="700 + i * 150"
           >
@@ -254,7 +279,7 @@
             >
               <span class="rw-flag flag-done"><ion-icon name="checkmark"></ion-icon></span>
               <div class="rw-img">
-                <img [src]="'../../' + r.imagem" [alt]="r.titulo">
+                <img [src]="img(r.imagem)" [alt]="r.titulo">
               </div>
               <p class="rw-title">{{ r.titulo }}</p>
               <span class="rw-date">{{ formatarData(r.coletadaEm) }}</span>
@@ -286,7 +311,7 @@
 
           <div class="rm-stage" [class.locked]="!r.desbloqueada" [class.fx]="fxId === r.id">
             <div class="rm-glow"></div>
-            <img [src]="'../../' + r.imagem" [alt]="r.titulo">
+            <img [src]="img(r.imagem)" [alt]="r.titulo">
             <span
               class="spark small"
               *ngFor="let s of burst"
